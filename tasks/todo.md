@@ -12,7 +12,8 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### To Do
 
-- [ ] Push `feature/phase-07-init-context-sync` and open PR to `development`.
+- [x] Push `feature/phase-07-init-context-sync` to origin.
+- [ ] Open PR from `feature/phase-07-init-context-sync` to `development` (manual — `gh` not available).
 - [ ] Configure GitHub branch protection in GitHub UI.
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured.
 
