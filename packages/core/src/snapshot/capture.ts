@@ -77,11 +77,22 @@ async function collectGitMetadata(): Promise<{
       execFileAsync("git", ["status", "--porcelain"]).catch(() => ({ stdout: "" })),
     ]);
 
-    return {
-      gitCommit: commitResult.stdout.trim() || undefined,
-      gitBranch: branchResult.stdout.trim() || undefined,
-      gitDirty: statusResult.stdout.trim().length > 0,
-    };
+    const result: {
+      gitCommit?: string;
+      gitBranch?: string;
+      gitDirty?: boolean;
+    } = {};
+
+    const commit = commitResult.stdout.trim();
+    if (commit) result.gitCommit = commit;
+
+    const branch = branchResult.stdout.trim();
+    if (branch) result.gitBranch = branch;
+
+    const isDirty = statusResult.stdout.trim().length > 0;
+    if (isDirty) result.gitDirty = isDirty;
+
+    return result;
   } catch {
     return {};
   }
