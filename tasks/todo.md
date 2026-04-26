@@ -4,7 +4,7 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 04 — Core CLI and SDK Foundation
+## Current Phase: Phase 06 — Manifest System
 
 ### In Progress
 
@@ -12,7 +12,8 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### To Do
 
-- [ ] Open PR from `feature/phase-04-core-cli-sdk-foundation` to `development`.
+- [ ] Push `feature/phase-06-manifest-system` to origin.
+- [ ] Open PR from `feature/phase-06-manifest-system` to `development`.
 - [ ] Configure GitHub branch protection in GitHub UI.
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured.
 
@@ -34,12 +35,18 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Add Phase 04 tests.
 - [x] Validate Phase 04 with format, lint, typecheck, test, build, and CLI smoke tests.
 - [x] Push Phase 04 branch to origin.
+- [x] Phase 04 merged into `development`.
+- [x] Implement manifest v1 schema/types.
+- [x] Implement YAML parser, JSON Schema validator, semantic provider validation, secret detection, and path/eval suite resolver.
+- [x] Implement `aidrift validate`.
+- [x] Add parser and CLI validate tests.
+- [x] Validate Phase 06 with format, lint, typecheck, test, build, and CLI smoke tests.
 
 ---
 
 ## Sprint Deliverable
 
-Empty monorepo skeleton is green in CI.
+Manifest validation system is implemented and ready for PR review after final validation.
 
 ## Notes
 

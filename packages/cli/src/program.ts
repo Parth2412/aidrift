@@ -3,6 +3,7 @@ import { Command } from "commander";
 import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@aidrift/core";
 import { resolveAIDriftConfig } from "@aidrift/core";
 
+import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
 
 export const CLI_NAME = "aidrift";
@@ -58,6 +59,11 @@ Bootstrap status:
 Product commands are implemented in later phases.
 `);
     });
+
+  registerValidateCommand(program, {
+    io: options.io,
+    resolveConfig: () => resolveConfigFromProgram(program, options),
+  });
 
   return program;
 }

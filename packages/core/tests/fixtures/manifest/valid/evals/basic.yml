@@ -1,0 +1,4 @@
+id: fixture-basic
+input: Say hello.
+expect:
+  contains: hello

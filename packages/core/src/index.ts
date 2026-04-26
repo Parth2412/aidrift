@@ -4,3 +4,8 @@ export * from "./config/types.js";
 export * from "./errors.js";
 export * from "./logging/logger.js";
 export * from "./logging/redact.js";
+export * from "./manifest/parser.js";
+export * from "./manifest/resolver.js";
+export * from "./manifest/schema.js";
+export * from "./manifest/security.js";
+export * from "./manifest/types.js";
