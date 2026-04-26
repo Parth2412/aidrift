@@ -1,0 +1,13 @@
+# AIDrift snapshot data (may contain prompt content)
+.aidrift/
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Environment files
+.env
+.env.*
+
+.claude
+CLAUDE.md
+tasks/
