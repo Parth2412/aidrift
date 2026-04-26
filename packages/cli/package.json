@@ -1,0 +1,32 @@
+{
+  "name": "aidrift",
+  "version": "0.0.0",
+  "description": "CLI for versioning, diffing, testing, and gating AI behavioral state.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "aidrift": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@aidrift/core": "workspace:*",
+    "@aidrift/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}

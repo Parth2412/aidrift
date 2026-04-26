@@ -1,0 +1,30 @@
+{
+  "name": "aidrift-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AIDRIFT monorepo for AI behavioral state management tooling.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint",
+    "pack:dry": "pnpm --filter aidrift pack --dry-run && pnpm --filter @aidrift/core pack --dry-run && pnpm --filter @aidrift/sdk pack --dry-run",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}

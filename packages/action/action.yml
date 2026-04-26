@@ -1,0 +1,11 @@
+name: AIDRIFT Check
+description: Run AIDRIFT behavioral checks in GitHub Actions.
+author: Parth
+inputs:
+  check_mode:
+    description: Check mode for future AIDRIFT behavioral gates.
+    required: false
+    default: strict
+runs:
+  using: node20
+  main: dist/index.js
