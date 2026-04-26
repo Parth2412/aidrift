@@ -37,8 +37,10 @@ export async function runCli(argv: readonly string[], options: RunCliOptions): P
 }
 
 function findUnknownCommand(args: readonly string[]): string | undefined {
-  const optionsWithValues = new Set(["-c", "--config", "-f", "--format", "--template", "--dir"]);
-  const knownCommands = new Set(["validate", "init"]);
+  const optionsWithValues = new Set(["-c", "--config", "-f", "--format", "--template", "--dir", "--label", "--message", "--limit"]);
+  const knownCommands = new Set(["validate", "init", "snapshot", "history", "diff"]);
+
+  let seenCommand = false;
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -56,14 +58,30 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       arg.startsWith("--config=") ||
       arg.startsWith("--format=") ||
       arg.startsWith("--template=") ||
-      arg.startsWith("--dir=")
+      arg.startsWith("--dir=") ||
+      arg.startsWith("--label=") ||
+      arg.startsWith("--message=") ||
+      arg.startsWith("--limit=")
     ) {
       continue;
     }
 
-    if (!arg.startsWith("-") && !knownCommands.has(arg)) {
-      return arg;
+    if (arg.startsWith("-")) {
+      continue;
     }
+
+    // Once a known command has been seen, subsequent non-flag arguments are
+    // positional args for that subcommand, not new commands.
+    if (seenCommand) {
+      continue;
+    }
+
+    if (knownCommands.has(arg)) {
+      seenCommand = true;
+      continue;
+    }
+
+    return arg;
   }
 
   return undefined;

@@ -3,7 +3,10 @@ import { Command } from "commander";
 import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@aidrift/core";
 import { resolveAIDriftConfig } from "@aidrift/core";
 
+import { registerDiffCommand } from "./commands/diff.js";
+import { registerHistoryCommand } from "./commands/history.js";
 import { registerInitCommand } from "./commands/init.js";
+import { registerSnapshotCommand } from "./commands/snapshot.js";
 import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
 
@@ -67,6 +70,9 @@ Product commands are implemented in later phases.
   });
 
   registerInitCommand(program, { io: options.io });
+  registerSnapshotCommand(program, { io: options.io });
+  registerHistoryCommand(program, { io: options.io });
+  registerDiffCommand(program, { io: options.io });
 
   return program;
 }
