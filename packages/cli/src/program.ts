@@ -3,6 +3,7 @@ import { Command } from "commander";
 import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@aidrift/core";
 import { resolveAIDriftConfig } from "@aidrift/core";
 
+import { registerInitCommand } from "./commands/init.js";
 import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
 
@@ -64,6 +65,8 @@ Product commands are implemented in later phases.
     io: options.io,
     resolveConfig: () => resolveConfigFromProgram(program, options),
   });
+
+  registerInitCommand(program, { io: options.io });
 
   return program;
 }

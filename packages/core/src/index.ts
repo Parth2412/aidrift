@@ -9,3 +9,6 @@ export * from "./manifest/resolver.js";
 export * from "./manifest/schema.js";
 export * from "./manifest/security.js";
 export * from "./manifest/types.js";
+export * from "./scanner/index.js";
+export * from "./scanner/types.js";
+export * from "./templates/index.js";

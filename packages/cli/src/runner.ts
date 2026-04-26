@@ -37,8 +37,8 @@ export async function runCli(argv: readonly string[], options: RunCliOptions): P
 }
 
 function findUnknownCommand(args: readonly string[]): string | undefined {
-  const optionsWithValues = new Set(["-c", "--config", "-f", "--format"]);
-  const knownCommands = new Set(["validate"]);
+  const optionsWithValues = new Set(["-c", "--config", "-f", "--format", "--template", "--dir"]);
+  const knownCommands = new Set(["validate", "init"]);
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -52,7 +52,12 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       continue;
     }
 
-    if (arg.startsWith("--config=") || arg.startsWith("--format=")) {
+    if (
+      arg.startsWith("--config=") ||
+      arg.startsWith("--format=") ||
+      arg.startsWith("--template=") ||
+      arg.startsWith("--dir=")
+    ) {
       continue;
     }
 
