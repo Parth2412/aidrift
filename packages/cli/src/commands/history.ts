@@ -31,8 +31,7 @@ export function registerHistoryCommand(
         cmd: Command,
       ) => {
         const merged = cmd.optsWithGlobals<{ config?: string; limit?: string; format?: string }>();
-        const manifestPath =
-          merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
+        const manifestPath = merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
         const projectRoot = path.dirname(manifestPath);
         const limit = Number(merged.limit ?? "20");
         const format = merged.format ?? "text";
@@ -46,9 +45,7 @@ export function registerHistoryCommand(
         }
 
         if (snapshots.length === 0) {
-          options.io.stdout.write(
-            "No snapshots found. Run 'aidrift snapshot' to create one.\n",
-          );
+          options.io.stdout.write("No snapshots found. Run 'aidrift snapshot' to create one.\n");
           return;
         }
 

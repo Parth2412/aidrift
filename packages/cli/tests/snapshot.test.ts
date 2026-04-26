@@ -37,8 +37,18 @@ describe("aidrift snapshot", () => {
   });
 
   it("exits 0 and creates a snapshot file", async () => {
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     const exitCode = await runCli(
       ["node", "aidrift", "snapshot", "-c", path.join(tmpDir, ".aistate.yml")],
@@ -54,24 +64,52 @@ describe("aidrift snapshot", () => {
   });
 
   it("snapshot output contains snapshot ID", async () => {
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
-    await runCli(
-      ["node", "aidrift", "snapshot", "-c", path.join(tmpDir, ".aistate.yml")],
-      { stdout, stderr },
-    );
+    await runCli(["node", "aidrift", "snapshot", "-c", path.join(tmpDir, ".aistate.yml")], {
+      stdout,
+      stderr,
+    });
 
     const output = stdout.chunks.join("");
     expect(output).toMatch(/snap_\d{8}_\d{6}/);
   });
 
   it("--label flag sets the snapshot label", async () => {
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     await runCli(
-      ["node", "aidrift", "snapshot", "-c", path.join(tmpDir, ".aistate.yml"), "--label", "v1-release"],
+      [
+        "node",
+        "aidrift",
+        "snapshot",
+        "-c",
+        path.join(tmpDir, ".aistate.yml"),
+        "--label",
+        "v1-release",
+      ],
       { stdout, stderr },
     );
 

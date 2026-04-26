@@ -44,8 +44,18 @@ describe("aidrift history", () => {
   });
 
   it("exits 0 with no snapshots and prints empty message", async () => {
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     const exitCode = await runCli(
       ["node", "aidrift", "history", "-c", path.join(tmpDir, ".aistate.yml")],
@@ -60,19 +70,25 @@ describe("aidrift history", () => {
     const snapshotsDir = path.join(tmpDir, ".aidrift", "snapshots");
     await fs.mkdir(snapshotsDir, { recursive: true });
     const snap = makeSnap("snap_20260426_120000", "release-v1");
-    await fs.writeFile(
-      path.join(snapshotsDir, `${snap.id}.json`),
-      JSON.stringify(snap),
-      "utf8",
-    );
+    await fs.writeFile(path.join(snapshotsDir, `${snap.id}.json`), JSON.stringify(snap), "utf8");
 
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
-    await runCli(
-      ["node", "aidrift", "history", "-c", path.join(tmpDir, ".aistate.yml")],
-      { stdout, stderr },
-    );
+    await runCli(["node", "aidrift", "history", "-c", path.join(tmpDir, ".aistate.yml")], {
+      stdout,
+      stderr,
+    });
 
     const output = stdout.chunks.join("");
     expect(output).toContain("snap_20260426_120000");
@@ -83,14 +99,20 @@ describe("aidrift history", () => {
     const snapshotsDir = path.join(tmpDir, ".aidrift", "snapshots");
     await fs.mkdir(snapshotsDir, { recursive: true });
     const snap = makeSnap("snap_20260426_130000");
-    await fs.writeFile(
-      path.join(snapshotsDir, `${snap.id}.json`),
-      JSON.stringify(snap),
-      "utf8",
-    );
+    await fs.writeFile(path.join(snapshotsDir, `${snap.id}.json`), JSON.stringify(snap), "utf8");
 
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     await runCli(
       ["node", "aidrift", "history", "-c", path.join(tmpDir, ".aistate.yml"), "--format", "json"],

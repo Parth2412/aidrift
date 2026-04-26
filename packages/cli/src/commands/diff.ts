@@ -67,10 +67,7 @@ function formatTextDiff(result: SnapshotDiffResult): string {
   return lines.join("\n") + "\n";
 }
 
-export function registerDiffCommand(
-  program: Command,
-  options: RegisterDiffCommandOptions,
-): void {
+export function registerDiffCommand(program: Command, options: RegisterDiffCommandOptions): void {
   program
     .command("diff [snap_a] [snap_b]")
     .description(
@@ -91,8 +88,7 @@ export function registerDiffCommand(
         cmd: Command,
       ) => {
         const merged = cmd.optsWithGlobals<{ config?: string; format?: string; stat?: boolean }>();
-        const manifestPath =
-          merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
+        const manifestPath = merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
         const projectRoot = path.dirname(manifestPath);
         const format = merged.format ?? "text";
 
@@ -108,9 +104,7 @@ export function registerDiffCommand(
         } else if (snapAArg !== undefined) {
           // diff snapAArg against latest
           if (allSummaries.length === 0) {
-            options.io.stderr.write(
-              "Error: No snapshots found. Run 'aidrift snapshot' first.\n",
-            );
+            options.io.stderr.write("Error: No snapshots found. Run 'aidrift snapshot' first.\n");
             process.exitCode = ExitCode.Failure;
             return;
           }

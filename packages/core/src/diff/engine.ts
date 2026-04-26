@@ -23,7 +23,13 @@ function diffArtifact(
   const hashStatus: DiffStatus = artifactA.hash === artifactB.hash ? "unchanged" : "modified";
 
   if (hashStatus === "unchanged") {
-    return { artifactKey: key, status: "unchanged", kind: artifactA.kind, hashA: artifactA.hash, hashB: artifactB.hash };
+    return {
+      artifactKey: key,
+      status: "unchanged",
+      kind: artifactA.kind,
+      hashA: artifactA.hash,
+      hashB: artifactB.hash,
+    };
   }
 
   if (artifactA.kind === "text" && artifactB.kind === "text") {
@@ -39,10 +45,7 @@ function diffArtifact(
   }
 
   if (artifactA.kind === "model" && artifactB.kind === "model") {
-    const paramDiff = diffParameters(
-      artifactA.parameters ?? {},
-      artifactB.parameters ?? {},
-    );
+    const paramDiff = diffParameters(artifactA.parameters ?? {}, artifactB.parameters ?? {});
     const modelIdDiff = diffJson(
       { provider: artifactA.provider, model: artifactA.model },
       { provider: artifactB.provider, model: artifactB.model },
@@ -53,7 +56,15 @@ function diffArtifact(
       kind: "model",
       hashA: artifactA.hash,
       hashB: artifactB.hash,
-      paramDiff: [...modelIdDiff.map((e) => ({ param: e.key, status: e.status, valueA: e.valueA, valueB: e.valueB })), ...paramDiff],
+      paramDiff: [
+        ...modelIdDiff.map((e) => ({
+          param: e.key,
+          status: e.status,
+          valueA: e.valueA,
+          valueB: e.valueB,
+        })),
+        ...paramDiff,
+      ],
     };
   }
 

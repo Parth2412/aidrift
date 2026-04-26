@@ -42,7 +42,10 @@ export async function listSnapshots(projectRoot: string): Promise<SnapshotSummar
     return [];
   }
 
-  const jsonFiles = entries.filter((e) => e.endsWith(".json")).sort().reverse();
+  const jsonFiles = entries
+    .filter((e) => e.endsWith(".json"))
+    .sort()
+    .reverse();
 
   const summaries: SnapshotSummary[] = [];
   for (const file of jsonFiles) {

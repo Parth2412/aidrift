@@ -6,7 +6,7 @@ export interface ArtifactDiffResult {
   readonly kind: "text" | "binary" | "model";
   readonly hashA?: string | undefined;
   readonly hashB?: string | undefined;
-  readonly textDiff?: string | undefined;         // unified diff for text
+  readonly textDiff?: string | undefined; // unified diff for text
   readonly jsonDiff?: JsonDiffEntry[] | undefined; // for JSON/YAML
   readonly paramDiff?: ParamDiffEntry[] | undefined; // for model params
 }

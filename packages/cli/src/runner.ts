@@ -37,7 +37,17 @@ export async function runCli(argv: readonly string[], options: RunCliOptions): P
 }
 
 function findUnknownCommand(args: readonly string[]): string | undefined {
-  const optionsWithValues = new Set(["-c", "--config", "-f", "--format", "--template", "--dir", "--label", "--message", "--limit"]);
+  const optionsWithValues = new Set([
+    "-c",
+    "--config",
+    "-f",
+    "--format",
+    "--template",
+    "--dir",
+    "--label",
+    "--message",
+    "--limit",
+  ]);
   const knownCommands = new Set(["validate", "init", "snapshot", "history", "diff"]);
 
   let seenCommand = false;

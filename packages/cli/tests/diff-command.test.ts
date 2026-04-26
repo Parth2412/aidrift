@@ -38,8 +38,18 @@ describe("aidrift diff", () => {
   });
 
   it("exits 1 with error when fewer than 2 snapshots exist", async () => {
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     await writeSnap(tmpDir, {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
@@ -85,13 +95,26 @@ describe("aidrift diff", () => {
     await writeSnap(tmpDir, baseSnap);
     await writeSnap(tmpDir, laterSnap);
 
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     const exitCode = await runCli(
       [
-        "node", "aidrift", "diff",
-        "-c", path.join(tmpDir, ".aistate.yml"),
+        "node",
+        "aidrift",
+        "diff",
+        "-c",
+        path.join(tmpDir, ".aistate.yml"),
         "snap_20260426_110000",
         "snap_20260426_120000",
       ],
@@ -138,16 +161,30 @@ describe("aidrift diff", () => {
     await writeSnap(tmpDir, snapA);
     await writeSnap(tmpDir, snapB);
 
-    const stdout = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
-    const stderr = { chunks: [] as string[], write(s: string) { this.chunks.push(s); } };
+    const stdout = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
+    const stderr = {
+      chunks: [] as string[],
+      write(s: string) {
+        this.chunks.push(s);
+      },
+    };
 
     await runCli(
       [
-        "node", "aidrift", "diff",
-        "-c", path.join(tmpDir, ".aistate.yml"),
+        "node",
+        "aidrift",
+        "diff",
+        "-c",
+        path.join(tmpDir, ".aistate.yml"),
         "snap_20260426_110000",
         "snap_20260426_120000",
-        "--format", "json",
+        "--format",
+        "json",
       ],
       { stdout, stderr },
     );

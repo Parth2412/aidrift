@@ -15,9 +15,7 @@ describe("hashString", () => {
   });
 
   it("matches known SHA-256 value", () => {
-    const expected =
-      "sha256:" +
-      createHash("sha256").update("hello", "utf8").digest("hex");
+    const expected = "sha256:" + createHash("sha256").update("hello", "utf8").digest("hex");
     expect(hashString("hello")).toBe(expected);
   });
 

@@ -41,17 +41,14 @@ export function registerSnapshotCommand(
         // optsWithGlobals merges root-program opts (where -c is consumed) with
         // subcommand opts, so --config works regardless of position.
         const merged = cmd.optsWithGlobals<{ config?: string; label?: string; message?: string }>();
-        const manifestPath =
-          merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
+        const manifestPath = merged.config ?? path.resolve(process.cwd(), ".aistate.yml");
         const projectRoot = path.dirname(manifestPath);
 
         const validation = await validateManifestFile({ manifestPath });
         // Filter out path-resolution errors so snapshot works even when eval
         // suite or optional paths don't exist yet; capture will fail if
         // artifact paths are missing.
-        const schemaErrors = validation.errors.filter(
-          (e) => e.code !== "manifest.path.missing",
-        );
+        const schemaErrors = validation.errors.filter((e) => e.code !== "manifest.path.missing");
         if (schemaErrors.length > 0 || validation.manifest === undefined) {
           options.io.stderr.write(
             `Manifest validation failed: ${manifestPath}\n` +

@@ -25,9 +25,7 @@ function generateSnapshotId(): string {
   return `snap_${date}_${time}`;
 }
 
-async function captureTextArtifact(
-  absolutePath: string,
-): Promise<SnapshotArtifact> {
+async function captureTextArtifact(absolutePath: string): Promise<SnapshotArtifact> {
   const content = await fs.readFile(absolutePath, "utf8");
   const hash = hashString(content);
   const stat = await fs.stat(absolutePath);

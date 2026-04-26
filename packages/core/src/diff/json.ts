@@ -1,9 +1,6 @@
 import type { JsonDiffEntry } from "./types.js";
 
-export function diffJson(
-  a: Record<string, unknown>,
-  b: Record<string, unknown>,
-): JsonDiffEntry[] {
+export function diffJson(a: Record<string, unknown>, b: Record<string, unknown>): JsonDiffEntry[] {
   const entries: JsonDiffEntry[] = [];
   const allKeys = new Set([...Object.keys(a), ...Object.keys(b)]);
 
