@@ -1,13 +1,6 @@
-export const AIDRIFT_CORE_PACKAGE = "@aidrift/core" as const;
-
-export interface BootstrapStatus {
-  readonly packageName: typeof AIDRIFT_CORE_PACKAGE;
-  readonly initialized: true;
-}
-
-export function getBootstrapStatus(): BootstrapStatus {
-  return {
-    packageName: AIDRIFT_CORE_PACKAGE,
-    initialized: true,
-  };
-}
+export * from "./config/defaults.js";
+export * from "./config/resolve.js";
+export * from "./config/types.js";
+export * from "./errors.js";
+export * from "./logging/logger.js";
+export * from "./logging/redact.js";
