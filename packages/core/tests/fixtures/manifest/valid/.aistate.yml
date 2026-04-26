@@ -1,0 +1,33 @@
+version: "1"
+name: fixture-ai-service
+description: Valid manifest fixture for parser tests.
+
+artifacts:
+  prompts:
+    system:
+      type: prompt
+      path: ./prompts/system.md
+      format: text
+  models:
+    primary:
+      type: model
+      provider: openai
+      model: gpt-4o-2024-08-06
+      parameters:
+        temperature: 0.2
+        max_tokens: 1024
+
+eval:
+  suite: ./evals
+  format: aidrift
+  samples_per_assertion: 1
+  significance_level: 0.05
+  timeout_seconds: 30
+  target:
+    type: provider
+
+storage:
+  backend: local
+  path: ./.aidrift/snapshots
+
+plugins: []

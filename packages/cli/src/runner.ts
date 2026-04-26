@@ -30,7 +30,7 @@ export async function runCli(argv: readonly string[], options: RunCliOptions): P
     }
 
     await program.parseAsync([...argv], { from: "node" });
-    return ExitCode.Success;
+    return consumeProcessExitCode();
   } catch (error) {
     return handleCliError(error, options);
   }
@@ -38,6 +38,7 @@ export async function runCli(argv: readonly string[], options: RunCliOptions): P
 
 function findUnknownCommand(args: readonly string[]): string | undefined {
   const optionsWithValues = new Set(["-c", "--config", "-f", "--format"]);
+  const knownCommands = new Set(["validate"]);
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -55,12 +56,23 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       continue;
     }
 
-    if (!arg.startsWith("-")) {
+    if (!arg.startsWith("-") && !knownCommands.has(arg)) {
       return arg;
     }
   }
 
   return undefined;
+}
+
+function consumeProcessExitCode(): ExitCode {
+  const exitCode = process.exitCode;
+  process.exitCode = undefined;
+
+  if (exitCode === ExitCode.Failure || exitCode === ExitCode.ConfigError) {
+    return exitCode;
+  }
+
+  return ExitCode.Success;
 }
 
 function handleCliError(error: unknown, options: RunCliOptions): ExitCode {

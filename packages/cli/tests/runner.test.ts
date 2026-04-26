@@ -1,6 +1,18 @@
 import { describe, expect, it } from "vitest";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { runCli } from "../src/runner.js";
+
+const testDir = path.dirname(fileURLToPath(import.meta.url));
+const validManifestPath = path.resolve(
+  testDir,
+  "../../core/tests/fixtures/manifest/valid/.aistate.yml",
+);
+const unpinnedManifestPath = path.resolve(
+  testDir,
+  "../../core/tests/fixtures/manifest/valid/.aistate.unpinned.yml",
+);
 
 function createTestIo() {
   let stdout = "";
@@ -69,5 +81,42 @@ describe("runCli", () => {
     expect(test.stdout).toContain("CLI foundation initialized");
     expect(test.stdout).toContain("Log level: debug");
     expect(test.stdout).toContain("Color: disabled");
+  });
+
+  it("validates a manifest from --config", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      ["node", "aidrift", "--config", validManifestPath, "validate"],
+      test.io,
+    );
+
+    expect(exitCode).toBe(0);
+    expect(test.stdout).toContain("Manifest is valid");
+    expect(test.stderr).toBe("");
+  });
+
+  it("returns failure when manifest validation fails", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      ["node", "aidrift", "--config", path.join(testDir, "missing.yml"), "validate"],
+      test.io,
+    );
+
+    expect(exitCode).toBe(1);
+    expect(test.stderr).toContain("manifest file does not exist");
+  });
+
+  it("returns failure for strict manifest warnings", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      ["node", "aidrift", "--config", unpinnedManifestPath, "validate", "--strict"],
+      test.io,
+    );
+
+    expect(exitCode).toBe(1);
+    expect(test.stderr).toContain("manifest.model.unpinned");
   });
 });
