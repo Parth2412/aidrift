@@ -12,3 +12,20 @@ export * from "./manifest/types.js";
 export * from "./scanner/index.js";
 export * from "./scanner/types.js";
 export * from "./templates/index.js";
+export {
+  SNAPSHOT_SCHEMA_VERSION,
+  type SnapshotArtifact,
+  type SnapshotMetadata,
+  type Snapshot,
+  type SnapshotSummary,
+  type ArtifactKind as SnapshotArtifactKind,
+} from "./snapshot/types.js";
+export * from "./snapshot/hasher.js";
+export * from "./snapshot/storage.js";
+export * from "./snapshot/capture.js";
+export * from "./diff/types.js";
+export * from "./diff/text.js";
+export * from "./diff/json.js";
+export * from "./diff/binary.js";
+export * from "./diff/parameters.js";
+export * from "./diff/engine.js";
