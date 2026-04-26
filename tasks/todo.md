@@ -4,7 +4,7 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 03 — Repository Bootstrap
+## Current Phase: Phase 04 — Core CLI and SDK Foundation
 
 ### In Progress
 
@@ -12,6 +12,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### To Do
 
+- [ ] Open PR from `feature/phase-04-core-cli-sdk-foundation` to `development`.
 - [ ] Configure GitHub branch protection in GitHub UI.
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured.
 
@@ -25,6 +26,14 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Add commit hook rejecting co-author and AI attribution footers.
 - [x] Install dependencies and generate lockfile.
 - [x] Run validation commands.
+- [x] Implement command router and documented global options.
+- [x] Implement config precedence skeleton.
+- [x] Implement logger and secret redaction foundation.
+- [x] Implement typed errors and exit codes.
+- [x] Add SDK placeholder interfaces.
+- [x] Add Phase 04 tests.
+- [x] Validate Phase 04 with format, lint, typecheck, test, build, and CLI smoke tests.
+- [x] Push Phase 04 branch to origin.
 
 ---
 
