@@ -12,7 +12,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### To Do
 
-- [ ] Push Phase 04 branch and open PR to `development`.
+- [ ] Open PR from `feature/phase-04-core-cli-sdk-foundation` to `development`.
 - [ ] Configure GitHub branch protection in GitHub UI.
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured.
 
@@ -33,6 +33,7 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Add SDK placeholder interfaces.
 - [x] Add Phase 04 tests.
 - [x] Validate Phase 04 with format, lint, typecheck, test, build, and CLI smoke tests.
+- [x] Push Phase 04 branch to origin.
 
 ---
 
