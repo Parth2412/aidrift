@@ -6,6 +6,7 @@ import path from "node:path";
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 
 import { hashString, hashFile, HASH_PREFIX } from "../../src/snapshot/hasher.js";
+import { AIDriftError } from "../../src/errors.js";
 
 describe("hashString", () => {
   it("produces sha256:<hex> prefixed output", () => {
@@ -64,7 +65,7 @@ describe("hashFile", () => {
   });
 
   it("throws AIDriftError when file does not exist", async () => {
-    await expect(hashFile(path.join(tmpDir, "missing.txt"))).rejects.toThrow();
+    await expect(hashFile(path.join(tmpDir, "missing.txt"))).rejects.toThrow(AIDriftError);
   });
 });
 

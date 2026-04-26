@@ -17,7 +17,7 @@ export async function hashFile(filePath: string): Promise<string> {
   } catch (cause) {
     throw new AIDriftError({
       code: "snapshot_hash_read_error",
-      exitCode: ExitCode.Failure,
+      exitCode: ExitCode.ConfigError,
       what: `Cannot read file for hashing: ${filePath}`,
       why: "The file does not exist or is not readable.",
       fix: `Ensure the path exists and is readable: ${filePath}`,
