@@ -8,11 +8,12 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### In Progress
 
-- Nothing. Ready to begin Phase 10.
+- Phase 10 probe slice: canonical probes, mocked-provider runner, cache, estimator, `aidrift probe`, and `plan --probe-providers`.
 
 ### To Do
 
-- [ ] Implement Phase 10: provider adapters (OpenAI, Anthropic), canonical probe suite, probe runner, `aidrift probe` command.
+- [x] Implement Phase 10 canonical probe suite, mocked-provider probe runner, local cache, cost estimator, `aidrift probe` command, and `plan --probe-providers` execution path.
+- [ ] Implement live provider adapters (OpenAI, Anthropic first) using env-only credentials and mocked/recorded tests.
 - [ ] Configure GitHub branch protection in GitHub UI (owner action required).
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured (owner action required).
 - [ ] Review and merge or close 5 open Dependabot PRs on origin before starting Phase 10 implementation.
