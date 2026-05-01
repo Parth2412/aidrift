@@ -4,16 +4,16 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 6 — Init and Context Sync
+## Current Phase: Phase 9 — Eval Runner and `aidrift plan`
 
 ### In Progress
 
-<!-- Move tasks here when active implementation is underway -->
+- [x] Implement Phase 9 assertion parser/loader, evaluators, mock provider, baseline-aware runner, and `aidrift plan`.
+- [x] Run final validation commands for Phase 9.
 
 ### To Do
 
-- [x] Push `feature/phase-07-init-context-sync` to origin.
-- [ ] Open PR from `feature/phase-07-init-context-sync` to `development` (manual — `gh` not available).
+- [ ] Open PR from `feature/phase-09-eval-and-plan` to `development` after validation.
 - [ ] Configure GitHub branch protection in GitHub UI.
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured.
 
@@ -52,7 +52,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ## Sprint Deliverable
 
-Init command with project scanner and built-in templates — Phase 6 of TASKS.md.
+Eval runner and `aidrift plan` — Phase 9 of TASKS.md.
 
 ## Notes
 
