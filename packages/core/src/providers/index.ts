@@ -5,3 +5,4 @@ export * from "./env.js";
 export * from "./cost-tables.js";
 export * from "./openai-provider.js";
 export * from "./anthropic-provider.js";
+export * from "./registry.js";
