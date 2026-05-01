@@ -34,6 +34,18 @@ export interface Snapshot {
   readonly timestamp: string; // ISO 8601
   readonly manifestHash: string; // sha256:<hex>
   readonly artifacts: Record<string, SnapshotArtifact>;
+  readonly eval?:
+    | {
+        readonly baselines?: Record<
+          string,
+          {
+            readonly score: number;
+            readonly capturedAt?: string | undefined;
+            readonly snapshotId?: string | undefined;
+          }
+        >;
+      }
+    | undefined;
   readonly metadata: SnapshotMetadata;
 }
 
