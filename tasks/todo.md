@@ -4,18 +4,18 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 9 — Eval Runner and `aidrift plan`
+## Current Phase: Phase 10 — Provider Drift Probes
 
 ### In Progress
 
-- [x] Implement Phase 9 assertion parser/loader, evaluators, mock provider, baseline-aware runner, and `aidrift plan`.
-- [x] Run final validation commands for Phase 9.
+- Nothing. Ready to begin Phase 10.
 
 ### To Do
 
-- [ ] Open PR from `feature/phase-09-eval-and-plan` to `development` after validation.
-- [ ] Configure GitHub branch protection in GitHub UI.
-- [ ] Set GitHub repository default branch to `development` after branch protection is configured.
+- [ ] Implement Phase 10: provider adapters (OpenAI, Anthropic), canonical probe suite, probe runner, `aidrift probe` command.
+- [ ] Configure GitHub branch protection in GitHub UI (owner action required).
+- [ ] Set GitHub repository default branch to `development` after branch protection is configured (owner action required).
+- [ ] Review and merge or close 5 open Dependabot PRs on origin before starting Phase 10 implementation.
 
 ### Done
 
@@ -35,7 +35,7 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Add Phase 04 tests.
 - [x] Validate Phase 04 with format, lint, typecheck, test, build, and CLI smoke tests.
 - [x] Push Phase 04 branch to origin.
-- [x] Phase 04 merged into `development`.
+- [x] Phase 04 merged into `development` (PR #1).
 - [x] Implement manifest v1 schema/types.
 - [x] Implement YAML parser, JSON Schema validator, semantic provider validation, secret detection, and path/eval suite resolver.
 - [x] Implement `aidrift validate`.
@@ -47,12 +47,22 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Implement `aidrift init` command (`packages/cli/src/commands/init.ts`).
 - [x] Implement built-in templates (`packages/core/src/templates/`).
 - [x] Run full validation (format, lint, typecheck, test, build, smoke tests).
+- [x] Implement SHA-256 hasher, snapshot schema, local storage, git metadata, `aidrift snapshot`, `aidrift history`.
+- [x] Implement text/JSON/binary/parameter diff engine, `aidrift diff`.
+- [x] Phase 7+8 merged into `development` (PR #4).
+- [x] Implement Phase 9 assertion suite schema/parser/loader for `contains`, `regex`, `json_schema`.
+- [x] Implement deterministic offline mock provider and assertion evaluators.
+- [x] Implement baseline-aware eval runner with bounded concurrency.
+- [x] Implement `aidrift plan` with `--dry-run`, `--format json`, `--save`, `--allow-regression`, `--probe-providers` Phase 10 stub.
+- [x] Export eval/provider public surface through core and SDK.
+- [x] Add Phase 9 tests (106 tests total passing).
+- [x] Phase 9 merged into `development` (PR #10).
 
 ---
 
 ## Sprint Deliverable
 
-Eval runner and `aidrift plan` — Phase 9 of TASKS.md.
+Provider drift probes and `aidrift probe` — Phase 10 of TASKS.md.
 
 ## Notes
 

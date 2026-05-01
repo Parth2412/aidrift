@@ -6,7 +6,18 @@ One-line pitch: Terraform for AI behavior.
 
 ## Current Status
 
-This repository is in bootstrap phase. The implementation is intentionally minimal while the monorepo, CI, release, and agent guardrails are established.
+All core CLI commands are implemented and merged into `development`. The following commands are available:
+
+| Command            | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| `aidrift init`     | Scaffold `.aistate.yml` for an existing AI project     |
+| `aidrift validate` | Parse and validate `.aistate.yml`                      |
+| `aidrift snapshot` | Capture a SHA-256 snapshot of all declared artifacts   |
+| `aidrift history`  | List all local snapshots                               |
+| `aidrift diff`     | Compare current state or two snapshots                 |
+| `aidrift plan`     | Run offline assertion suite against snapshot baselines |
+
+106 tests passing. Build, lint, typecheck, and format checks all green.
 
 ## Repository Rules
 
