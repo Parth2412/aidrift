@@ -29,3 +29,5 @@ export * from "./diff/json.js";
 export * from "./diff/binary.js";
 export * from "./diff/parameters.js";
 export * from "./diff/engine.js";
+export * from "./eval/index.js";
+export * from "./providers/index.js";
