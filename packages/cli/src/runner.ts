@@ -47,8 +47,15 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
     "--label",
     "--message",
     "--limit",
+    "--assertions",
+    "--tags",
+    "--samples",
+    "--allow-regression",
+    "--budget",
+    "--timeout",
+    "--concurrency",
   ]);
-  const knownCommands = new Set(["validate", "init", "snapshot", "history", "diff"]);
+  const knownCommands = new Set(["validate", "init", "snapshot", "history", "diff", "plan"]);
 
   let seenCommand = false;
 
@@ -71,7 +78,14 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       arg.startsWith("--dir=") ||
       arg.startsWith("--label=") ||
       arg.startsWith("--message=") ||
-      arg.startsWith("--limit=")
+      arg.startsWith("--limit=") ||
+      arg.startsWith("--assertions=") ||
+      arg.startsWith("--tags=") ||
+      arg.startsWith("--samples=") ||
+      arg.startsWith("--allow-regression=") ||
+      arg.startsWith("--budget=") ||
+      arg.startsWith("--timeout=") ||
+      arg.startsWith("--concurrency=")
     ) {
       continue;
     }
