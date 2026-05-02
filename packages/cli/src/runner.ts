@@ -54,8 +54,19 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
     "--budget",
     "--timeout",
     "--concurrency",
+    "--model",
+    "--category",
+    "--cache-ttl",
   ]);
-  const knownCommands = new Set(["validate", "init", "snapshot", "history", "diff", "plan"]);
+  const knownCommands = new Set([
+    "validate",
+    "init",
+    "snapshot",
+    "history",
+    "diff",
+    "plan",
+    "probe",
+  ]);
 
   let seenCommand = false;
 
@@ -85,7 +96,10 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       arg.startsWith("--allow-regression=") ||
       arg.startsWith("--budget=") ||
       arg.startsWith("--timeout=") ||
-      arg.startsWith("--concurrency=")
+      arg.startsWith("--concurrency=") ||
+      arg.startsWith("--model=") ||
+      arg.startsWith("--category=") ||
+      arg.startsWith("--cache-ttl=")
     ) {
       continue;
     }

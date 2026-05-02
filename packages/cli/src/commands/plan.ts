@@ -6,10 +6,14 @@ import { Command } from "commander";
 import {
   AIDriftError,
   ExitCode,
+  runProviderProbes,
   runEvalPlan,
   validateManifestFile,
+  type AIStateManifest,
   type ManifestValidationIssue,
   type PlanRunResult,
+  type ProbeModelTarget,
+  type ProbeRunResult,
   type WritableStreamLike,
 } from "@aidrift/core";
 
@@ -29,6 +33,7 @@ interface PlanCommandOptions {
   readonly probeProviders?: boolean | undefined;
   readonly assertions?: string | undefined;
   readonly tags?: string | undefined;
+  readonly samples?: string | undefined;
   readonly concurrency?: string | undefined;
 }
 
@@ -47,23 +52,12 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
     .option("--budget <amount>", "Accepted for CLI compatibility; no provider costs in Phase 9")
     .option("--timeout <seconds>", "Accepted for CLI compatibility")
     .option("--dry-run", "Show what would be tested without invoking the mock provider")
-    .option("--probe-providers", "Rejected in Phase 9; provider probes are deferred to Phase 10")
+    .option("--probe-providers", "Include Phase 10 mocked provider drift probes")
     .option("--format <fmt>", "Output format: text or json", "text")
     .option("--save", "Save results to .aidrift/results/")
     .option("--concurrency <n>", "Maximum concurrent assertions", "4")
     .action(async (commandOptions: PlanCommandOptions, cmd: Command) => {
       const merged = cmd.optsWithGlobals<PlanCommandOptions>();
-
-      if (merged.probeProviders === true) {
-        throw new AIDriftError({
-          code: "plan.probe_providers.deferred",
-          exitCode: ExitCode.ConfigError,
-          what: "--probe-providers is deferred to Phase 10.",
-          why: "Phase 9 is offline-only and does not run provider drift probes.",
-          fix: "Run aidrift plan without --probe-providers.",
-          docs: "../aidrift-docs/PHASES/09-eval-and-plan.md",
-        });
-      }
 
       const manifestPath = path.resolve(merged.config ?? path.join(process.cwd(), ".aistate.yml"));
       const projectRoot = path.dirname(manifestPath);
@@ -90,6 +84,14 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
         assertionIds: parseCsvSet(merged.assertions),
         tags: parseCsvSet(merged.tags),
       });
+      const probeResult =
+        merged.probeProviders === true
+          ? await runProviderProbes({
+              projectRoot,
+              models: manifestModels(validation.manifest),
+              samples: parsePositiveInteger(merged.samples, 5),
+            })
+          : undefined;
 
       if (merged.save === true) {
         await savePlanResult(projectRoot, result);
@@ -97,9 +99,9 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
 
       const format = merged.format ?? "text";
       if (format === "json") {
-        options.io.stdout.write(`${formatPlanJson(result)}\n`);
+        options.io.stdout.write(`${formatPlanJson(result, probeResult)}\n`);
       } else if (format === "text") {
-        options.io.stdout.write(formatPlanText(result));
+        options.io.stdout.write(formatPlanText(result, probeResult));
       } else {
         throw new AIDriftError({
           code: "plan.format.unsupported",
@@ -110,7 +112,7 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
         });
       }
 
-      if (result.hasRegressions) {
+      if (result.hasRegressions || probeResult?.hasDrift === true) {
         process.exitCode = ExitCode.Failure;
       }
     });
@@ -157,7 +159,16 @@ function parsePositiveInteger(value: string | undefined, fallback: number): numb
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function formatPlanText(result: PlanRunResult): string {
+function manifestModels(manifest: AIStateManifest): readonly ProbeModelTarget[] {
+  return Object.entries(manifest.artifacts.models ?? {}).map(([name, artifact]) => ({
+    name,
+    provider: artifact.provider,
+    model: artifact.model,
+    parameters: artifact.parameters,
+  }));
+}
+
+function formatPlanText(result: PlanRunResult, probeResult: ProbeRunResult | undefined): string {
   const lines = [
     "AIDRIFT Plan",
     `Suite: ${result.suitePath}`,
@@ -179,14 +190,29 @@ function formatPlanText(result: PlanRunResult): string {
     `Summary: ${result.summary.passed} PASS, ${result.summary.warned} WARN, ${result.summary.failed} FAIL, ${result.summary.new} NEW`,
   );
 
+  if (probeResult !== undefined) {
+    const probeSamples = probeResult.results[0]?.samples.length ?? 1;
+    lines.push(
+      `Provider probes: ${probeResult.summary.total}`,
+      `Probe summary: ${probeResult.summary.passed} PASS, ${probeResult.summary.drifted} DRIFT, ${probeResult.summary.errors} ERROR, ${probeResult.summary.new} NEW`,
+      `Probe requests: ${probeResult.summary.total * probeSamples}`,
+    );
+  }
+
   return `${lines.join("\n")}\n`;
 }
 
-function formatPlanJson(result: PlanRunResult): string {
+function formatPlanJson(result: PlanRunResult, probeResult: ProbeRunResult | undefined): string {
   return JSON.stringify({
     summary: result.summary,
     results: result.results.map((item) => ({
       assertionId: item.assertionId,
+      status: item.status,
+    })),
+    probeSummary: probeResult?.summary,
+    probeResults: probeResult?.results.map((item) => ({
+      modelName: item.modelName,
+      probeId: item.probeId,
       status: item.status,
     })),
   });

@@ -7,6 +7,7 @@ import { registerDiffCommand } from "./commands/diff.js";
 import { registerHistoryCommand } from "./commands/history.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerPlanCommand } from "./commands/plan.js";
+import { registerProbeCommand } from "./commands/probe.js";
 import { registerSnapshotCommand } from "./commands/snapshot.js";
 import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
@@ -75,6 +76,7 @@ Product commands are implemented in later phases.
   registerHistoryCommand(program, { io: options.io });
   registerDiffCommand(program, { io: options.io });
   registerPlanCommand(program, { io: options.io });
+  registerProbeCommand(program, { io: options.io });
 
   return program;
 }

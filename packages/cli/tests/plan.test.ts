@@ -93,7 +93,7 @@ assertions:
     expect(test.stdout).toContain("FAIL");
   });
 
-  it("--probe-providers exits 2 with a Phase 10 message", async () => {
+  it("--probe-providers runs Phase 10 mocked provider probes", async () => {
     const test = createTestIo();
 
     const exitCode = await runCli(
@@ -101,8 +101,9 @@ assertions:
       test.io,
     );
 
-    expect(exitCode).toBe(2);
-    expect(test.stderr).toContain("Phase 10");
+    expect(exitCode).toBe(0);
+    expect(test.stdout).toContain("Provider probes: 20");
+    expect(test.stderr).toBe("");
   });
 
   it("--format json emits stable valid JSON", async () => {

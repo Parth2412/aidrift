@@ -46,6 +46,19 @@ export interface Snapshot {
         >;
       }
     | undefined;
+  readonly probe?:
+    | {
+        readonly baselines?: Record<
+          string,
+          {
+            readonly output: string;
+            readonly score?: number | undefined;
+            readonly capturedAt?: string | undefined;
+            readonly snapshotId?: string | undefined;
+          }
+        >;
+      }
+    | undefined;
   readonly metadata: SnapshotMetadata;
 }
 
