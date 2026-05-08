@@ -106,6 +106,95 @@ assertions:
     expect(test.stderr).toBe("");
   });
 
+  it("--probe-providers --provider mock runs without env vars", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "plan",
+        "--probe-providers",
+        "--provider",
+        "mock",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(0);
+    expect(test.stdout).toContain("Provider probes: 20");
+    expect(test.stderr).toBe("");
+  });
+
+  it("--probe-providers --provider chat-completions exits 2 when OPENAI_API_KEY is missing", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "plan",
+        "--probe-providers",
+        "--provider",
+        "openai",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("OPENAI_API_KEY");
+    expect(test.stderr).toContain("probe-costs.md");
+    expect(test.stderr).toContain("Code: probe.provider.auth_missing");
+  });
+
+  it("--probe-providers --provider messages-api exits 2 when ANTHROPIC_API_KEY is missing", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "plan",
+        "--probe-providers",
+        "--provider",
+        "anthropic",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("ANTHROPIC_API_KEY");
+    expect(test.stderr).toContain("probe-costs.md");
+    expect(test.stderr).toContain("Code: probe.provider.auth_missing");
+  });
+
+  it("--probe-providers --provider invalid exits 2 with a helpful message", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "plan",
+        "--probe-providers",
+        "--provider",
+        "bogus",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("must be one of mock, openai, anthropic");
+  });
+
   it("--format json emits stable valid JSON", async () => {
     await writeSuite(`
 suite: json

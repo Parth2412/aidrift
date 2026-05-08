@@ -6,6 +6,22 @@ The project follows Semantic Versioning once public releases begin.
 
 ## Unreleased (development)
 
+### Phase 10 — Provider Drift Probes (complete)
+
+- Added canonical built-in probe suite (20 probes across deterministic, structural, semantic, behavioral, and performance categories).
+- Added mocked-provider probe runner with baseline comparison, local cache, and bounded concurrency.
+- Added `aidrift probe` command with `--category`, `--samples`, `--estimate-cost`, `--format json`, `--no-cache`, and `--concurrency` flags.
+- Added `aidrift plan --probe-providers` execution path.
+- Added chat-completions adapter (`POST /v1/chat/completions`) and messages-API adapter (`POST /v1/messages`) with injectable `fetch` for hermetic testing.
+- Added provider registry dispatching `mock | openai | anthropic` ids.
+- Added per-model cost tables for both live adapters.
+- Added `--provider {mock|openai|anthropic}` flag to `aidrift probe` and `aidrift plan --probe-providers`. Default is `mock`.
+- Added fast-fail exit 2 for missing API key env var when a live provider is selected; error message names the missing variable and links to `docs/development/probe-costs.md`.
+- Added pre-run cost estimate printed before any live API call; requires `--yes` or `--cost-budget=<dollars>` to proceed.
+- Added `docs/development/probe-costs.md` with per-probe cost expectations, default models, price tables, and cost-capping strategies.
+- Added integration tests (auto-skipped in CI) for both live adapters via env-var guard.
+- All hermetic tests run without network access; 165 tests total.
+
 ### Phase 9 — Eval Runner and `aidrift plan`
 
 - Added assertion suite YAML schema and parser with YAML line-number error reporting.

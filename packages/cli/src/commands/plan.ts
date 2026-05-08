@@ -6,10 +6,12 @@ import { Command } from "commander";
 import {
   AIDriftError,
   ExitCode,
-  runProviderProbes,
+  estimateProbeCost,
   runEvalPlan,
+  runProviderProbes,
   validateManifestFile,
   type AIStateManifest,
+  type EvalProvider,
   type ManifestValidationIssue,
   type PlanRunResult,
   type ProbeModelTarget,
@@ -17,11 +19,21 @@ import {
   type WritableStreamLike,
 } from "@aidrift/core";
 
+import {
+  buildLiveProvider,
+  checkProviderEnvVar,
+  enforceRunConfirmation,
+  formatCostEstimate,
+  parseProviderId,
+  type LiveProviderId,
+} from "../provider-gate.js";
+
 export interface RegisterPlanCommandOptions {
   readonly io: {
     readonly stdout: WritableStreamLike;
     readonly stderr: WritableStreamLike;
   };
+  readonly env?: Readonly<Record<string, string | undefined>> | undefined;
 }
 
 interface PlanCommandOptions {
@@ -35,6 +47,9 @@ interface PlanCommandOptions {
   readonly tags?: string | undefined;
   readonly samples?: string | undefined;
   readonly concurrency?: string | undefined;
+  readonly provider?: string | undefined;
+  readonly yes?: boolean | undefined;
+  readonly costBudget?: string | undefined;
 }
 
 export function registerPlanCommand(program: Command, options: RegisterPlanCommandOptions): void {
@@ -52,7 +67,17 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
     .option("--budget <amount>", "Accepted for CLI compatibility; no provider costs in Phase 9")
     .option("--timeout <seconds>", "Accepted for CLI compatibility")
     .option("--dry-run", "Show what would be tested without invoking the mock provider")
-    .option("--probe-providers", "Include Phase 10 mocked provider drift probes")
+    .option("--probe-providers", "Include Phase 10 provider drift probes")
+    .option(
+      "--provider <provider>",
+      "Provider for --probe-providers: mock, openai, or anthropic",
+      "mock",
+    )
+    .option("--yes", "Confirm live provider run and accept estimated cost")
+    .option(
+      "--cost-budget <dollars>",
+      "Maximum allowed cost in USD; exits 2 if estimate exceeds it",
+    )
     .option("--format <fmt>", "Output format: text or json", "text")
     .option("--save", "Save results to .aidrift/results/")
     .option("--concurrency <n>", "Maximum concurrent assertions", "4")
@@ -74,6 +99,15 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
         throw manifestValidationError(blockingErrors, manifestPath);
       }
 
+      // Validate provider and check env var before running anything expensive.
+      const providerId = merged.probeProviders === true ? parseProviderId(merged.provider) : "mock";
+      const isLive = providerId !== "mock";
+
+      if (isLive) {
+        const env: Readonly<Record<string, string | undefined>> = options.env ?? process.env;
+        checkProviderEnvVar(providerId as LiveProviderId, env);
+      }
+
       const suitePath = path.resolve(projectRoot, validation.manifest.eval.suite);
       const result = await runEvalPlan({
         projectRoot,
@@ -84,14 +118,28 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
         assertionIds: parseCsvSet(merged.assertions),
         tags: parseCsvSet(merged.tags),
       });
-      const probeResult =
-        merged.probeProviders === true
-          ? await runProviderProbes({
-              projectRoot,
-              models: manifestModels(validation.manifest),
-              samples: parsePositiveInteger(merged.samples, 5),
-            })
-          : undefined;
+
+      let probeResult: ProbeRunResult | undefined;
+      if (merged.probeProviders === true) {
+        const models = manifestModels(validation.manifest);
+        const samples = parsePositiveInteger(merged.samples, 5);
+        let liveProvider: EvalProvider | undefined;
+
+        if (isLive) {
+          const env: Readonly<Record<string, string | undefined>> = options.env ?? process.env;
+          const estimate = estimateProbeCost({ models, samples });
+          options.io.stdout.write(formatCostEstimate(estimate));
+          enforceRunConfirmation(estimate, merged.yes, merged.costBudget);
+          liveProvider = buildLiveProvider(providerId as LiveProviderId, models, env);
+        }
+
+        probeResult = await runProviderProbes({
+          projectRoot,
+          models,
+          samples,
+          provider: liveProvider,
+        });
+      }
 
       if (merged.save === true) {
         await savePlanResult(projectRoot, result);
