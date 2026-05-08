@@ -75,8 +75,14 @@ Product commands are implemented in later phases.
   registerSnapshotCommand(program, { io: options.io });
   registerHistoryCommand(program, { io: options.io });
   registerDiffCommand(program, { io: options.io });
-  registerPlanCommand(program, { io: options.io });
-  registerProbeCommand(program, { io: options.io });
+  registerPlanCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
+  registerProbeCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
 
   return program;
 }

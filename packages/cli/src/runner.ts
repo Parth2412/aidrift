@@ -57,6 +57,8 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
     "--model",
     "--category",
     "--cache-ttl",
+    "--provider",
+    "--cost-budget",
   ]);
   const knownCommands = new Set([
     "validate",
@@ -99,7 +101,9 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       arg.startsWith("--concurrency=") ||
       arg.startsWith("--model=") ||
       arg.startsWith("--category=") ||
-      arg.startsWith("--cache-ttl=")
+      arg.startsWith("--cache-ttl=") ||
+      arg.startsWith("--provider=") ||
+      arg.startsWith("--cost-budget=")
     ) {
       continue;
     }

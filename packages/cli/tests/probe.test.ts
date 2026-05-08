@@ -109,6 +109,99 @@ describe("aidrift probe", () => {
     expect(test.stderr).toContain("Error:");
     expect(test.stderr).toContain("Code: manifest.file.missing");
   });
+
+  it("--provider mock runs without requiring any env var", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "probe",
+        "--provider",
+        "mock",
+        "--category",
+        "deterministic",
+        "--samples",
+        "1",
+        "--format",
+        "json",
+        "--no-cache",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(0);
+    expect(test.stderr).toBe("");
+  });
+
+  it("--provider chat-completions exits 2 when OPENAI_API_KEY is missing", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "probe",
+        "--provider",
+        "openai",
+        "--category",
+        "deterministic",
+        "--samples",
+        "1",
+        "--no-cache",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("OPENAI_API_KEY");
+    expect(test.stderr).toContain("probe-costs.md");
+    expect(test.stderr).toContain("Code: probe.provider.auth_missing");
+  });
+
+  it("--provider messages-api exits 2 when ANTHROPIC_API_KEY is missing", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        manifestPath,
+        "probe",
+        "--provider",
+        "anthropic",
+        "--category",
+        "deterministic",
+        "--samples",
+        "1",
+        "--no-cache",
+      ],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("ANTHROPIC_API_KEY");
+    expect(test.stderr).toContain("probe-costs.md");
+    expect(test.stderr).toContain("Code: probe.provider.auth_missing");
+  });
+
+  it("--provider invalid exits 2 with a helpful message", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      ["node", "aidrift", "--config", manifestPath, "probe", "--provider", "bogus"],
+      { ...test.io, env: {} },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("must be one of mock, openai, anthropic");
+  });
 });
 
 function createTestIo() {

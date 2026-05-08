@@ -9,6 +9,7 @@ import {
   runProviderProbes,
   validateManifestFile,
   type AIStateManifest,
+  type EvalProvider,
   type ManifestValidationIssue,
   type ProbeCategory,
   type ProbeModelTarget,
@@ -16,11 +17,21 @@ import {
   type WritableStreamLike,
 } from "@aidrift/core";
 
+import {
+  buildLiveProvider,
+  checkProviderEnvVar,
+  enforceRunConfirmation,
+  formatCostEstimate,
+  parseProviderId,
+  type LiveProviderId,
+} from "../provider-gate.js";
+
 export interface RegisterProbeCommandOptions {
   readonly io: {
     readonly stdout: WritableStreamLike;
     readonly stderr: WritableStreamLike;
   };
+  readonly env?: Readonly<Record<string, string | undefined>> | undefined;
 }
 
 interface ProbeCommandOptions {
@@ -33,12 +44,15 @@ interface ProbeCommandOptions {
   readonly estimateCost?: boolean | undefined;
   readonly format?: string | undefined;
   readonly concurrency?: string | undefined;
+  readonly provider?: string | undefined;
+  readonly yes?: boolean | undefined;
+  readonly costBudget?: string | undefined;
 }
 
 export function registerProbeCommand(program: Command, options: RegisterProbeCommandOptions): void {
   program
     .command("probe")
-    .description("Detect provider-side drift with canonical mocked provider probes.")
+    .description("Detect provider-side drift with canonical provider probes.")
     .option("-c, --config <path>", "Path to .aistate.yml")
     .option("--model <name>", "Probe a specific model artifact name")
     .option(
@@ -51,6 +65,12 @@ export function registerProbeCommand(program: Command, options: RegisterProbeCom
     .option("--estimate-cost", "Show estimated probe cost without running probes")
     .option("--format <fmt>", "Output format: text or json", "text")
     .option("--concurrency <n>", "Maximum concurrent probes", "4")
+    .option("--provider <provider>", "Provider: mock, openai, or anthropic", "mock")
+    .option("--yes", "Confirm live provider run and accept estimated cost")
+    .option(
+      "--cost-budget <dollars>",
+      "Maximum allowed cost in USD; exits 2 if estimate exceeds it",
+    )
     .action(async (commandOptions: ProbeCommandOptions, cmd: Command) => {
       const merged = cmd.optsWithGlobals<ProbeCommandOptions>();
       const manifestPath = path.resolve(merged.config ?? path.join(process.cwd(), ".aistate.yml"));
@@ -68,19 +88,28 @@ export function registerProbeCommand(program: Command, options: RegisterProbeCom
         throw manifestValidationError(blockingErrors, manifestPath);
       }
 
+      const providerId = parseProviderId(merged.provider);
       const category = parseCategory(merged.category);
       const models = manifestModels(validation.manifest, merged.model);
       const samples = parsePositiveInteger(merged.samples, 5);
       const selectedProbeCount = category === undefined ? undefined : 4;
 
       if (merged.estimateCost === true) {
-        const estimate = estimateProbeCost({
-          models,
-          samples,
-          probeCount: selectedProbeCount,
-        });
-        options.io.stdout.write(formatEstimateText(estimate));
+        const estimate = estimateProbeCost({ models, samples, probeCount: selectedProbeCount });
+        options.io.stdout.write(formatCostEstimate(estimate));
         return;
+      }
+
+      const isLive = providerId !== "mock";
+      let liveProvider: EvalProvider | undefined;
+
+      if (isLive) {
+        const env: Readonly<Record<string, string | undefined>> = options.env ?? process.env;
+        checkProviderEnvVar(providerId as LiveProviderId, env);
+        const estimate = estimateProbeCost({ models, samples, probeCount: selectedProbeCount });
+        options.io.stdout.write(formatCostEstimate(estimate));
+        enforceRunConfirmation(estimate, merged.yes, merged.costBudget);
+        liveProvider = buildLiveProvider(providerId as LiveProviderId, models, env);
       }
 
       const result = await runProviderProbes({
@@ -91,6 +120,7 @@ export function registerProbeCommand(program: Command, options: RegisterProbeCom
         cacheTtlMinutes: parsePositiveInteger(merged.cacheTtl, 60),
         useCache: merged.cache !== false,
         concurrency: parsePositiveInteger(merged.concurrency, 4),
+        provider: liveProvider,
       });
 
       const format = merged.format ?? "text";
@@ -195,18 +225,6 @@ function parsePositiveInteger(value: string | undefined, fallback: number): numb
 
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-}
-
-function formatEstimateText(estimate: ReturnType<typeof estimateProbeCost>): string {
-  return [
-    "AIDRIFT Probe Cost Estimate",
-    `Models: ${estimate.modelCount}`,
-    `Probes per model: ${estimate.probeCount}`,
-    `Samples per probe: ${estimate.samples}`,
-    `Estimated requests: ${estimate.requestCount}`,
-    `Estimated cost: $${estimate.estimatedUsd.toFixed(6)}`,
-    "",
-  ].join("\n");
 }
 
 function formatProbeText(result: ProbeRunResult): string {
