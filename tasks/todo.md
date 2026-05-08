@@ -4,17 +4,21 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 10 — Provider Drift Probes
+## Current Phase: Phase 11 — GitHub Workflow Check Command
 
 ### In Progress
 
-- Nothing. Ready to begin Phase 11.
+- [x] Implement `aidrift check` command with CI-safe non-interactive behavior.
+- [x] Support `--format text|json|junit|github`, `--baseline`, `--output`, and `--fail-on warn|fail`.
+- [x] Run evals and provider probes against snapshot baselines.
+- [x] Add JSON schema, JUnit XML, GitHub annotation, snapshot, and exit-code contract tests.
+- [ ] Finish full validation, commit, push, and open PR.
 
 ### To Do
 
 - [x] Implement Phase 10 canonical probe suite, mocked-provider probe runner, local cache, cost estimator, `aidrift probe` command, and `plan --probe-providers` execution path.
 - [x] Implement live provider adapters (OpenAI, Anthropic first) using env-only credentials and mocked/recorded tests.
-- [ ] Wire `--provider` flag through `aidrift probe` and `aidrift plan --probe-providers` to surface the live adapter registry to end users.
+- [x] Wire `--provider` flag through `aidrift probe` and `aidrift plan --probe-providers` to surface the live adapter registry to end users.
 - [ ] Configure GitHub branch protection in GitHub UI (owner action required).
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured (owner action required).
 - [ ] Review and merge or close 5 open Dependabot PRs on origin before starting Phase 10 implementation.

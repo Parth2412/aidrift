@@ -13,7 +13,14 @@ export async function loadLatestEvalBaselines(projectRoot: string): Promise<Load
     return { baselines: {} };
   }
 
-  const snapshot = await readSnapshot(projectRoot, latest.id);
+  return loadEvalBaselinesForSnapshot(projectRoot, latest.id);
+}
+
+export async function loadEvalBaselinesForSnapshot(
+  projectRoot: string,
+  snapshotId: string,
+): Promise<LoadedEvalBaselines> {
+  const snapshot = await readSnapshot(projectRoot, snapshotId);
   const rawBaselines = snapshot.eval?.baselines ?? {};
   const baselines: Record<string, AssertionBaseline> = {};
 

@@ -1,0 +1,6 @@
+suite: missing-baseline
+assertions:
+  - id: any-assertion
+    type: contains
+    input: "return the word mock"
+    expected_contains: ["mock"]

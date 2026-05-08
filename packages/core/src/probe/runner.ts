@@ -1,7 +1,11 @@
 import { performance } from "node:perf_hooks";
 
 import { createMockProvider } from "../providers/mock-provider.js";
-import { probeBaselineKey, loadLatestProbeBaselines } from "./baselines.js";
+import {
+  loadLatestProbeBaselines,
+  loadProbeBaselinesForSnapshot,
+  probeBaselineKey,
+} from "./baselines.js";
 import { readCachedProbeSample, writeCachedProbeSample } from "./cache.js";
 import { BUILT_IN_PROBES } from "./canonical.js";
 import { compareProbeOutput } from "./comparator.js";
@@ -24,7 +28,10 @@ export async function runProviderProbes(
   const cacheTtlMinutes =
     options.useCache === false ? 0 : Math.max(0, options.cacheTtlMinutes ?? 60);
   const probes = filterProbes(options);
-  const loadedBaselines = await loadLatestProbeBaselines(options.projectRoot);
+  const loadedBaselines =
+    options.baselineSnapshotId === undefined
+      ? await loadLatestProbeBaselines(options.projectRoot)
+      : await loadProbeBaselinesForSnapshot(options.projectRoot, options.baselineSnapshotId);
 
   const workItems = options.models.flatMap((model) =>
     probes.map((probe) => ({

@@ -3,6 +3,7 @@ import { Command } from "commander";
 import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@aidrift/core";
 import { resolveAIDriftConfig } from "@aidrift/core";
 
+import { registerCheckCommand } from "./commands/check.js";
 import { registerDiffCommand } from "./commands/diff.js";
 import { registerHistoryCommand } from "./commands/history.js";
 import { registerInitCommand } from "./commands/init.js";
@@ -65,6 +66,11 @@ Bootstrap status:
 Product commands are implemented in later phases.
 `);
     });
+
+  registerCheckCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
 
   registerValidateCommand(program, {
     io: options.io,

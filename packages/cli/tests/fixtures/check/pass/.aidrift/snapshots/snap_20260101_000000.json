@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1",
+  "id": "snap_20260101_000000",
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "manifestHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "artifacts": {},
+  "eval": {
+    "baselines": {
+      "always-passes": {
+        "score": 1,
+        "capturedAt": "2026-01-01T00:00:00.000Z"
+      }
+    }
+  },
+  "metadata": {
+    "cliVersion": "0.0.0",
+    "nodeVersion": "v20.16.0",
+    "os": "linux"
+  }
+}

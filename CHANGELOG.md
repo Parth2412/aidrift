@@ -6,6 +6,16 @@ The project follows Semantic Versioning once public releases begin.
 
 ## Unreleased (development)
 
+### Phase 11 — GitHub Workflow Check Command (in progress)
+
+- Added `aidrift check` as a CI-safe quality gate that reads the manifest, resolves the latest or selected snapshot baseline, runs evals and provider probes, and exits `0` pass, `1` regression, or `2` config/runtime error.
+- Added non-interactive live-provider handling for `openai` and `anthropic` manifest models; missing credentials fail with exit `2` instead of prompting.
+- Added baseline alias resolution for snapshot id, label, tag, and git commit prefix.
+- Added stable `--format text|json|junit|github`, `--baseline`, `--output`, and `--fail-on warn|fail` contracts.
+- Added versioned `packages/sdk/schemas/check-output.v1.json` for JSON output.
+- Added JUnit XML, GitHub workflow annotation, JSON schema, output-file, stdout/stderr, and exit-code contract coverage for the six Phase 11 check fixtures.
+- Routed check output and CLI error output through the existing secret redaction layer.
+
 ### Phase 10 — Provider Drift Probes (complete)
 
 - Added canonical built-in probe suite (20 probes across deterministic, structural, semantic, behavioral, and performance categories).

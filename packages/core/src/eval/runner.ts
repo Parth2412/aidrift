@@ -2,7 +2,7 @@ import { performance } from "node:perf_hooks";
 
 import { createMockProvider } from "../providers/mock-provider.js";
 import type { EvalProvider } from "../providers/types.js";
-import { loadLatestEvalBaselines } from "./baselines.js";
+import { loadEvalBaselinesForSnapshot, loadLatestEvalBaselines } from "./baselines.js";
 import { evaluateAssertion } from "./evaluators/index.js";
 import { loadEvalSuite } from "./loader.js";
 import { describeAssertionExpected, summarizeResults } from "./results.js";
@@ -23,6 +23,7 @@ export interface RunEvalPlanOptions {
   readonly assertionIds?: ReadonlySet<string> | undefined;
   readonly tags?: ReadonlySet<string> | undefined;
   readonly provider?: EvalProvider | undefined;
+  readonly baselineSnapshotId?: string | undefined;
 }
 
 export async function runEvalPlan(options: RunEvalPlanOptions): Promise<PlanRunResult> {
@@ -31,7 +32,10 @@ export async function runEvalPlan(options: RunEvalPlanOptions): Promise<PlanRunR
   const provider = options.provider ?? createMockProvider();
   const suite = await loadEvalSuite({ suitePath: options.suitePath });
   const assertions = filterAssertions(suite.assertions, options);
-  const loadedBaselines = await loadLatestEvalBaselines(options.projectRoot);
+  const loadedBaselines =
+    options.baselineSnapshotId !== undefined
+      ? await loadEvalBaselinesForSnapshot(options.projectRoot, options.baselineSnapshotId)
+      : await loadLatestEvalBaselines(options.projectRoot);
   const dryRun = options.dryRun === true;
 
   const results = await mapWithConcurrency(

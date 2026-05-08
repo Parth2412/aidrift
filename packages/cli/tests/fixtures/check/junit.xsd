@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Minimal XSD describing the JUnit XML output produced by aidrift check --format=junit -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="testsuites">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="testsuite" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="testcase" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="failure" minOccurs="0" maxOccurs="1">
+                      <xs:complexType mixed="true">
+                        <xs:attribute name="message" type="xs:string" use="required"/>
+                        <xs:attribute name="type" type="xs:string" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required"/>
+                  <xs:attribute name="classname" type="xs:string" use="required"/>
+                  <xs:attribute name="time" type="xs:string" use="required"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="tests" type="xs:nonNegativeInteger" use="required"/>
+            <xs:attribute name="failures" type="xs:nonNegativeInteger" use="required"/>
+            <xs:attribute name="errors" type="xs:nonNegativeInteger" use="required"/>
+            <xs:attribute name="skipped" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="time" type="xs:string" use="required"/>
+            <xs:attribute name="timestamp" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="tests" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="failures" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="errors" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="time" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

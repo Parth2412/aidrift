@@ -1,6 +1,12 @@
 import { CommanderError } from "commander";
 
-import { AIDriftError, ExitCode, formatAIDriftError, type AIDriftEnv } from "@aidrift/core";
+import {
+  AIDriftError,
+  ExitCode,
+  formatAIDriftError,
+  redactSecrets,
+  type AIDriftEnv,
+} from "@aidrift/core";
 
 import { createCliProgram, type CliProgramIO } from "./program.js";
 
@@ -59,8 +65,12 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
     "--cache-ttl",
     "--provider",
     "--cost-budget",
+    "--baseline",
+    "--output",
+    "--fail-on",
   ]);
   const knownCommands = new Set([
+    "check",
     "validate",
     "init",
     "snapshot",
@@ -103,7 +113,10 @@ function findUnknownCommand(args: readonly string[]): string | undefined {
       arg.startsWith("--category=") ||
       arg.startsWith("--cache-ttl=") ||
       arg.startsWith("--provider=") ||
-      arg.startsWith("--cost-budget=")
+      arg.startsWith("--cost-budget=") ||
+      arg.startsWith("--baseline=") ||
+      arg.startsWith("--output=") ||
+      arg.startsWith("--fail-on=")
     ) {
       continue;
     }
@@ -150,15 +163,17 @@ function handleCliError(error: unknown, options: RunCliOptions): ExitCode {
   }
 
   if (error instanceof AIDriftError) {
-    options.stderr.write(formatAIDriftError(error));
+    options.stderr.write(redactSecrets(formatAIDriftError(error)));
     return error.exitCode;
   }
 
-  options.stderr.write(`Error: Unexpected AIDRIFT failure.
+  options.stderr.write(
+    redactSecrets(`Error: Unexpected AIDRIFT failure.
   Code: unexpected_error
   Reason: An unexpected internal error occurred.
   Fix: Re-run with --debug and report the issue with the command you ran.
   Docs: ../aidrift-docs/SECURITY-GUIDELINES.md
-`);
-  return ExitCode.Failure;
+`),
+  );
+  return ExitCode.ConfigError;
 }

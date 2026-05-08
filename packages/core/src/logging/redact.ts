@@ -1,5 +1,5 @@
 const TOKEN_PATTERNS: readonly RegExp[] = [
-  /\bsk-[A-Za-z0-9_-]{8,}\b/g,
+  /sk-[A-Za-z0-9_-]{8,}\b/g,
   /\bgh[pousr]_[A-Za-z0-9_]{8,}\b/g,
   /\bgithub_pat_[A-Za-z0-9_]{8,}\b/g,
   /\b(?:npm|pypi)-[A-Za-z0-9_-]{8,}\b/gi,

@@ -1,0 +1,12 @@
+suite: multiple-regressions
+assertions:
+  - id: fail-alpha
+    type: contains
+    input: "return the word mock"
+    expected_contains: ["IMPOSSIBLE_STRING_AIDRIFT_99999"]
+    critical: true
+  - id: fail-beta
+    type: contains
+    input: "return mock output"
+    expected_contains: ["IMPOSSIBLE_STRING_AIDRIFT_99999"]
+    critical: true
