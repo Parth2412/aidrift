@@ -1,0 +1,7 @@
+suite: pass
+assertions:
+  - id: always-passes
+    type: contains
+    input: "return the word mock"
+    expected_contains: ["mock"]
+    critical: true

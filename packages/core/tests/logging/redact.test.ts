@@ -6,13 +6,14 @@ import { redactSecrets } from "../../src/logging/redact.js";
 describe("redactSecrets", () => {
   it("redacts provider keys, GitHub tokens, bearer tokens, and secret env assignments", () => {
     const input =
-      "OPENAI_API_KEY=sk-testsecret123 github_pat_abcdefghi Bearer abc.def.ghi npm-secret123";
+      'OPENAI_API_KEY=sk-testsecret123 github_pat_abcdefghi Bearer abc.def.ghi npm-secret123 {"error":"missing:\\nsk-test-escaped123"}';
 
     const output = redactSecrets(input);
 
     expect(output).toContain("OPENAI_API_KEY=<redacted>");
     expect(output).toContain("Bearer <redacted>");
     expect(output).not.toContain("sk-testsecret123");
+    expect(output).not.toContain("sk-test-escaped123");
     expect(output).not.toContain("github_pat_abcdefghi");
     expect(output).not.toContain("npm-secret123");
   });

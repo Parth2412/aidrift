@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://aidrift.dev/schemas/check-output.v1.json",
+  "title": "AIDrift Check Output",
+  "description": "Stable schema for `aidrift check --format=json` output. Breaking changes require a schemaVersion bump.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "passed",
+    "failOn",
+    "summary",
+    "results",
+    "probes",
+    "startedAt",
+    "completedAt",
+    "durationMs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1",
+      "description": "Schema version. Always '1' for this version."
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "True when no assertions triggered the configured fail-on threshold."
+    },
+    "failOn": {
+      "type": "string",
+      "enum": ["fail", "warn"],
+      "description": "Threshold used to determine exit code 1."
+    },
+    "baselineSnapshotId": {
+      "type": "string",
+      "description": "ID of the snapshot used as baseline. Absent when no snapshot was found."
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the run started."
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the run completed."
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total wall-clock duration in milliseconds."
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate counts across all assertions.",
+      "required": ["total", "passed", "warned", "failed", "new", "regressions"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "warned": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "new": { "type": "integer", "minimum": 0 },
+        "regressions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "results": {
+      "type": "array",
+      "description": "Per-assertion results, sorted by assertionId.",
+      "items": {
+        "type": "object",
+        "required": ["assertionId", "type", "status", "score", "explanation", "critical", "tags"],
+        "additionalProperties": false,
+        "properties": {
+          "assertionId": { "type": "string" },
+          "type": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "WARN", "FAIL", "NEW"]
+          },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+          "explanation": { "type": "string" },
+          "critical": { "type": "boolean" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "probes": {
+      "type": "object",
+      "description": "Provider probe gate results, sorted by modelName/probeId.",
+      "required": ["summary", "results"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "object",
+          "required": ["total", "passed", "drifted", "errors", "new"],
+          "additionalProperties": false,
+          "properties": {
+            "total": { "type": "integer", "minimum": 0 },
+            "passed": { "type": "integer", "minimum": 0 },
+            "drifted": { "type": "integer", "minimum": 0 },
+            "errors": { "type": "integer", "minimum": 0 },
+            "new": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "modelName",
+              "provider",
+              "model",
+              "probeId",
+              "category",
+              "status",
+              "score",
+              "confidence",
+              "explanation"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "modelName": { "type": "string" },
+              "provider": { "type": "string" },
+              "model": { "type": "string" },
+              "probeId": { "type": "string" },
+              "category": {
+                "type": "string",
+                "enum": ["deterministic", "structural", "semantic", "behavioral", "performance"]
+              },
+              "status": {
+                "type": "string",
+                "enum": ["PASS", "DRIFT", "ERROR", "NEW"]
+              },
+              "score": { "type": "number", "minimum": 0, "maximum": 1 },
+              "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "explanation": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

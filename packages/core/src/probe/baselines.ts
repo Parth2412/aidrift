@@ -29,7 +29,14 @@ export async function loadLatestProbeBaselines(projectRoot: string): Promise<Loa
     return { baselines: {} };
   }
 
-  const snapshot = (await readSnapshot(projectRoot, latest.id)) as SnapshotWithProbeBaselines;
+  return loadProbeBaselinesForSnapshot(projectRoot, latest.id);
+}
+
+export async function loadProbeBaselinesForSnapshot(
+  projectRoot: string,
+  snapshotId: string,
+): Promise<LoadedProbeBaselines> {
+  const snapshot = (await readSnapshot(projectRoot, snapshotId)) as SnapshotWithProbeBaselines;
   const rawBaselines = snapshot.probe?.baselines ?? {};
   const baselines: Record<string, ProbeBaseline> = {};
 

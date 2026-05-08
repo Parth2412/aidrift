@@ -91,6 +91,7 @@ export interface RunProviderProbesOptions {
   readonly cacheTtlMinutes?: number | undefined;
   readonly useCache?: boolean | undefined;
   readonly concurrency?: number | undefined;
+  readonly baselineSnapshotId?: string | undefined;
 }
 
 export interface ProbeCostEstimate {
