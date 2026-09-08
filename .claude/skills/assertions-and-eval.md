@@ -1,214 +1,65 @@
-# Assertions & Eval — Behavioral Testing Engine
+# Assertions And Eval — Behavioral Evidence
 
 ## When to Read This
 
-Read before: implementing or modifying assertion evaluators, working on the eval runner, adding new assertion types, working on assertion YAML parsing, or touching anything in `src/eval/`.
+Read before changing assertion schemas/evaluators, eval targets, sampling, statistical comparison, baseline identity, concurrency, deadlines, or result contracts.
 
----
+## Supported Assertions
 
-## Assertion YAML Schema
+Only three assertion types execute in this release:
 
-```yaml
-# evals/my_assertions.assertions.yml
-suite: customer_support
-description: "Behavioral assertions for customer support chatbot"
+- `contains`: require and/or forbid literal substrings.
+- `regex`: match a JavaScript regular expression after unsafe-pattern screening.
+- `json_schema`: parse JSON and validate it with the bounded RE2-compatible JSON Schema engine.
 
-assertions:
-  - id: greeting_tone # Unique ID (required)
-    description: "Warm and professional" # Human description
-    type: llm_judge # Assertion type (required)
-    tags: [tone, safety] # For filtering with --tags
-    critical: false # If true, always FAIL (never WARN)
-    input: "Hi, I need help" # Input to send to AI system
-    # ... type-specific fields below
-```
+The manifest/schema reserves `llm_judge`, `tool_call`, `latency`, `cost`, `semantic_stability`, and `custom`, but the parser rejects them with a version-neutral unsupported message. Do not add examples that imply they execute.
 
----
+Every assertion has a unique `id`, an `input`, and optional description/tags/critical metadata. Suites and their structured values are bounded before execution.
 
-## Nine Built-in Assertion Types
+## Execution Target
 
-### 1. `contains` — Substring check
+Behavioral commands require an explicit `eval.target` of type `provider`. It binds execution to one declared model artifact and an ordered set of declared text prompts. Supported model parameters are applied by the selected provider adapter.
 
-```yaml
-type: contains
-input: "What's your refund policy?"
-expected_contains:
-  - "30 days"
-  - "full refund"
-expected_not_contains:
-  - "no refunds"
-  - "store credit only"
-```
+HTTP, subprocess, custom, plugin, RAG, tool, safety-policy, adapter, and non-text prompt execution are unavailable. Fail with exit `2`; never substitute mock behavior for an unsupported target.
 
-**Score:** 1.0 if all contains match and no not_contains match; 0.0 otherwise.
+## Runner Contract
 
-### 2. `regex` — Pattern matching
+1. Load and validate assertion suites from the manifest-relative suite path.
+2. Filter by selected assertion IDs/tags.
+3. resolve the explicit provider target and baseline identity.
+4. enforce sample, execution-count, concurrency, timeout, response, result-size, and cost bounds.
+5. generate each sample and retain score/output/latency/cost evidence.
+6. compare the current distribution with compatible baseline samples.
+7. return stable assertion ordering, summary counts, identities, totals, and statistical evidence.
 
-```yaml
-type: regex
-input: "Generate an order ID"
-pattern: "^ORD-[A-Z0-9]{8}$"
-flags: "i" # Optional regex flags
-```
+Default concurrency is 4. When a live dollar budget is active, execution is serialized so observed spend can stop the workload before the ceiling is exceeded. Provider calls receive the run-wide abort signal.
 
-**Score:** 1.0 if pattern matches; 0.0 otherwise.
+## Classification
 
-### 3. `json_schema` — Structured output validation
+Result statuses are `PASS`, `WARN`, `FAIL`, and `NEW`.
 
-```yaml
-type: json_schema
-input: "List my recent orders as JSON"
-expected_schema:
-  type: object
-  properties:
-    orders:
-      type: array
-      items:
-        type: object
-        required: ["id", "status", "date"]
-```
+- Baseline/current binary samples use Fisher's exact test.
+- Continuous distributions use Welch's t-test.
+- Evidence includes sample counts, standard deviations, p-value, significance level, confidence level/interval, and whether the change is significant.
+- Identity mismatches, missing samples, or undersized evidence must remain explicit; never invent statistical confidence.
+- Allowed regressions may be downgraded only through the documented command contract and must remain visible in evidence.
 
-**Score:** 1.0 if output is valid JSON matching the schema; 0.0 otherwise.
+Statistical utilities have property-based coverage. Changes require known-case tests, boundary tests, symmetry/range invariants where applicable, and end-to-end classification fixtures.
 
-### 4. `llm_judge` — LLM-as-judge evaluation
+## Safety Rules
 
-```yaml
-type: llm_judge
-input: "Hi, I need help with my order"
-judge:
-  criteria: "Response is warm, professional, and asks clarifying questions"
-  model: gpt-4o-mini # Cheaper model for judging
-  threshold: 0.8 # 80% of samples must pass
-```
+- Screen standalone JavaScript regexes for unsafe backtracking and enforce the evaluation deadline.
+- Use RE2 syntax for JSON Schema patterns; lookaround and backreferences are unsupported.
+- Bound provider output before evaluation and final run output before serialization.
+- Never log raw credentials. Treat prompt and provider output as potentially private.
+- Reject invalid format, target, credentials, limits, and known-over-budget workloads before a live request.
+- Do not automatically retry provider calls.
 
-**Score:** Percentage of samples the judge deems passing (0.0–1.0).
-**Implementation:** `src/eval/assertions/llm-judge.ts` — sends output + criteria to judge model, parses pass/fail + reasoning.
+## Change Checklist
 
-### 5. `tool_call` — Tool/function call verification
-
-```yaml
-type: tool_call
-input: "Where is my order #12345?"
-expected_tool: order_lookup
-expected_args:
-  order_id: "12345"
-```
-
-**Score:** 1.0 if correct tool called with correct args; partial score for correct tool with wrong args.
-
-### 6. `latency` — Response time check
-
-```yaml
-type: latency
-input: "Hello"
-max_p95_ms: 3000 # p95 latency threshold
-```
-
-**Score:** 1.0 if p95 within threshold; degrades proportionally beyond threshold.
-
-### 7. `cost` — Token cost check
-
-```yaml
-type: cost
-input: "Tell me about your products"
-max_cost_usd: 0.05
-```
-
-**Score:** 1.0 if average cost within budget; 0.0 if exceeds.
-
-### 8. `semantic_stability` — Output consistency
-
-```yaml
-type: semantic_stability
-input: "Explain your return process"
-min_cosine_similarity: 0.85
-samples: 10 # Overrides global sample count
-```
-
-**Score:** Average pairwise cosine similarity across samples.
-**Implementation:** Runs input N times, computes embeddings, calculates all pairwise cosine similarities.
-
-### 9. `custom` — User-defined function
-
-```yaml
-type: custom
-input: "Generate a report"
-command: "python ./evals/custom_checker.py"
-input_format: json # {"input": "...", "output": "..."}
-output_format: json # {"score": 0.95, "passed": true, "reason": "..."}
-```
-
-**Score:** Whatever the subprocess returns.
-
----
-
-## Eval Runner (`src/eval/runner.ts`)
-
-### Execution Flow
-
-```
-1. Load assertion YAML files from eval suite directory
-2. Filter assertions by --assertions or --tags if specified
-3. For each assertion:
-   a. Send input to AI system N times (samples_per_assertion)
-   b. Evaluate each output with the assertion evaluator
-   c. Aggregate scores across samples
-   d. Compare aggregated score to baseline from snapshot
-   e. Run statistical significance test (Welch's t-test or Fisher's exact)
-   f. Classify: PASS (stable/improved) | WARN (degraded, above threshold) | FAIL (regression)
-4. Collect all results
-5. Format and output
-```
-
-### AI System Interaction Modes
-
-The executor (`src/eval/executor.ts`) supports three modes:
-
-| Mode         | Config                                                       | How It Works                                                  |
-| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| `provider`   | Uses model config from manifest                              | Direct API call to LLM provider                               |
-| `http`       | `url`, `method`, `headers`, `body_template`, `response_path` | HTTP POST to AI system endpoint                               |
-| `subprocess` | `command`, `input_format`, `output_format`                   | Runs script, passes input via stdin, reads output from stdout |
-
-### Concurrency
-
-- `src/eval/runner.ts` uses configurable parallelism
-- Default: 5 concurrent assertion evaluations
-- Each assertion's N samples run sequentially (to avoid rate limits)
-- Provider rate limit handling: exponential backoff with jitter
-
----
-
-## AssertionResult Interface
-
-```typescript
-interface AssertionResult {
-  assertion_id: string;
-  passed: boolean;
-  score: number; // 0.0 – 1.0
-  confidence: number; // Statistical confidence
-  p_value?: number;
-  details: {
-    expected: string;
-    actual: string;
-    explanation: string;
-  };
-  samples: SampleResult[];
-  latency_ms: number;
-  cost_usd: number;
-}
-```
-
----
-
-## Rules
-
-- Every assertion evaluator MUST implement the `AssertionEvaluator` interface from `src/eval/assertions/interface.ts`
-- Every assertion returns a score between 0.0 and 1.0
-- Assertion evaluators must be stateless — no side effects between invocations
-- `llm_judge` should use a cheaper/faster model than the system under test (e.g., `gpt-4o-mini`)
-- `custom` assertions run in a subprocess — never execute user code in the main process
-- The eval runner must respect `--budget` limits — estimate cost before running, abort if budget exceeded
-- The eval runner must respect `--timeout` limits
-- Assertion YAML files use the naming convention `*.assertions.yml`
-- All assertion types must have unit tests with mocked LLM responses
+- Update parser/schema/types and both pass/fail evaluator tests.
+- Update baseline and statistical comparison tests.
+- Update CLI plan/check fixtures and machine-output schemas if evidence changes.
+- Maintain the dedicated eval line-coverage floor of at least 90%.
+- Rebuild the CLI and checked-in Action bundle.
+- Update public limitations and generated references without claiming reserved behavior.

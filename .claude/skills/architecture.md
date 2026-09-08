@@ -2,138 +2,98 @@
 
 ## When to Read This
 
-Read before: adding new modules, changing directory structure, adding dependencies, creating new packages, or making architectural decisions.
+Read before changing package boundaries, dependency direction, runtime contracts, storage, providers, or distribution.
 
----
+## System Shape
 
-## Monorepo Structure (Turborepo)
+AIDrift is a TypeScript/pnpm/Turborepo monorepo with four workspace packages:
 
-```
-aidrift/
-├── packages/
-│   ├── cli/                     # Main CLI (@aidrift/cli) — entry point
-│   │   ├── src/
-│   │   │   ├── commands/        # CLI command implementations (one file per command)
-│   │   │   ├── manifest/        # Manifest parsing & validation
-│   │   │   │   ├── schema.json  # JSON Schema for .aistate.yml
-│   │   │   │   ├── parser.ts    # YAML parsing + ajv validation
-│   │   │   │   ├── resolver.ts  # File path resolver (globs, relative paths)
-│   │   │   │   ├── types.ts     # TypeScript interfaces
-│   │   │   │   └── templates/   # Built-in project templates (openai-chat, rag-pipeline, etc.)
-│   │   │   ├── snapshot/        # Snapshot engine
-│   │   │   │   ├── engine.ts    # Core snapshot logic
-│   │   │   │   ├── hasher.ts    # SHA-256 hashing
-│   │   │   │   ├── storage/     # Storage backends (local.ts, git.ts, interface.ts)
-│   │   │   │   ├── comparator.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── diff/            # Diff engine
-│   │   │   │   ├── engine.ts    # Orchestrator across artifact types
-│   │   │   │   ├── text.ts      # Unified diff for text
-│   │   │   │   ├── json.ts      # Semantic diff for JSON/YAML
-│   │   │   │   ├── binary.ts    # Hash comparison
-│   │   │   │   ├── parameters.ts # Key-value parameter diff
-│   │   │   │   ├── formatter/   # terminal.ts, json.ts, markdown.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── eval/            # Eval runner & assertions
-│   │   │   │   ├── runner.ts    # Orchestrates multi-sample execution
-│   │   │   │   ├── parser.ts    # Assertion YAML parser
-│   │   │   │   ├── assertions/  # One file per assertion type
-│   │   │   │   │   ├── interface.ts, contains.ts, regex.ts, json-schema.ts
-│   │   │   │   │   ├── llm-judge.ts, tool-call.ts, latency.ts
-│   │   │   │   │   ├── cost.ts, semantic.ts, custom.ts
-│   │   │   │   ├── executor.ts  # Sends inputs, captures outputs
-│   │   │   │   ├── statistics.ts # Welch's t-test, Fisher's exact
-│   │   │   │   └── types.ts
-│   │   │   ├── probe/           # Provider drift probes
-│   │   │   │   ├── runner.ts
-│   │   │   │   ├── canonical/   # deterministic.ts, structural.ts, semantic.ts, behavioral.ts, performance.ts
-│   │   │   │   ├── comparator.ts
-│   │   │   │   ├── cache.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── providers/       # LLM provider adapters
-│   │   │   │   ├── interface.ts, openai.ts, anthropic.ts, google.ts
-│   │   │   │   ├── mistral.ts, cohere.ts, local.ts, custom.ts
-│   │   │   │   └── registry.ts
-│   │   │   ├── plugins/         # Plugin system
-│   │   │   │   ├── loader.ts, registry.ts
-│   │   │   │   ├── sdk/         # Public SDK exports (artifact.ts, assertion.ts, storage.ts, formatter.ts)
-│   │   │   │   └── scaffold/    # Plugin template generator
-│   │   │   ├── output/          # Output formatters (terminal, json, junit, github-annotations)
-│   │   │   └── utils/           # Shared utilities
-│   │   ├── tests/
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   ├── sdk/                     # Plugin SDK (@aidrift/sdk) — published interfaces
-│   ├── action/                  # GitHub Action (action.yml + Docker container)
-│   └── python/                  # Python SDK wrapper (subprocess wraps CLI)
-├── plugins/                     # First-party plugins (pinecone, weaviate, chromadb)
-├── examples/                    # Example projects (openai-chatbot, rag-pipeline, multi-agent, local-llm)
-├── docs/                        # VitePress or Docusaurus documentation site
-├── .github/workflows/           # CI (lint, test, build)
-├── turbo.json                   # Turborepo config
-├── LICENSE                      # Apache 2.0
-└── README.md
+```text
+packages/core    @zettacore/aidrift-core     runtime engines
+packages/sdk     @zettacore/aidrift-sdk      public types and JSON Schemas
+packages/cli     @zettacore/aidrift          command orchestration and executable
+packages/action  private workspace package   bundled GitHub Action
 ```
 
----
+Dependency direction is strict:
 
-## Core Dependency Map
-
-| Dependency          | Purpose                | Version | Notes                                             |
-| ------------------- | ---------------------- | ------- | ------------------------------------------------- |
-| `commander`         | CLI framework          | ^12.x   | One command per file in `src/commands/`           |
-| `inquirer`          | Interactive prompts    | ^9.x    | Used in `init`, `rollback`                        |
-| `chalk`             | Terminal colors        | ^5.x    | ESM only — use dynamic import or v4 if CJS needed |
-| `yaml`              | YAML parsing           | ^2.x    | For `.aistate.yml` and assertion YAML             |
-| `ajv`               | JSON Schema validation | ^8.x    | Validates manifest against `schema.json`          |
-| `diff`              | Text diffing           | ^5.x    | Unified diff for prompts/configs                  |
-| `ora`               | Spinners               | ^8.x    | Async operation feedback                          |
-| `glob`              | File pattern matching  | ^10.x   | Artifact file resolution                          |
-| `chokidar`          | File watching          | ^3.x    | Watch mode (Phase 4)                              |
-| `openai`            | OpenAI API client      | ^4.x    | Provider adapter                                  |
-| `@anthropic-ai/sdk` | Anthropic API client   | ^0.x    | Provider adapter                                  |
-| `cosine-similarity` | Semantic comparison    | ^1.x    | Probe comparator                                  |
-| `simple-statistics` | Statistical tests      | ^7.x    | Welch's t-test, distributions                     |
-
----
-
-## Design Principles (Architectural)
-
-1. **Unix philosophy** — each module does one thing well, composes via interfaces
-2. **CLI-first** — every feature works from the terminal; SDK/API wrap the CLI
-3. **Local-first** — full functionality offline; no cloud dependency for core
-4. **Plugin boundary** — plugins extend via interfaces (ArtifactResolver, AssertionEvaluator, StorageBackend, OutputFormatter), never modify core
-5. **Provider-agnostic** — uniform `LLMProvider` interface; never leak provider specifics into core
-6. **Stateless CLI** — all state lives in `.aistate.yml` (manifest) + `.aidrift/` (snapshots); CLI is a pure function of inputs
-
----
-
-## Key Data Flow
-
-```
-.aistate.yml (manifest) → Manifest Parser → Validated Config
-                                               ↓
-                                        Snapshot Engine → .aidrift/snapshots/*.json
-                                               ↓
-                                        Diff Engine → Change Detection
-                                               ↓
-                                  ┌─────────────┴──────────────┐
-                                  ↓                            ↓
-                           Eval Runner                   Probe Runner
-                        (behavioral assertions)     (provider drift detection)
-                                  ↓                            ↓
-                           Statistics Engine ←─────────────────┘
-                                  ↓
-                        Plan / Check Output (pass/warn/fail)
+```text
+core ─┐
+      ├─> cli ─> action bundle
+sdk  ─┘
 ```
 
----
+Core and SDK do not depend on CLI or Action internals. The Action invokes the bundled CLI once and derives all GitHub-facing outputs from the resulting v3 evidence.
 
-## Rules
+## Ownership Boundaries
 
-- New modules go under the appropriate engine directory — never create top-level `src/` files
-- Every public interface gets a `types.ts` in its module directory
-- Provider adapters MUST implement the `LLMProvider` interface from `src/providers/interface.ts`
-- Assertion evaluators MUST implement `AssertionEvaluator` from `src/eval/assertions/interface.ts`
-- All file I/O goes through utility functions in `src/utils/` — never raw `fs` calls in command files
-- Config resolution order: CLI flags → environment variables → manifest values → defaults
+### Core
+
+- Manifest schema, parsing, validation, path resolution, secret detection, and runtime-support guards.
+- Bounded file reads and structured-data limits.
+- Snapshot capture, schema validation, baseline resolution, atomic local storage, and hashing.
+- Text, binary, model-parameter, and structured JSON/YAML diff engines.
+- Assertion parsing/evaluation, sampled runs, deadlines, cost bounds, and statistical comparison.
+- Canonical probes, caching, category-aware comparison, and evidence.
+- Deterministic mock plus OpenAI Chat Completions and Anthropic Messages adapters.
+- Central error, logging, and redaction contracts.
+
+### SDK
+
+- Stable consumer-facing TypeScript interfaces.
+- Packaged manifest and check-output JSON Schemas.
+- No runtime plugin loader or execution engine.
+
+### CLI
+
+- Commander registration, global configuration, I/O, format selection, and exit-code mapping.
+- Command orchestration only; reusable behavior belongs in core.
+- Public binary name remains `aidrift` even though the npm package is scoped.
+
+### Action
+
+- Strict input parsing, bounded child-process output, one CLI execution, schema-validated evidence, annotations, artifacts, outputs, and guarded PR comments.
+- Checked-in `dist` is required by GitHub Actions and must be reproducibly rebuilt.
+- Provider credentials enter only through environment variables.
+
+## State And Trust Boundaries
+
+- `.aistate.yml` is declarative, version-controlled input.
+- `.aidrift/` contains local state that may include private prompt/output evidence and is ignored by default.
+- Artifact paths are resolved relative to the manifest and constrained to the project boundary.
+- Only local snapshot storage is executable in this release.
+- Only explicit provider eval targets are executable; reserved manifest features fail closed.
+- Network access occurs only through selected live provider adapters. Default tests and quickstarts use the deterministic mock.
+- Provider calls have request, response, sample, concurrency, time, and cost bounds.
+
+## Public Contracts
+
+Treat these as coordinated versioned contracts:
+
+- CLI options and exit codes.
+- Manifest schema and runtime-supported subset.
+- Snapshot schema and baseline identity.
+- Eval/probe classifications and statistical evidence.
+- Check-output JSON Schemas.
+- Action inputs, outputs, and security behavior.
+- Public package names, exports, engines, and internal dependency versions.
+
+Schema acceptance does not imply runtime support. A reserved feature must fail explicitly until its full execution, safety, testing, and documentation contract exists.
+
+## Distribution
+
+- Node 24.20.0 and pnpm 10.28.2 are pinned for release production.
+- Public packages support Node 22.14.0 or newer.
+- npm packages use coordinated versions and strict tarball allowlists.
+- The GitHub Action is distributed from `packages/action` at an immutable repository tag, not npm.
+- Recurring npm publication is from an immutable `main` tag through a protected GitHub environment and npm trusted publishing.
+
+## Architectural Rules
+
+- Fail closed rather than silently omitting declared behavior.
+- Keep all default tests hermetic and deterministic.
+- Never introduce a live-provider-to-mock fallback.
+- Centralize limits and validate before expensive or irreversible work.
+- Keep evidence bounded, versioned, redacted, and internally consistent.
+- Preserve atomic writes and validate persisted state on both write and read.
+- Do not add a new provider, assertion, storage backend, target, or plugin path without end-to-end execution, negative tests, cost/security bounds, and public documentation.

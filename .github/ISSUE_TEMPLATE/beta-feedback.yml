@@ -1,0 +1,76 @@
+name: Beta feedback
+description: Report a completed beta run, false positive, missed regression, or confusing behavior.
+title: "[Beta]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing AIDRIFT. Remove credentials, private prompts, model outputs, customer data, and proprietary configuration before submitting. Report vulnerabilities through the private process in SECURITY.md, not here.
+  - type: input
+    id: version
+    attributes:
+      label: AIDRIFT version
+      description: Paste the exact output of `aidrift --version`.
+      placeholder: 0.9.0-beta.1
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome
+      options:
+        - Completed successfully
+        - False positive (safe behavior reported as regression)
+        - Missed regression (unsafe behavior passed)
+        - Setup or runtime failure
+        - Output or workflow was unclear
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, architecture, and exact Node.js version.
+      placeholder: Ubuntu 24.04, x64, Node 24.20.0
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Target provider and model
+      description: Use `mock` if this was the offline quickstart. Do not include credentials.
+      placeholder: mock / mock-v1
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What were you trying to verify?
+      description: Describe the behavior and the commands you ran.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include exit code and sanitized evidence. Prefer a minimal reproduction over raw production logs.
+    validations:
+      required: true
+  - type: textarea
+    id: usability
+    attributes:
+      label: Setup time and usability notes
+      description: Approximate minutes, where you hesitated, and what would have made the workflow clearer.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-data confirmation
+      options:
+        - label: I removed secrets, private prompts/outputs, customer data, and proprietary configuration.
+          required: true
