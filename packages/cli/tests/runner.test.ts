@@ -69,7 +69,7 @@ describe("runCli", () => {
     const exitCode = await runCli(["node", "aidrift", "--version"], test.io);
 
     expect(exitCode).toBe(0);
-    expect(test.stdout.trim()).toBe("0.9.0-beta.1");
+    expect(test.stdout.trim()).toBe("0.9.0-beta.0");
     expect(test.stderr).toBe("");
   });
 

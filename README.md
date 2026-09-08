@@ -8,7 +8,7 @@ AIDrift treats prompts, model settings, eval expectations, provider probes, and 
 
 ## Current Status
 
-The local CLI and GitHub Action are implemented and undergoing release hardening as `0.9.0-beta.1`. No npm package or Action tag should be treated as public until the protected release workflow succeeds. The following commands are available:
+The local CLI and GitHub Action are implemented and undergoing release hardening as `0.9.0-beta.0`. No npm package or Action tag should be treated as public until the protected release workflow succeeds. The following commands are available:
 
 | Command            | Description                                                  |
 | ------------------ | ------------------------------------------------------------ |
@@ -23,10 +23,10 @@ The local CLI and GitHub Action are implemented and undergoing release hardening
 
 ## Five-Minute Offline Quickstart
 
-After the owner publishes `0.9.0-beta.1` to npm's `next` channel, this flow goes from an empty directory to a behavioral baseline and first check without an API key or YAML editing:
+After the owner publishes `0.9.0-beta.0` to npm's `next` channel, this flow goes from an empty directory to a behavioral baseline and first check without an API key or YAML editing:
 
 ```bash
-npm install --global @zettacore/aidrift@0.9.0-beta.1
+npm install --global @zettacore/aidrift@0.9.0-beta.0
 mkdir aidrift-demo
 cd aidrift-demo
 aidrift init --yes
@@ -89,7 +89,7 @@ JSON output conforms to `packages/sdk/schemas/check-output.v3.json`; the package
 
 The Node 24 Action under `packages/action` bundles the exact CLI and runs `check` once. It emits workflow annotations, uploads JSON and JUnit evidence, exposes result outputs, and can upsert one bot-owned PR comment.
 
-The example below becomes installable after the owner publishes the immutable `v0.9.0-beta.1` Action tag; until then, validate the checked-in bundle with `pnpm test:built-action`.
+The example below becomes installable after the owner publishes the immutable `v0.9.0-beta.0` Action tag; until then, validate the checked-in bundle with `pnpm test:built-action`.
 
 ```yaml
 permissions:
@@ -98,7 +98,7 @@ permissions:
 
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
+  - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.0
     with:
       samples: "5"
       timeout: "120"

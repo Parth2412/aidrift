@@ -14,7 +14,7 @@ import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
 
 export const CLI_NAME = "aidrift";
-export const CLI_VERSION = "0.9.0-beta.1";
+export const CLI_VERSION = "0.9.0-beta.0";
 
 export interface CliProgramIO {
   readonly stdout: WritableStreamLike;

@@ -8,4 +8,4 @@ Runtime support is deliberately narrower than the reserved manifest schema. Unsu
 
 All parsing, discovery, snapshot, regex, provider-request, and behavioral-execution paths enforce explicit ceilings. JSON Schema regexes use RE2 syntax. See the repository's [safety and resource limits](../../docs/reference/safety-limits.md) before integrating the programmatic API with untrusted project input.
 
-Version `0.9.0-beta.1` is prepared for the `next` channel but is not public until the protected npm workflow succeeds. Its API remains prerelease and may change before 1.0.
+Version `0.9.0-beta.0` is prepared for the `next` channel but is not public until the protected owner bootstrap succeeds. Its API remains prerelease and may change before 1.0.

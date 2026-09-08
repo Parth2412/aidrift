@@ -6,7 +6,7 @@ The checked-in bundle includes generated dependency licenses in `dist/licenses.t
 
 ## Usage
 
-This reference is usable after the owner publishes the immutable `v0.9.0-beta.1` repository tag. Before publication, repository development validates the checked-in bundle with `pnpm test:built-action`.
+This reference is usable after the owner publishes the immutable `v0.9.0-beta.0` repository tag. Before publication, repository development validates the checked-in bundle with `pnpm test:built-action`.
 
 ```yaml
 name: AIDRIFT
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
+      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.0
         with:
           manifest: .aistate.yml
           fail-on: fail
@@ -36,7 +36,7 @@ jobs:
 For a live OpenAI or Anthropic manifest, pass the provider credential through the environment and set `cost-budget`. A live check without a known and enforceable cost ceiling exits as a configuration error.
 
 ```yaml
-- uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
+- uses: Parth2412/aidrift/packages/action@v0.9.0-beta.0
   with:
     cost-budget: "0.25"
     github-token: ${{ github.token }}

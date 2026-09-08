@@ -62,7 +62,7 @@ The project follows Semantic Versioning once public releases begin.
 ### Beta readiness
 
 - Made `aidrift init` create a non-destructive starter eval suite so a new offline project can run `init`, `snapshot`, `plan`, and `check` without YAML editing.
-- Added a complete `0.9.0-beta.1` offline example whose unchanged check exits `0` and supplied behavioral regression exits `1` with artifact and statistical evidence.
+- Added a complete `0.9.0-beta.0` offline example whose unchanged check exits `0` and supplied behavioral regression exits `1` with artifact and statistical evidence.
 - Extended clean installed-tarball validation to execute both the generated first-run journey and versioned regression example.
 - Added a Linux/macOS/Windows matrix for Node 22.14.0 and 24.20.0 public-package builds, clean installs, and quickstart checks.
 - Added beta limitations, structured feedback and bug forms, an evidence ledger, draft release notes, and an owner release/incident runbook without claiming publication or external-user results.

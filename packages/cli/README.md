@@ -15,7 +15,7 @@ The CLI implements:
 The beta must be published before this install command becomes available:
 
 ```bash
-npm install --global @zettacore/aidrift@0.9.0-beta.1
+npm install --global @zettacore/aidrift@0.9.0-beta.0
 mkdir aidrift-demo
 cd aidrift-demo
 aidrift init --yes
@@ -29,4 +29,4 @@ This needs no API key and no YAML editing. `init` creates a deterministic offlin
 
 OpenAI and Anthropic execution reads credentials only from `AIDRIFT_OPENAI_API_KEY` and `AIDRIFT_ANTHROPIC_API_KEY`. Live checks require an explicit `--cost-budget`; the deterministic mock provider remains the offline default for development and tests.
 
-See the [complete regression example](https://github.com/Parth2412/aidrift/tree/development/examples/quickstart), [generated CLI reference](https://github.com/Parth2412/aidrift/blob/development/docs/reference/cli.md), and repository README for the supported manifest/runtime boundary. Version `0.9.0-beta.1` is prepared for the `next` channel but is not public until the protected npm workflow succeeds.
+See the [complete regression example](https://github.com/Parth2412/aidrift/tree/development/examples/quickstart), [generated CLI reference](https://github.com/Parth2412/aidrift/blob/development/docs/reference/cli.md), and repository README for the supported manifest/runtime boundary. Version `0.9.0-beta.0` is prepared for the `next` channel but is not public until the protected owner bootstrap succeeds.

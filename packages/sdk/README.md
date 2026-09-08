@@ -8,4 +8,4 @@ Consumers should pin the exact prerelease package version and validate machine-r
 
 The v3 schema includes the beta's execution and evidence cardinality ceilings. Runtime consistency checks—such as unique result identities, exact summary counts, and pass/fail coherence—are additionally enforced by the GitHub Action because JSON Schema cannot express all of those relationships directly.
 
-Version `0.9.0-beta.1` is prepared for the `next` channel but is not public until the protected npm workflow succeeds. Its interfaces remain prerelease until 1.0.
+Version `0.9.0-beta.0` is prepared for the `next` channel but is not public until the protected owner bootstrap succeeds. Its interfaces remain prerelease until 1.0.

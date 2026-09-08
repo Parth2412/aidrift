@@ -2,7 +2,7 @@
 
 ## Release status
 
-`0.9.0-beta.1` is a locally verified release candidate. It is not an available npm or GitHub Action release until the protected owner publication steps succeed. Do not report an installation as successful unless it came from the public registry or a locally generated release tarball.
+`0.9.0-beta.0` is a locally verified bootstrap release candidate. It is not an available npm or GitHub Action release until the protected owner publication steps succeed. Do not report an installation as successful unless it came from the public registry or a locally generated release tarball.
 
 ## Supported beta boundary
 

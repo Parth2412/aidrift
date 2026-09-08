@@ -1,6 +1,6 @@
 # AIDrift offline quickstart
 
-This example proves the complete `0.9.0-beta.1` baseline-to-regression workflow without an API key or network call. It uses AIDrift's deterministic mock provider so the result is reproducible; replace the synthetic assertion and provider with behavior from your application after the walkthrough.
+This example proves the complete `0.9.0-beta.0` baseline-to-regression workflow without an API key or network call. It uses AIDrift's deterministic mock provider so the result is reproducible; replace the synthetic assertion and provider with behavior from your application after the walkthrough.
 
 From the repository root, build the packages once and run the local CLI:
 
@@ -29,7 +29,7 @@ rm -rf .aidrift
 After the npm beta is published, the equivalent clean-install flow is:
 
 ```bash
-npm install --global @zettacore/aidrift@0.9.0-beta.1
+npm install --global @zettacore/aidrift@0.9.0-beta.0
 aidrift validate
 aidrift snapshot --with-evals --with-probes --samples 5 --label clean
 aidrift check --samples 5
