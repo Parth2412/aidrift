@@ -1,6 +1,7 @@
 export const MANIFEST_VERSION = "1";
 
 export const RECOGNIZED_MODEL_PROVIDERS = [
+  "mock",
   "openai",
   "anthropic",
   "cohere",
@@ -127,8 +128,16 @@ export interface EvalConfig {
   readonly target?: EvalTargetConfig | undefined;
 }
 
-export interface EvalTargetConfig {
-  readonly type: "provider" | "http" | "subprocess";
+export type EvalTargetConfig = ProviderEvalTargetConfig | ExternalEvalTargetConfig;
+
+export interface ProviderEvalTargetConfig {
+  readonly type: "provider";
+  readonly model: string;
+  readonly prompts?: readonly string[] | undefined;
+}
+
+export interface ExternalEvalTargetConfig {
+  readonly type: "http" | "subprocess";
   readonly [key: string]: unknown;
 }
 

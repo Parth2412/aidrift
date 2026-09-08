@@ -42,6 +42,16 @@ function createTestIo() {
 }
 
 describe("runCli", () => {
+  it("prints current help when invoked without arguments", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(["node", "aidrift"], test.io);
+
+    expect(exitCode).toBe(0);
+    expect(test.stdout).toContain("Usage: aidrift");
+    expect(test.stderr).toBe("");
+  });
+
   it("prints help for --help", async () => {
     const test = createTestIo();
 
@@ -59,7 +69,7 @@ describe("runCli", () => {
     const exitCode = await runCli(["node", "aidrift", "--version"], test.io);
 
     expect(exitCode).toBe(0);
-    expect(test.stdout.trim()).toBe("0.0.0");
+    expect(test.stdout.trim()).toBe("0.9.0-beta.1");
     expect(test.stderr).toBe("");
   });
 
@@ -72,15 +82,15 @@ describe("runCli", () => {
     expect(test.stderr).toContain("unknown command");
   });
 
-  it("prints bootstrap status for no command and resolves global options", async () => {
+  it("prints current help when global options are provided without a command", async () => {
     const test = createTestIo();
 
     const exitCode = await runCli(["node", "aidrift", "--debug", "--no-color"], test.io);
 
     expect(exitCode).toBe(0);
-    expect(test.stdout).toContain("CLI foundation initialized");
-    expect(test.stdout).toContain("Log level: debug");
-    expect(test.stdout).toContain("Color: disabled");
+    expect(test.stdout).toContain("Usage: aidrift");
+    expect(test.stdout).toContain("check [options]");
+    expect(test.stdout).not.toContain("implemented in later phases");
   });
 
   it("validates a manifest from --config", async () => {
@@ -93,6 +103,19 @@ describe("runCli", () => {
 
     expect(exitCode).toBe(0);
     expect(test.stdout).toContain("Manifest is valid");
+    expect(test.stderr).toBe("");
+  });
+
+  it("suppresses successful command output in quiet mode", async () => {
+    const test = createTestIo();
+
+    const exitCode = await runCli(
+      ["node", "aidrift", "--quiet", "--config", validManifestPath, "validate"],
+      test.io,
+    );
+
+    expect(exitCode).toBe(0);
+    expect(test.stdout).toBe("");
     expect(test.stderr).toBe("");
   });
 

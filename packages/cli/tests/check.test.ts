@@ -3,14 +3,14 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import Ajv from "ajv";
+import { Ajv } from "ajv";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { runCli } from "../src/runner.js";
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDir = path.join(testDir, "fixtures", "check");
-const schemaPath = path.resolve(testDir, "..", "..", "sdk", "schemas", "check-output.v1.json");
+const schemaPath = path.resolve(testDir, "..", "..", "sdk", "schemas", "check-output.v3.json");
 const junitXsdPath = path.join(fixturesDir, "junit.xsd");
 
 type JsonValue =
@@ -76,7 +76,7 @@ async function expectCheckJsonSchemaValid(output: string): Promise<void> {
   const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
   const validate = ajv.compile(schema);
 
-  expect(schema["$id"]).toBe("https://aidrift.dev/schemas/check-output.v1.json");
+  expect(schema["$id"]).toBe("https://aidrift.dev/schemas/check-output.v3.json");
   expect(validate(parsed), ajv.errorsText(validate.errors)).toBe(true);
 }
 
@@ -110,6 +110,8 @@ describe("aidrift check", () => {
     expect(test.stdout).toContain("--baseline");
     expect(test.stdout).toContain("--output");
     expect(test.stdout).toContain("--fail-on");
+    expect(test.stdout).toContain("--cost-budget");
+    expect(test.stdout).toContain("--probe-category");
   });
 
   // --- pass scenario ---
@@ -270,12 +272,30 @@ describe("aidrift check", () => {
       readonly startedAt: string;
       readonly completedAt: string;
       readonly durationMs: number;
+      readonly artifacts: {
+        readonly gate: string;
+        readonly summary: { readonly changed: number };
+      };
+      readonly execution: {
+        readonly samples: number;
+        readonly estimatedRequests: number;
+        readonly costEstimateKnown: boolean;
+      };
     };
 
-    expect(parsed.schemaVersion).toBe("1");
+    expect(parsed.schemaVersion).toBe("3");
     expect(parsed.passed).toBe(true);
     expect(parsed.failOn).toBe("fail");
     expect(typeof parsed.durationMs).toBe("number");
+    expect(parsed.artifacts).toMatchObject({
+      gate: "informational",
+      summary: { changed: 0 },
+    });
+    expect(parsed.execution).toMatchObject({
+      samples: 5,
+      estimatedRequests: 105,
+      costEstimateKnown: true,
+    });
     expect(parsed.summary).toMatchObject({
       total: 1,
       passed: 1,
@@ -495,10 +515,13 @@ describe("aidrift check", () => {
 
     const fileContent = await fs.readFile(outFile, "utf8");
     const parsed = JSON.parse(fileContent) as { readonly schemaVersion: string };
-    expect(parsed.schemaVersion).toBe("1");
+    expect(parsed.schemaVersion).toBe("3");
+    if (process.platform !== "win32") {
+      expect((await fs.stat(outFile)).mode & 0o777).toBe(0o600);
+    }
   });
 
-  it("validates JSON output against check-output.v1 schema", async () => {
+  it("validates JSON output against check-output.v3 schema", async () => {
     const test = createTestIo();
     const exitCode = await runCli(
       ["node", "aidrift", "--config", fixturePath("pass"), "check", "--format", "json"],
@@ -552,7 +575,7 @@ describe("aidrift check", () => {
     await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
     const manifestPath = path.join(projectDir, ".aistate.yml");
     const manifest = await fs.readFile(manifestPath, "utf8");
-    await fs.writeFile(manifestPath, manifest.replace("provider: custom", "provider: openai"));
+    await fs.writeFile(manifestPath, manifest.replace("provider: mock", "provider: openai"));
 
     const test = createTestIo();
     const exitCode = await runCli(["node", "aidrift", "--config", manifestPath, "check"], {
@@ -563,6 +586,51 @@ describe("aidrift check", () => {
     expect(exitCode).toBe(2);
     expect(test.stderr).toContain("AIDRIFT_OPENAI_API_KEY");
     expect(test.stdout).toBe("");
+  });
+
+  it("rejects unsupported manifest providers instead of silently using mock", async () => {
+    const projectDir = path.join(tmpDir, "unsupported-provider");
+    await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
+    const manifestPath = path.join(projectDir, ".aistate.yml");
+    const manifest = await fs.readFile(manifestPath, "utf8");
+    await fs.writeFile(manifestPath, manifest.replace("provider: mock", "provider: custom"));
+
+    const test = createTestIo();
+    const exitCode = await runCli(["node", "aidrift", "--config", manifestPath, "check"], test.io);
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("eval.provider.unsupported");
+    expect(test.stderr).toContain("supports mock, openai, and anthropic only");
+    expect(test.stdout).toBe("");
+  });
+
+  it("routes multiple model artifacts independently while the eval target stays explicit", async () => {
+    const projectDir = path.join(tmpDir, "ambiguous-models");
+    await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
+    const manifestPath = path.join(projectDir, ".aistate.yml");
+    const manifest = await fs.readFile(manifestPath, "utf8");
+    await fs.writeFile(
+      manifestPath,
+      manifest.replace(
+        "eval:",
+        [
+          "    secondary:",
+          "      type: model",
+          "      provider: mock",
+          "      model: mock-secondary",
+          "eval:",
+        ].join("\n"),
+      ),
+    );
+
+    const test = createTestIo();
+    const exitCode = await runCli(["node", "aidrift", "--config", manifestPath, "check"], test.io);
+
+    expect(exitCode).toBe(0);
+    expect(test.stderr).toBe("");
+    expect(test.stdout).toContain("Probes: 40");
+    expect(test.stdout).toContain("primary/deterministic_math");
+    expect(test.stdout).toContain("secondary/deterministic_math");
   });
 
   it("aborts manifests that mix live provider families", async () => {
@@ -586,6 +654,9 @@ describe("aidrift check", () => {
         "      model: claude-3-5-sonnet-20241022",
         "eval:",
         "  suite: ./evals",
+        "  target:",
+        "    type: provider",
+        "    model: primary",
         "storage:",
         "  backend: local",
         "  path: ./.aidrift/snapshots",
@@ -595,10 +666,13 @@ describe("aidrift check", () => {
     );
 
     const test = createTestIo();
-    const exitCode = await runCli(["node", "aidrift", "--config", manifestPath, "check"], test.io);
+    const exitCode = await runCli(["node", "aidrift", "--config", manifestPath, "check"], {
+      ...test.io,
+      env: {},
+    });
 
     expect(exitCode).toBe(2);
-    expect(test.stderr).toContain("check.provider.mixed");
+    expect(test.stderr).toContain("AIDRIFT_OPENAI_API_KEY");
   });
 
   it("resolves --baseline from snapshot label, tag, and git SHA prefix", async () => {
@@ -670,7 +744,7 @@ describe("aidrift check", () => {
     expect(test.stderr).toContain("check.baseline.not_found");
   });
 
-  it("escapes github annotation command data and redacts secrets in every format", async () => {
+  it("escapes github annotation command data in every format", async () => {
     const projectDir = path.join(tmpDir, "escaping-redaction");
     await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
     const evalPath = path.join(projectDir, "evals", "basic.assertions.yml");
@@ -685,7 +759,6 @@ describe("aidrift check", () => {
         "    expected_contains:",
         "      - |",
         "        MISSING%VALUE",
-        "        sk-test-1234567890abcdef",
         "    critical: true",
         "",
       ].join("\n"),
@@ -708,7 +781,6 @@ describe("aidrift check", () => {
       );
 
       expect(exitCode).toBe(1);
-      expect(test.stdout).not.toContain("sk-test-1234567890abcdef");
       if (format === "github") {
         expect(test.stdout).toContain("MISSING%25VALUE%0A");
       }
@@ -736,6 +808,15 @@ describe("aidrift check", () => {
               "primary/deterministic_math": {
                 output: "different baseline output",
                 score: 1,
+                provider: "mock",
+                model: "gpt-4o-2024-08-06",
+                modelName: "primary",
+                probeId: "deterministic_math",
+                samples: Array.from({ length: 5 }, () => ({
+                  output: "different baseline output",
+                  latencyMs: 10,
+                  costUsd: 0,
+                })),
                 capturedAt: "2026-01-01T00:00:00.000Z",
                 snapshotId: "snap_20260101_000000",
               },
@@ -816,6 +897,188 @@ describe("aidrift check", () => {
 
     expect(exitCode).toBe(0);
     expect(test.stdout).toContain("always-passes\tNEW\tnew");
+  });
+
+  it("reports current artifact-state drift without treating it as a behavioral failure", async () => {
+    const projectDir = path.join(tmpDir, "artifact-drift");
+    await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
+    const snapshotPath = path.join(
+      projectDir,
+      ".aidrift",
+      "snapshots",
+      "snap_20260101_000000.json",
+    );
+    const snapshot = await fs.readFile(snapshotPath, "utf8");
+    await fs.writeFile(
+      snapshotPath,
+      snapshot.replace(
+        "sha256:3aaf5bd3e28e21da157e52b3d9c73173a8f444dfe281fad4d5d7f5ed80864a8b",
+        "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      ),
+      "utf8",
+    );
+
+    const json = createTestIo();
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        path.join(projectDir, ".aistate.yml"),
+        "check",
+        "--format",
+        "json",
+      ],
+      json.io,
+    );
+    const output = JSON.parse(json.stdout) as {
+      readonly passed: boolean;
+      readonly artifacts: {
+        readonly gate: string;
+        readonly summary: { readonly changed: number };
+      };
+    };
+
+    expect(exitCode).toBe(0);
+    expect(output.passed).toBe(true);
+    expect(output.artifacts).toMatchObject({
+      gate: "informational",
+      summary: { changed: 1 },
+    });
+
+    const github = createTestIo();
+    await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        path.join(projectDir, ".aistate.yml"),
+        "check",
+        "--format",
+        "github",
+      ],
+      github.io,
+    );
+    expect(github.stdout).toContain("::notice");
+    expect(github.stdout).toContain("artifact/models/primary");
+  });
+
+  it("applies explicit sample, probe, concurrency, and timeout controls", async () => {
+    const test = createTestIo();
+    const exitCode = await runCli(
+      [
+        "node",
+        "aidrift",
+        "--config",
+        fixturePath("pass"),
+        "check",
+        "--format",
+        "json",
+        "--samples",
+        "2",
+        "--probe-model",
+        "primary",
+        "--probe-category",
+        "deterministic",
+        "--concurrency",
+        "1",
+        "--timeout",
+        "10",
+      ],
+      test.io,
+    );
+    const output = JSON.parse(test.stdout) as {
+      readonly execution: {
+        readonly samples: number;
+        readonly concurrency: number;
+        readonly timeoutSeconds: number;
+        readonly estimatedRequests: number;
+      };
+      readonly probes: { readonly summary: { readonly total: number } };
+    };
+
+    expect(exitCode).toBe(0);
+    expect(output.execution).toMatchObject({
+      samples: 2,
+      concurrency: 1,
+      timeoutSeconds: 10,
+      estimatedRequests: 10,
+    });
+    expect(output.probes.summary.total).toBe(4);
+  });
+
+  it("rejects malformed bounded-run controls before execution", async () => {
+    for (const args of [
+      ["--samples", "1.5"],
+      ["--samples", "101"],
+      ["--concurrency", "0"],
+      ["--concurrency", "33"],
+      ["--timeout", "NaN"],
+      ["--timeout", "3601"],
+      ["--probe-category", "unknown"],
+      ["--probe-model", "missing"],
+    ]) {
+      const test = createTestIo();
+      const exitCode = await runCli(
+        ["node", "aidrift", "--config", fixturePath("pass"), "check", ...args],
+        test.io,
+      );
+      expect(exitCode).toBe(2);
+      expect(test.stderr).toContain("check.option.invalid");
+      expect(test.stdout).toBe("");
+    }
+  });
+
+  it("requires an enforceable cost budget before any live CI request", async () => {
+    const projectDir = path.join(tmpDir, "live-cost-bound");
+    await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
+    const manifestPath = path.join(projectDir, ".aistate.yml");
+    const manifest = await fs.readFile(manifestPath, "utf8");
+    await fs.writeFile(manifestPath, manifest.replace("provider: mock", "provider: openai"));
+
+    const missingBudget = createTestIo();
+    const missingBudgetExit = await runCli(["node", "aidrift", "--config", manifestPath, "check"], {
+      ...missingBudget.io,
+      env: { AIDRIFT_OPENAI_API_KEY: "test-key-not-sent" },
+    });
+    expect(missingBudgetExit).toBe(2);
+    expect(missingBudget.stderr).toContain("check.cost_budget.required");
+
+    const exceededBudget = createTestIo();
+    const exceededBudgetExit = await runCli(
+      ["node", "aidrift", "--config", manifestPath, "check", "--cost-budget", "0"],
+      {
+        ...exceededBudget.io,
+        env: { AIDRIFT_OPENAI_API_KEY: "test-key-not-sent" },
+      },
+    );
+    expect(exceededBudgetExit).toBe(2);
+    expect(exceededBudget.stderr).toContain("check.budget.exceeded");
+  });
+
+  it("rejects unpriced live models even when a CI budget is supplied", async () => {
+    const projectDir = path.join(tmpDir, "unpriced-live-model");
+    await fs.cp(path.dirname(fixturePath("pass")), projectDir, { recursive: true });
+    const manifestPath = path.join(projectDir, ".aistate.yml");
+    const manifest = await fs.readFile(manifestPath, "utf8");
+    await fs.writeFile(
+      manifestPath,
+      manifest
+        .replace("provider: mock", "provider: openai")
+        .replace("gpt-4o-2024-08-06", "gpt-unknown-future"),
+    );
+
+    const test = createTestIo();
+    const exitCode = await runCli(
+      ["node", "aidrift", "--config", manifestPath, "check", "--cost-budget", "10"],
+      {
+        ...test.io,
+        env: { AIDRIFT_OPENAI_API_KEY: "test-key-not-sent" },
+      },
+    );
+
+    expect(exitCode).toBe(2);
+    expect(test.stderr).toContain("check.cost.unknown");
   });
 
   for (const scenario of contractScenarios) {

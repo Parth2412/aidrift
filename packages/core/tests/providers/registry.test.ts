@@ -21,7 +21,7 @@ describe("resolveProbeProvider", () => {
   it("returns an anthropic-id provider for the anthropic id when env is set", () => {
     const provider = resolveProbeProvider({
       providerId: "anthropic",
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       env: { AIDRIFT_ANTHROPIC_API_KEY: "sk-ant-test" },
     });
     expect(provider.id).toBe("anthropic");

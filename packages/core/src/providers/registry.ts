@@ -18,6 +18,7 @@ export interface ResolveProbeProviderOptions {
   readonly baseUrl?: string;
   readonly timeoutMs?: number;
   readonly systemPrompt?: string;
+  readonly parameters?: Readonly<Record<string, unknown>>;
 }
 
 export function resolveProbeProvider(options: ResolveProbeProviderOptions): EvalProvider {
@@ -72,6 +73,8 @@ function assignLiveOptions<
     readonly fetch?: typeof globalThis.fetch;
     readonly baseUrl?: string;
     readonly timeoutMs?: number;
+    readonly systemPrompt?: string;
+    readonly parameters?: Readonly<Record<string, unknown>>;
   },
 >(target: T, options: ResolveProbeProviderOptions): T {
   let next = target;
@@ -89,6 +92,12 @@ function assignLiveOptions<
   }
   if (options.timeoutMs !== undefined) {
     next = { ...next, timeoutMs: options.timeoutMs };
+  }
+  if (options.systemPrompt !== undefined) {
+    next = { ...next, systemPrompt: options.systemPrompt };
+  }
+  if (options.parameters !== undefined) {
+    next = { ...next, parameters: options.parameters };
   }
   return next;
 }

@@ -1,7 +1,7 @@
 import { Command } from "commander";
 
-import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@aidrift/core";
-import { resolveAIDriftConfig } from "@aidrift/core";
+import type { AIDriftEnv, PartialAIDriftConfig, WritableStreamLike } from "@zettacore/aidrift-core";
+import { resolveAIDriftConfig } from "@zettacore/aidrift-core";
 
 import { registerCheckCommand } from "./commands/check.js";
 import { registerDiffCommand } from "./commands/diff.js";
@@ -14,7 +14,7 @@ import { registerValidateCommand } from "./commands/validate.js";
 import { globalOptionsToConfig, type GlobalCliOptions } from "./config/cli-options.js";
 
 export const CLI_NAME = "aidrift";
-export const CLI_VERSION = "0.0.0";
+export const CLI_VERSION = "0.9.0-beta.1";
 
 export interface CliProgramIO {
   readonly stdout: WritableStreamLike;
@@ -48,23 +48,9 @@ export function createCliProgram(options: CreateCliProgramOptions): Command {
     .option("--debug", "Debug output with secrets redacted")
     .option("-q, --quiet", "Suppress non-error output")
     .option("--no-color", "Disable colored output")
-    .option("-f, --format <fmt>", "Output format: text, json, yaml", "text")
+    .option("-f, --format <fmt>", "Output format (when supported by the command)")
     .action(() => {
-      const config = resolveConfigFromProgram(program, options);
-      const colorStatus = config.color ? "enabled" : "disabled";
-
-      options.io.stdout.write(`AIDRIFT ${version}
-
-Terraform for AI behavior.
-
-Bootstrap status:
-  CLI foundation initialized.
-  Output format: ${config.format}
-  Log level: ${config.logLevel}
-  Color: ${colorStatus}
-
-Product commands are implemented in later phases.
-`);
+      program.outputHelp();
     });
 
   registerCheckCommand(program, {
@@ -78,9 +64,18 @@ Product commands are implemented in later phases.
   });
 
   registerInitCommand(program, { io: options.io });
-  registerSnapshotCommand(program, { io: options.io });
-  registerHistoryCommand(program, { io: options.io });
-  registerDiffCommand(program, { io: options.io });
+  registerSnapshotCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
+  registerHistoryCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
+  registerDiffCommand(program, {
+    io: options.io,
+    env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,
+  });
   registerPlanCommand(program, {
     io: options.io,
     env: options.env as unknown as Readonly<Record<string, string | undefined>> | undefined,

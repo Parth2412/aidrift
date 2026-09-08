@@ -72,11 +72,44 @@ export type AssertionStatus = "PASS" | "WARN" | "FAIL" | "NEW";
 
 export interface AssertionBaseline {
   readonly score: number;
+  readonly scores: readonly number[];
   readonly capturedAt: string;
   readonly snapshotId?: string | undefined;
 }
 
 export type AssertionBaselineMap = Readonly<Record<string, AssertionBaseline>>;
+
+export interface AssertionSampleResult {
+  readonly sampleIndex: number;
+  readonly score: number;
+  readonly output: string;
+  readonly latencyMs: number;
+  readonly costUsd?: number | undefined;
+  readonly explanation: string;
+  readonly expected: string;
+  readonly actual: string;
+}
+
+export interface AssertionStatisticalEvidence {
+  readonly method: "fisher_exact" | "welch_t";
+  readonly sampleCount: number;
+  readonly baselineSampleCount: number;
+  readonly standardDeviation: number;
+  readonly baselineStandardDeviation: number;
+  readonly pValue: number;
+  readonly significanceLevel: number;
+  readonly confidenceLevel: number;
+  readonly confidenceInterval: readonly [number, number];
+  readonly significant: boolean;
+}
+
+export interface EvalExecutionTarget {
+  readonly type: "provider";
+  readonly providerId: string;
+  readonly modelName: string;
+  readonly model: string;
+  readonly promptNames: readonly string[];
+}
 
 export interface AssertionEvalResult {
   readonly assertionId: string;
@@ -87,6 +120,10 @@ export interface AssertionEvalResult {
   readonly delta?: number | undefined;
   readonly providerId: string;
   readonly latencyMs: number;
+  readonly costUsd: number;
+  readonly output: string;
+  readonly samples: readonly AssertionSampleResult[];
+  readonly statistics?: AssertionStatisticalEvidence | undefined;
   readonly tags: readonly string[];
   readonly critical: boolean;
   readonly explanation: string;
@@ -112,6 +149,11 @@ export interface PlanRunResult {
   readonly completedAt: string;
   readonly durationMs: number;
   readonly dryRun: boolean;
+  readonly requestedSamples: number;
+  readonly significanceLevel: number;
+  readonly totalCostUsd: number;
+  readonly unknownCostSamples: number;
+  readonly executionTarget?: EvalExecutionTarget | undefined;
   readonly results: readonly AssertionEvalResult[];
   readonly summary: PlanRunSummary;
   readonly hasRegressions: boolean;

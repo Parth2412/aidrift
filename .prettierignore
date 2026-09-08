@@ -5,3 +5,5 @@ node_modules
 .turbo
 pnpm-lock.yaml
 *.tgz
+.agents
+skills-lock.json

@@ -24,6 +24,8 @@ export interface AIDriftEnv {
   readonly AIDRIFT_CONFIG?: string | undefined;
   readonly AIDRIFT_FORMAT?: string | undefined;
   readonly AIDRIFT_LOG_LEVEL?: string | undefined;
+  readonly AIDRIFT_OPENAI_API_KEY?: string | undefined;
+  readonly AIDRIFT_ANTHROPIC_API_KEY?: string | undefined;
   readonly NO_COLOR?: string | undefined;
 }
 

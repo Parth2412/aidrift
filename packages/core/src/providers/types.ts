@@ -3,6 +3,7 @@ export interface ProviderGenerateRequest {
   readonly assertionId?: string | undefined;
   readonly probeId?: string | undefined;
   readonly modelName?: string | undefined;
+  readonly signal?: AbortSignal | undefined;
 }
 
 export interface ProviderOutput {

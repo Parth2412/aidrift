@@ -65,6 +65,16 @@ describe("hashFile", () => {
   it("throws AIDriftError when file does not exist", async () => {
     await expect(hashFile(path.join(tmpDir, "missing.txt"))).rejects.toThrow(AIDriftError);
   });
+
+  it("stops hashing after the configured byte ceiling", async () => {
+    const filePath = path.join(tmpDir, "bounded.bin");
+    await fs.writeFile(filePath, "12345", "utf8");
+
+    await expect(hashFile(filePath, 4)).rejects.toMatchObject({
+      code: "snapshot_hash_size_error",
+      exitCode: 2,
+    });
+  });
 });
 
 describe("HASH_PREFIX", () => {

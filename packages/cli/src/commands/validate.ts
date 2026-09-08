@@ -8,7 +8,7 @@ import {
   type ManifestValidationIssue,
   type ResolvedAIDriftConfig,
   type WritableStreamLike,
-} from "@aidrift/core";
+} from "@zettacore/aidrift-core";
 
 export interface RegisterValidateCommandOptions {
   readonly io: {

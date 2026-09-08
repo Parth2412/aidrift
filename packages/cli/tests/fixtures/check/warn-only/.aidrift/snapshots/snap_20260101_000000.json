@@ -3,11 +3,25 @@
   "id": "snap_20260101_000000",
   "timestamp": "2026-01-01T00:00:00.000Z",
   "manifestHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
-  "artifacts": {},
+  "artifacts": {
+    "models/primary": {
+      "kind": "model",
+      "hash": "sha256:3aaf5bd3e28e21da157e52b3d9c73173a8f444dfe281fad4d5d7f5ed80864a8b",
+      "provider": "mock",
+      "model": "gpt-4o-2024-08-06"
+    }
+  },
   "eval": {
     "baselines": {
       "will-warn": {
         "score": 1,
+        "samples": [
+          { "output": "baseline", "score": 1, "latencyMs": 1, "costUsd": 0 },
+          { "output": "baseline", "score": 1, "latencyMs": 1, "costUsd": 0 },
+          { "output": "baseline", "score": 1, "latencyMs": 1, "costUsd": 0 },
+          { "output": "baseline", "score": 1, "latencyMs": 1, "costUsd": 0 },
+          { "output": "baseline", "score": 1, "latencyMs": 1, "costUsd": 0 }
+        ],
         "capturedAt": "2026-01-01T00:00:00.000Z"
       }
     }

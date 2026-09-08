@@ -1,0 +1,9 @@
+export const MAX_EVAL_SAMPLES = 100;
+export const MAX_EVAL_CONCURRENCY = 32;
+export const MAX_EVAL_TIMEOUT_MS = 60 * 60 * 1_000;
+export const MAX_EVAL_EXECUTIONS = 100_000;
+export const MAX_PROVIDER_OUTPUT_BYTES = 5 * 1024 * 1024;
+export const MAX_RUN_OUTPUT_BYTES = 16 * 1024 * 1024;
+export const MAX_PROBE_MODELS = 100;
+export const MAX_PROBE_EXECUTIONS = 100_000;
+export const MAX_PROBE_CACHE_TTL_MINUTES = 30 * 24 * 60;

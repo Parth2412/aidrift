@@ -4,7 +4,7 @@ import { AIDriftError, ExitCode } from "../../src/errors.js";
 import { ProviderError } from "../../src/providers/errors.js";
 
 describe("ProviderError", () => {
-  it("preserves kind, providerId and exits with Failure code", () => {
+  it("preserves kind, providerId and exits with the non-regression config code", () => {
     const error = new ProviderError({
       kind: "rate_limit",
       providerId: "openai",
@@ -20,7 +20,7 @@ describe("ProviderError", () => {
     expect(error.retryAfterMs).toBe(5_000);
     expect(error.httpStatus).toBe(429);
     expect(error.code).toBe("provider.rate_limit");
-    expect(error.exitCode).toBe(ExitCode.Failure);
+    expect(error.exitCode).toBe(ExitCode.ConfigError);
   });
 
   it("redacts secrets from the human-facing message", () => {

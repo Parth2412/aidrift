@@ -21,7 +21,7 @@ function successBody(text: string): unknown {
     id: "msg_test",
     type: "message",
     role: "assistant",
-    model: "claude-3-5-haiku-latest",
+    model: "claude-haiku-4-5-20251001",
     content: [{ type: "text", text }],
     stop_reason: "end_turn",
     usage: { input_tokens: 10, output_tokens: 20 },
@@ -34,7 +34,7 @@ describe("createAnthropicProvider", () => {
 
     expect(() =>
       createAnthropicProvider({
-        model: "claude-3-5-haiku-latest",
+        model: "claude-haiku-4-5-20251001",
         env: {},
         fetch: fetchSpy as unknown as typeof globalThis.fetch,
       }),
@@ -47,7 +47,7 @@ describe("createAnthropicProvider", () => {
     const fetchSpy = vi.fn(async () => jsonResponse(successBody("hello world")));
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -57,7 +57,7 @@ describe("createAnthropicProvider", () => {
     expect(provider.id).toBe("anthropic");
     expect(output.content).toBe("hello world");
     expect(output.latencyMs).toBeGreaterThanOrEqual(0);
-    expect(output.costUsd).toBeCloseTo(10 * 0.8e-6 + 20 * 4.0e-6, 12);
+    expect(output.costUsd).toBeCloseTo(10 * 1e-6 + 20 * 5e-6, 12);
     expect(output.raw).toMatchObject({ id: "msg_test" });
   });
 
@@ -69,7 +69,7 @@ describe("createAnthropicProvider", () => {
     });
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -84,7 +84,7 @@ describe("createAnthropicProvider", () => {
     expect(headers.get("content-type")).toBe("application/json");
     const body = JSON.parse(String(captured?.init?.body)) as Record<string, unknown>;
     expect(body).toMatchObject({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       messages: [{ role: "user", content: "ping" }],
     });
     expect(body.system).toBeUndefined();
@@ -99,7 +99,7 @@ describe("createAnthropicProvider", () => {
     });
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       systemPrompt: "Be terse.",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
@@ -110,6 +110,85 @@ describe("createAnthropicProvider", () => {
     const body = JSON.parse(String(captured?.body)) as Record<string, unknown>;
     expect(body.system).toBe("Be terse.");
     expect(body.messages).toEqual([{ role: "user", content: "ping" }]);
+  });
+
+  it("applies supported model parameters to the request", async () => {
+    let captured: FetchInit | undefined;
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      parameters: { temperature: 0.2, top_p: 0.9, top_k: 20, max_tokens: 128 },
+      fetch: vi.fn(async (_url: FetchInput, init: FetchInit) => {
+        captured = init;
+        return jsonResponse(successBody("ok"));
+      }) as unknown as typeof globalThis.fetch,
+    });
+
+    await provider.generate({ input: "ping" });
+
+    expect(JSON.parse(String(captured?.body))).toMatchObject({
+      model: "claude-haiku-4-5-20251001",
+      temperature: 0.2,
+      top_p: 0.9,
+      top_k: 20,
+      max_tokens: 128,
+    });
+  });
+
+  it("rejects unsupported or out-of-range model parameters before fetch", () => {
+    const fetchSpy = vi.fn();
+    expect(() =>
+      createAnthropicProvider({
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test",
+        parameters: { top_p: 2 },
+        fetch: fetchSpy as unknown as typeof globalThis.fetch,
+      }),
+    ).toThrow(/top_p/u);
+    expect(() =>
+      createAnthropicProvider({
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test",
+        parameters: { seed: 42 },
+        fetch: fetchSpy as unknown as typeof globalThis.fetch,
+      }),
+    ).toThrow(/seed/u);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("rejects unsafe construction values and oversized stop collections", () => {
+    const fetchSpy = vi.fn();
+    for (const options of [
+      { model: "", apiKey: "sk-ant-test" },
+      { model: "claude-haiku-4-5-20251001", apiKey: "" },
+      {
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test\ninjected",
+      },
+      {
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test",
+        baseUrl: "ftp://example.com",
+      },
+      {
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test",
+        apiVersion: "latest",
+      },
+      {
+        model: "claude-haiku-4-5-20251001",
+        apiKey: "sk-ant-test",
+        parameters: { stop_sequences: ["1", "2", "3", "4", "5"] },
+      },
+    ]) {
+      expect(() =>
+        createAnthropicProvider({
+          ...options,
+          fetch: fetchSpy as unknown as typeof globalThis.fetch,
+        }),
+      ).toThrow(ProviderError);
+    }
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it("joins multiple text content blocks and ignores tool_use blocks for content", async () => {
@@ -125,7 +204,7 @@ describe("createAnthropicProvider", () => {
     );
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -139,7 +218,7 @@ describe("createAnthropicProvider", () => {
       jsonResponse({ error: { message: "Invalid API key" } }, { status: 401 }),
     );
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -158,7 +237,7 @@ describe("createAnthropicProvider", () => {
       ),
     );
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -174,12 +253,26 @@ describe("createAnthropicProvider", () => {
     expect(captured?.retryAfterMs).toBe(7_000);
   });
 
+  it("rejects provider responses whose declared size exceeds the safety limit", async () => {
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      fetch: vi.fn(async () =>
+        jsonResponse(successBody("ok"), { headers: { "content-length": "6000000" } }),
+      ) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
   it("classifies a 503 response as server_error", async () => {
     const fetchSpy = vi.fn(async () =>
       jsonResponse({ error: { message: "boom" } }, { status: 503 }),
     );
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -187,6 +280,37 @@ describe("createAnthropicProvider", () => {
     await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
       kind: "server_error",
       httpStatus: 503,
+    });
+  });
+
+  it("classifies other 4xx responses as bad_request", async () => {
+    const fetchSpy = vi.fn(async () =>
+      jsonResponse({ error: { message: "Unknown model" } }, { status: 404 }),
+    );
+    const provider = createAnthropicProvider({
+      model: "claude-does-not-exist",
+      apiKey: "sk-ant-test",
+      fetch: fetchSpy as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "bad_request",
+      httpStatus: 404,
+    });
+  });
+
+  it.each([
+    ["invalid JSON", new Response("{", { status: 200 })],
+    ["missing content", jsonResponse({ usage: {} })],
+  ])("classifies a successful response with %s as invalid_response", async (_label, response) => {
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      fetch: vi.fn(async () => response) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "invalid_response",
     });
   });
 
@@ -205,7 +329,7 @@ describe("createAnthropicProvider", () => {
     });
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       timeoutMs: 5,
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
@@ -216,13 +340,51 @@ describe("createAnthropicProvider", () => {
     });
   });
 
+  it("keeps the timeout active while reading the response body", async () => {
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      timeoutMs: 5,
+      fetch: vi.fn(async (_url: FetchInput, init: FetchInit) => {
+        const signal = init?.signal;
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode('{"content":['));
+              signal?.addEventListener("abort", () =>
+                controller.error(new DOMException("aborted", "AbortError")),
+              );
+            },
+          }),
+          { status: 200 },
+        );
+      }) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({ kind: "timeout" });
+  });
+
+  it("rejects invalid token usage instead of producing negative cost evidence", async () => {
+    const response = successBody("hi") as Record<string, unknown>;
+    response.usage = { input_tokens: 10, output_tokens: -1 };
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      fetch: vi.fn(async () => jsonResponse(response)) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "hi" })).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
   it("classifies a fetch rejection as network_error", async () => {
     const fetchSpy = vi.fn(async () => {
       throw new TypeError("fetch failed");
     });
 
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-test",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -237,7 +399,7 @@ describe("createAnthropicProvider", () => {
       jsonResponse({ error: { message: "Invalid key sk-leakedabcdefghi" } }, { status: 401 }),
     );
     const provider = createAnthropicProvider({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       apiKey: "sk-ant-secretvalue123",
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
@@ -268,5 +430,17 @@ describe("createAnthropicProvider", () => {
 
     const output = await provider.generate({ input: "hi" });
     expect(output.costUsd).toBeUndefined();
+  });
+
+  it("returns undefined cost when provider usage evidence is missing", async () => {
+    const response = successBody("hi") as Record<string, unknown>;
+    delete response.usage;
+    const provider = createAnthropicProvider({
+      model: "claude-haiku-4-5-20251001",
+      apiKey: "sk-ant-test",
+      fetch: vi.fn(async () => jsonResponse(response)) as unknown as typeof globalThis.fetch,
+    });
+
+    expect((await provider.generate({ input: "hi" })).costUsd).toBeUndefined();
   });
 });
