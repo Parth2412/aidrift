@@ -1,0 +1,95 @@
+name: Publish npm
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish verified packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: npm-production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout immutable release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.28.2
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Verify release source and toolchain
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          npm --version
+
+      - name: Install without dependency lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Validate source and generated contracts
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          pnpm format:check
+          pnpm audit:dependencies
+          pnpm audit:licenses
+          pnpm lint
+          pnpm typecheck
+          pnpm test
+          pnpm test:coverage
+          pnpm --filter @zettacore/aidrift-core test:eval-coverage
+          pnpm --filter @zettacore/aidrift test:check-coverage
+          pnpm build
+          node scripts/verify-release-packages.mjs --tag "$RELEASE_TAG"
+          pnpm docs:check
+          pnpm test:built-cli
+          pnpm test:built-action
+          pnpm test:packed
+          git diff --exit-code
+          test -z "$(git ls-files --others --exclude-standard packages/action/dist)"
+
+      - name: Build immutable package tarballs and CycloneDX SBOM
+        run: pnpm release:artifacts
+
+      - name: Retain release SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: aidrift-sbom-${{ github.event.release.tag_name }}
+          path: .release/sbom/aidrift.cdx.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish dependency packages with provenance
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |
+          npm publish .release/packages/zettacore-aidrift-core-*.tgz --access public --tag next
+          npm publish .release/packages/zettacore-aidrift-sdk-*.tgz --access public --tag next
+
+      - name: Publish CLI with provenance
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npm publish .release/packages/zettacore-aidrift-[0-9]*.tgz --access public --tag next
