@@ -8,7 +8,6 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ### To Do
 
-- [ ] Confirm a working private Code of Conduct reporting contact before active beta recruitment.
 - [ ] Configure the protected `provider-smoke` environment and scoped live-provider credentials.
 - [ ] Recruit at least 10 external beta users, capture at least 3 actionable reports, dogfood one consent-safe public project, classify false positives/missed regressions, and complete the 14-day observation gate begun on 2026-09-09.
 
@@ -29,6 +28,7 @@ Use this file only for local implementation notes that are too detailed for the 
 - [x] Pass all six remote platform cells plus CI and security checks on exact release commit `252a01588a694088d47539e9852bfcef08aaf838`.
 - [x] Publish signed GitHub prerelease `v0.9.0-beta.1`, all three npm packages under `next` with OIDC provenance, and the release-generated CycloneDX SBOM.
 - [x] Verify a credential-free registry install, package signatures/attestations, imports, and the complete offline first-run workflow.
+- [x] Publish the owner-approved private Code of Conduct reporting contact before external beta recruitment.
 - [x] Prepare beta limitations, structured feedback/bug intake, evidence ledger, draft release notes, and owner publication/incident runbook.
 - [x] Complete M3 test/security gates: zero dependency advisories, package-wide coverage, statistical property tests, SDK contracts, modern redaction, Gitleaks, Dependency Review, CodeQL, CycloneDX SBOM, SHA-pinned Actions, and spend-bounded protected provider smokes.
 - [x] Complete M2 npm release engineering: coordinated prerelease metadata, strict tarball allowlists and budgets, installed-tarball smoke tests, Node 24.20.0/npm 11.5.1+ release contract, and a protected OIDC/provenance publish workflow.
@@ -85,7 +85,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ## Sprint Deliverable
 
-The public beta has a clean-install five-minute example, all six supported OS/runtime checks, signed release notes/tag, OIDC-proven npm packages, an SBOM, protected repository settings, and a verified anonymous registry workflow. Live-provider credentials, a private conduct contact, and external beta evidence remain deliberately open.
+The public beta has a clean-install five-minute example, all six supported OS/runtime checks, signed release notes/tag, OIDC-proven npm packages, an SBOM, protected repository settings, a private conduct channel, and a verified anonymous registry workflow. Live-provider credentials and external beta evidence remain deliberately open.
 
 ## Notes
 
