@@ -9,6 +9,7 @@ The project follows Semantic Versioning.
 ### Documentation
 
 - Updated beta and security guidance to point directly to the enabled private vulnerability reporting channel.
+- Added the owner-approved private conduct-reporting contact required before external beta recruitment.
 
 ## [0.9.0-beta.1] - 2026-09-09
 

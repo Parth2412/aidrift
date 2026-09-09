@@ -24,7 +24,7 @@ This code applies in repository issues, pull requests, discussions, release/beta
 
 Project maintainers may edit or remove contributions and may temporarily or permanently restrict participation when conduct is inappropriate, threatening, offensive, or harmful. Enforcement decisions should explain their rationale while protecting reporter privacy.
 
-Report conduct concerns privately to the repository owner through a private contact method listed on the [`@Parth2412` GitHub profile](https://github.com/Parth2412). Do not put sensitive conduct reports into a public issue. If no private maintainer channel is available, public beta recruitment must remain paused until the owner establishes one; violations of GitHub's policies can also be reported through [GitHub Support](https://support.github.com/contact/report-content).
+Report conduct concerns privately to the repository owner at [kaloliya@gmail.com](mailto:kaloliya@gmail.com), with `AIDrift conduct report` in the subject line. Do not put sensitive conduct reports into a public issue. Violations of GitHub's policies can also be reported through [GitHub Support](https://support.github.com/contact/report-content).
 
 All reports will be reviewed promptly and handled as confidentially as practical. A maintainer with a conflict of interest must recuse themselves.
 
