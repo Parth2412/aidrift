@@ -2,7 +2,7 @@
 
 ## Release status
 
-`0.9.0-beta.0` is a locally verified bootstrap release candidate. It is not an available npm or GitHub Action release until the protected owner publication steps succeed. Do not report an installation as successful unless it came from the public registry or a locally generated release tarball.
+`0.9.0-beta.1` is the first announced public beta. Install the CLI from npm with `@zettacore/aidrift@next`, or pin the GitHub Action to `Parth2412/aidrift/packages/action@v0.9.0-beta.1`. The unannounced `0.9.0-beta.0` registry bootstrap exists only to establish trusted publishing for the new package names.
 
 ## Supported beta boundary
 
