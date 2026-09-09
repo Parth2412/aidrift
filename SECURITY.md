@@ -38,4 +38,4 @@ Default CI is hermetic and receives no model-provider secrets. The separate `pro
 
 ## Reporting
 
-Use GitHub private vulnerability reporting after the owner enables it under **Settings → Security → Private vulnerability reporting**. Until that remote control is enabled, report issues privately to the repository owner and do not open a public issue containing exploit or credential details.
+Use [GitHub private vulnerability reporting](https://github.com/Parth2412/aidrift/security/advisories/new). Do not open a public issue containing exploit details, credentials, private prompts/model output, customer data, or other sensitive evidence.

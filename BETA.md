@@ -31,6 +31,6 @@
 
 Use the **Beta feedback** GitHub issue form for completed runs, confusing output, missed regressions, and false positives. Use **Bug report** for a reproducible defect. Before posting, remove prompts, model outputs, credentials, customer data, filesystem paths, and proprietary configuration that should not be public.
 
-Security vulnerabilities must not be filed as public issues. Follow [SECURITY.md](SECURITY.md), using GitHub private vulnerability reporting after the owner enables it.
+Security vulnerabilities must not be filed as public issues. Follow [SECURITY.md](SECURITY.md) and use the repository's enabled private vulnerability reporting channel.
 
 Maintainers record aggregate outcomes in `aidrift-docs/BETA-FEEDBACK-LOG.md`. A stable release requires the documented beta exit gates; elapsed time and user counts are never inferred from automated test runs.
