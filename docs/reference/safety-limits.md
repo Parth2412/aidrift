@@ -1,6 +1,6 @@
 # AIDrift Safety and Resource Limits
 
-AIDRIFT rejects inputs and workloads that exceed these ceilings with exit `2`. The limits are part of the `0.9.0-beta.0` runtime safety boundary; they are not capacity recommendations. Split unusually large projects or narrow the selected artifacts, assertions, models, and probes instead of relying on a partial result.
+AIDRIFT rejects inputs and workloads that exceed these ceilings with exit `2`. The limits are part of the `0.9.0-beta.1` runtime safety boundary; they are not capacity recommendations. Split unusually large projects or narrow the selected artifacts, assertions, models, and probes instead of relying on a partial result.
 
 ## Behavioral execution
 
