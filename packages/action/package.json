@@ -1,6 +1,6 @@
 {
   "name": "@zettacore/aidrift-action",
-  "version": "0.9.0-beta.0",
+  "version": "0.9.0-beta.1",
   "private": true,
   "description": "GitHub Action wrapper for AIDrift by ZettaCore checks.",
   "license": "Apache-2.0",

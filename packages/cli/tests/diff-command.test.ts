@@ -339,6 +339,6 @@ function richSnapshot(id: string, changed: boolean): Snapshot {
           }
         : {}),
     },
-    metadata: { cliVersion: "0.9.0-beta.0", nodeVersion: process.version, os: "linux" },
+    metadata: { cliVersion: "0.9.0-beta.1", nodeVersion: process.version, os: "linux" },
   };
 }

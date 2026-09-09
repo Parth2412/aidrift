@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.0
+      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
         with:
           samples: "5"
           timeout: "120"
@@ -83,7 +83,7 @@ For a live-provider manifest, add the required provider credential through `env`
 Install the exact prerelease and preserve exit status:
 
 ```bash
-npm install --global @zettacore/aidrift@0.9.0-beta.0
+npm install --global @zettacore/aidrift@next
 aidrift check --format junit --output aidrift-results.xml
 ```
 
