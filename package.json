@@ -35,7 +35,7 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
+    "@types/node": "^26.4.1",
     "@vitest/coverage-v8": "4.1.11",
     "prettier": "^3.5.3",
     "turbo": "2.10.12",
