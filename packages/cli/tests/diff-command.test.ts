@@ -5,8 +5,7 @@ import path from "node:path";
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 
 import { runCli } from "../src/runner.js";
-import type { Snapshot } from "@aidrift/core";
-import { SNAPSHOT_SCHEMA_VERSION } from "@aidrift/core";
+import { hashString, SNAPSHOT_SCHEMA_VERSION, type Snapshot } from "@zettacore/aidrift-core";
 
 async function writeSnap(dir: string, snap: Snapshot): Promise<void> {
   const snapsDir = path.join(dir, ".aidrift", "snapshots");
@@ -22,7 +21,7 @@ eval:
   suite: ./evals
 storage:
   backend: local
-  path: .aidrift
+  path: ./.aidrift/snapshots
 `;
 
 describe("aidrift diff", () => {
@@ -37,7 +36,7 @@ describe("aidrift diff", () => {
     await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
-  it("exits 1 with error when fewer than 2 snapshots exist", async () => {
+  it("compares the latest snapshot with current state when one snapshot exists", async () => {
     const stdout = {
       chunks: [] as string[],
       write(s: string) {
@@ -55,7 +54,7 @@ describe("aidrift diff", () => {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       id: "snap_20260426_120000",
       timestamp: new Date().toISOString(),
-      manifestHash: "sha256:abc",
+      manifestHash: hashString("manifest"),
       artifacts: {},
       metadata: { cliVersion: "0.0.0", nodeVersion: process.version, os: "linux" },
     });
@@ -65,8 +64,8 @@ describe("aidrift diff", () => {
       { stdout, stderr },
     );
 
-    // Only 1 snapshot, so diff with prev fails
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(0);
+    expect(stdout.chunks.join("")).toContain("current");
   });
 
   it("exits 0 when diffing two snapshots with no changes", async () => {
@@ -74,11 +73,11 @@ describe("aidrift diff", () => {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       id: "snap_20260426_110000",
       timestamp: new Date(Date.now() - 60000).toISOString(),
-      manifestHash: "sha256:abc",
+      manifestHash: hashString("manifest"),
       artifacts: {
         "models/primary": {
           kind: "model",
-          hash: "sha256:def",
+          hash: hashString("model"),
           provider: "openai",
           model: "gpt-4o",
           parameters: { temperature: 0.2 },
@@ -131,11 +130,11 @@ describe("aidrift diff", () => {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       id: "snap_20260426_110000",
       timestamp: new Date(Date.now() - 60000).toISOString(),
-      manifestHash: "sha256:abc",
+      manifestHash: hashString("manifest"),
       artifacts: {
         "models/primary": {
           kind: "model",
-          hash: "sha256:old",
+          hash: hashString("model-old"),
           provider: "openai",
           model: "gpt-4o",
           parameters: { temperature: 0.2 },
@@ -150,7 +149,7 @@ describe("aidrift diff", () => {
       artifacts: {
         "models/primary": {
           kind: "model",
-          hash: "sha256:new",
+          hash: hashString("model-new"),
           provider: "openai",
           model: "gpt-4o",
           parameters: { temperature: 0.4 },
@@ -192,4 +191,154 @@ describe("aidrift diff", () => {
     const parsed = JSON.parse(stdout.chunks.join("")) as { changedCount: number };
     expect(parsed.changedCount).toBe(1);
   });
+
+  it("fails closed for an unsupported format and a missing baseline", async () => {
+    const unsupported = await executeDiff(tmpDir, ["--format", "html"]);
+
+    expect(unsupported.exitCode).toBe(2);
+    expect(unsupported.stderr).toContain("diff.format.unsupported");
+
+    const missing = await executeDiff(tmpDir, []);
+
+    expect(missing.exitCode).toBe(2);
+    expect(missing.stderr).toContain("diff.baseline.missing");
+  });
+
+  it("fails closed before a current-state diff can ignore a custom artifact", async () => {
+    await fs.writeFile(path.join(tmpDir, "policy.txt"), "policy\n", "utf8");
+    await fs.writeFile(
+      path.join(tmpDir, ".aistate.yml"),
+      `version: "1"
+name: unsupported-current-diff
+artifacts:
+  custom:
+    policy:
+      type: custom
+      path: ./policy.txt
+eval:
+  suite: ./evals
+storage:
+  backend: local
+  path: ./.aidrift/snapshots
+`,
+      "utf8",
+    );
+    await writeSnap(tmpDir, {
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      id: "snap_20260426_120000",
+      timestamp: new Date().toISOString(),
+      manifestHash: hashString("manifest"),
+      artifacts: {},
+      metadata: { cliVersion: "0.0.0", nodeVersion: process.version, os: "linux" },
+    });
+
+    const result = await executeDiff(tmpDir, []);
+
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain("manifest.runtime.unsupported");
+    expect(result.stderr).toContain("artifacts.custom");
+  });
+
+  it("renders detailed Markdown and grouped statistics", async () => {
+    const base = richSnapshot("snap_20260426_110000", false);
+    const current = richSnapshot("snap_20260426_120000", true);
+    await writeSnap(tmpDir, base);
+    await writeSnap(tmpDir, current);
+
+    const markdown = await executeDiff(tmpDir, [base.id, current.id, "--format", "markdown"]);
+    const text = await executeDiff(tmpDir, [base.id, current.id]);
+    const stats = await executeDiff(tmpDir, [
+      base.id,
+      current.id,
+      "--format",
+      "markdown",
+      "--stat",
+    ]);
+    const filtered = await executeDiff(tmpDir, [
+      base.id,
+      current.id,
+      "--format",
+      "json",
+      "--artifact",
+      "models/primary",
+    ]);
+
+    expect(markdown.exitCode).toBe(0);
+    expect(markdown.stdout).toContain("## AIDRIFT Diff");
+    expect(markdown.stdout).toContain("```diff");
+    expect(markdown.stdout).toContain("temperature");
+    expect(markdown.stdout).toContain("hash:");
+    expect(text.stdout).toContain("Diff: snap_20260426_110000 → snap_20260426_120000");
+    expect(text.stdout).toContain("~ modified  models/primary");
+    expect(stats.stdout).toContain("| Group | Changed | Added | Modified | Removed | Unchanged |");
+    expect(stats.stdout).toContain("| models |");
+    expect(JSON.parse(filtered.stdout)).toMatchObject({ changedCount: 1, addedCount: 0 });
+  });
+
+  it("rejects an artifact selector that matches nothing", async () => {
+    const base = richSnapshot("snap_20260426_110000", false);
+    const current = richSnapshot("snap_20260426_120000", true);
+    await writeSnap(tmpDir, base);
+    await writeSnap(tmpDir, current);
+
+    const result = await executeDiff(tmpDir, [base.id, current.id, "--artifact", "missing"]);
+
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toContain("diff.artifact.not_found");
+  });
 });
+
+async function executeDiff(
+  projectRoot: string,
+  args: readonly string[],
+): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  let stdout = "";
+  let stderr = "";
+  const exitCode = await runCli(
+    ["node", "aidrift", "diff", "-c", path.join(projectRoot, ".aistate.yml"), ...args],
+    {
+      stdout: { write: (chunk) => (stdout += chunk) },
+      stderr: { write: (chunk) => (stderr += chunk) },
+    },
+  );
+  return { exitCode, stdout, stderr };
+}
+
+function richSnapshot(id: string, changed: boolean): Snapshot {
+  return {
+    schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+    id,
+    timestamp: changed ? "2026-04-26T12:00:00.000Z" : "2026-04-26T11:00:00.000Z",
+    manifestHash: hashString(changed ? "manifest-new" : "manifest-old"),
+    artifacts: {
+      "models/primary": {
+        kind: "model",
+        hash: hashString(changed ? "model-new" : "model-old"),
+        provider: "mock",
+        model: changed ? "mock-v2" : "mock-v1",
+        parameters: { temperature: changed ? 0.8 : 0.2 },
+      },
+      "prompts/system": {
+        kind: "text",
+        hash: hashString(changed ? "new prompt\n" : "old prompt\n"),
+        content: changed ? "new prompt\n" : "old prompt\n",
+        contentType: "text",
+      },
+      "adapters/model": {
+        kind: "binary",
+        hash: hashString(changed ? "binary-new" : "binary-old"),
+      },
+      ...(changed
+        ? {
+            "tools/added": {
+              kind: "text" as const,
+              hash: hashString("added"),
+              content: "added",
+              contentType: "text" as const,
+            },
+          }
+        : {}),
+    },
+    metadata: { cliVersion: "0.9.0-beta.0", nodeVersion: process.version, os: "linux" },
+  };
+}

@@ -2,210 +2,100 @@
 
 ## When to Read This
 
-Read before: working on `aidrift check`, building the GitHub Action, creating CI templates, implementing output formatters (JUnit, GitHub annotations), or working on PR comment generation.
+Read before changing `aidrift check`, the GitHub Action, CI recipes, evidence formats, or PR comment generation.
 
----
+## Check Command
 
-## Check Command (`aidrift check`)
-
-Same as `aidrift plan` but with CI-appropriate behavior:
-
-- No interactive prompts
-- No color codes if not a TTY
-- Deterministic exit codes
-- Machine-readable output options
+`aidrift check` is the bounded, non-interactive CI gate. It resolves the selected snapshot baseline, reports current artifact state for context, runs the selected eval and provider-probe workload, and gates on behavioral evidence.
 
 ### Exit Codes
 
-| Code | Meaning                                                               | CI Result    |
-| ---- | --------------------------------------------------------------------- | ------------ |
-| `0`  | All assertions pass (or warn in non-strict mode)                      | Build passes |
-| `1`  | Behavioral regression detected                                        | Build fails  |
-| `2`  | Configuration error (missing manifest, invalid YAML, missing API key) | Build fails  |
+| Code | Meaning                                                 |
+| ---- | ------------------------------------------------------- |
+| `0`  | The configured behavioral gate passed                   |
+| `1`  | A regression crossed the configured `--fail-on` policy  |
+| `2`  | Configuration, input, budget, timeout, or runtime error |
 
-### Check Modes
+The only gate thresholds are `--fail-on fail` (default) and `--fail-on warn`. There is no `--mode`, `critical-only`, or `AIDRIFT_CHECK_MODE` contract.
 
-| Mode            | Flag                   | Behavior                                  |
-| --------------- | ---------------------- | ----------------------------------------- |
-| `strict`        | `--mode strict`        | Any regression OR warning fails           |
-| `warn`          | `--mode warn`          | Only regressions fail; warnings pass      |
-| `critical-only` | `--mode critical-only` | Only `critical: true` assertions can fail |
+### Evidence Formats
 
-Default: `strict` (override via `AIDRIFT_CHECK_MODE`)
+- `--format text`: human-readable terminal result.
+- `--format json`: check-output v3 evidence. Validate it with `packages/sdk/schemas/check-output.v3.json`.
+- `--format junit`: JUnit evidence for CI test-report consumers.
+- `--format github`: GitHub workflow-command annotations.
+- `--output <path>`: writes the selected evidence without changing the exit contract.
 
----
+The schema keeps artifact context, workload/time/cost bounds, target identity, sample counts, statistical evidence, and the final gate summary. Update the schema, validators, fixtures, Action parser, generated docs, and migration notes together when this contract changes.
 
-## Output Formatters
+## GitHub Action
 
-### Text (default)
+`packages/action/action.yml` runs the checked-in Node 24 bundle. It invokes the bundled CLI once, then derives annotations, JSON/JUnit artifacts, outputs, and an optional pull-request comment from the same evidence.
 
-Standard colored terminal output. Automatically disables colors when not a TTY.
+Input groups:
 
-### JSON (`--format json`)
+- Check selection: `manifest`, `baseline`, `fail-on`, `assertions`, `tags`, `samples`, `probe-model`, `probe-category`.
+- Bounds: `concurrency`, `timeout`, and mandatory `cost-budget` for live providers.
+- Action behavior: `comment-mode`, `github-token`, `upload-artifact`, `artifact-name`, `retention-days`.
 
-```json
-{
-  "status": "fail",
-  "assertions": [
-    {
-      "id": "safety_boundary",
-      "status": "fail",
-      "baseline_score": 1.0,
-      "current_score": 0.8,
-      "delta": -0.2,
-      "p_value": 0.003,
-      "details": "..."
-    }
-  ],
-  "summary": {
-    "passed": 4,
-    "warned": 1,
-    "failed": 1,
-    "new": 1
-  },
-  "cost_usd": 0.23,
-  "duration_ms": 42300
-}
-```
-
-### JUnit XML (`--format junit`)
-
-```xml
-<testsuites name="aidrift" tests="6" failures="1">
-  <testsuite name="my-ai-service" tests="6">
-    <testcase name="greeting_tone" time="5.2">
-    </testcase>
-    <testcase name="safety_boundary" time="8.1">
-      <failure message="Regression: 1.00 → 0.80 (-20.0%)">
-        Safety response rate dropped below threshold.
-      </failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-```
-
-Compatible with: Jenkins, CircleCI, Azure DevOps, GitHub Actions JUnit parsers.
-
-### GitHub Annotations (`--format github-annotations`)
-
-```
-::error file=prompts/system.md,line=3::AIDrift: safety_boundary regression (1.00 → 0.80)
-::warning file=prompts/system.md,line=3::AIDrift: tool_usage degraded (0.88 → 0.80)
-```
-
-Inline annotations appear on changed files in PR review.
-
----
-
-## GitHub Action (`packages/action/`)
-
-### action.yml Inputs
-
-| Input                | Required | Default  | Description                      |
-| -------------------- | -------- | -------- | -------------------------------- |
-| `openai_api_key`     | No       | —        | OpenAI API key (from secrets)    |
-| `anthropic_api_key`  | No       | —        | Anthropic API key (from secrets) |
-| `check_mode`         | No       | `strict` | Check mode                       |
-| `probe_providers`    | No       | `false`  | Run provider drift probes        |
-| `comment_on_pr`      | No       | `true`   | Post results as PR comment       |
-| `fail_on_regression` | No       | `true`   | Block merge on regression        |
-| `annotations`        | No       | `true`   | Inline code annotations          |
-| `samples`            | No       | `5`      | Samples per assertion            |
-| `timeout`            | No       | `300`    | Max execution time (seconds)     |
+Outputs are `result`, `regressions`, `artifact-id`, and `artifact-url`. Provider keys are never Action inputs; supply only the required `AIDRIFT_OPENAI_API_KEY` or `AIDRIFT_ANTHROPIC_API_KEY` through the job environment.
 
 ### Workflow Template
 
 ```yaml
 name: AI Behavioral Check
+
 on:
   pull_request:
-    paths:
-      - "prompts/**"
-      - "tools/**"
-      - "rag/**"
-      - "safety/**"
-      - ".aistate.yml"
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   behavioral-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: aidrift/action@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.0
         with:
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          check_mode: strict
-          comment_on_pr: true
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: aidrift-results
-          path: .aidrift/results/
+          samples: "5"
+          timeout: "120"
+          comment-mode: upsert
+          github-token: ${{ github.token }}
 ```
 
-### PR Comment Format
+For a live-provider manifest, add the required provider credential through `env` and set an explicit `cost-budget`. Default CI must remain offline and credential-free.
 
-Markdown table with assertion results, overall status, provider drift status, and link to full report artifact.
+### Security Contract
 
-### Comment Update Logic
+- Use `pull_request`, never `pull_request_target`; the Action rejects the latter.
+- Fork pull requests receive no provider secrets. Comment writes are skipped for forks.
+- `contents: read` is sufficient unless PR comments are enabled; comments add `pull-requests: write`.
+- The token is masked and used only for same-repository issue-comment operations.
+- Upsert mode edits only the marker-bearing comment owned by `github-actions[bot]`.
+- Provider output is excluded from PR comments; explanations pass through redaction.
+- The Action does not cache or create a baseline. The repository must deliberately supply versioned snapshot state appropriate for its workflow.
+- Rebuild and commit `packages/action/dist` after Action source or bundled CLI changes. CI rejects a stale bundle.
 
-- Uses a hidden HTML comment marker to identify AIDrift comments
-- On subsequent pushes: UPDATES the existing comment (not duplicate)
-- If no existing comment: creates a new one
+## Other CI Systems
 
-### Snapshot Caching
-
-- Uses `actions/cache` to cache `.aidrift/snapshots/` between runs
-- Cache key: `aidrift-snapshots-${{ hashFiles('.aistate.yml') }}`
-- Speeds up subsequent runs by avoiding re-computation of unchanged baselines
-
----
-
-## GitLab CI Template
-
-```yaml
-aidrift-check:
-  image: node:22-slim
-  stage: test
-  script:
-    - npm install -g aidrift
-    - aidrift check --format junit > aidrift-results.xml
-  artifacts:
-    reports:
-      junit: aidrift-results.xml
-  only:
-    changes:
-      - prompts/**
-      - tools/**
-      - .aistate.yml
-```
-
----
-
-## Generic CI Script
-
-`aidrift-ci.sh` — works with any CI system:
+Install the exact prerelease and preserve exit status:
 
 ```bash
-#!/bin/bash
-set -e
-npm install -g aidrift
-aidrift check --format json > aidrift-results.json
-EXIT_CODE=$?
-# Parse JSON for custom reporting
-exit $EXIT_CODE
+npm install --global @zettacore/aidrift@0.9.0-beta.0
+aidrift check --format junit --output aidrift-results.xml
 ```
 
----
+Publish `aidrift-results.xml` with the CI system's normal JUnit artifact mechanism. Do not place provider credentials on the command line or print them while debugging.
 
 ## Rules
 
-- Check command MUST be non-interactive — no `inquirer` prompts in CI
-- Exit code contract is sacred: 0 = pass, 1 = regression, 2 = config error
-- Color output must auto-detect TTY — never send ANSI codes to CI logs unless it's a TTY
-- JUnit XML must validate against the JUnit schema — test with real CI parsers
-- PR comments must update (not duplicate) — use a hidden marker comment for identification
-- API keys in CI come from secrets/env vars — the action MUST NOT log them
-- `--timeout` must be enforced — CI runners have time limits
-- Snapshot cache invalidation: re-cache when `.aistate.yml` hash changes
-- The GitHub Action must work with `pull_request`, `push`, and `schedule` triggers
+- `check` must remain non-interactive and preserve exit codes `0`/`1`/`2`.
+- Reject unsupported formats and invalid bounds before any billable provider request.
+- Enforce the total timeout and cost ceiling across the entire selected workload.
+- Keep stdout machine-readable for JSON, JUnit, and GitHub formats.
+- Validate JUnit XML and JSON evidence with real consumers and schemas.
+- PR comments update only the Action's own marker-bearing bot comment.
+- Never log credentials, raw private prompts, or raw provider output.
+- Keep the bundled Action and its dependency-license notices reproducible.

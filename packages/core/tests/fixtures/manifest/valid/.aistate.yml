@@ -25,6 +25,8 @@ eval:
   timeout_seconds: 30
   target:
     type: provider
+    model: primary
+    prompts: [system]
 
 storage:
   backend: local

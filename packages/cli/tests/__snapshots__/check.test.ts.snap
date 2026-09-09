@@ -4,11 +4,11 @@ exports[`aidrift check > snapshots github output-file contract for malformed-man
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
-  Docs: ../aidrift-docs/MANIFEST-SPEC.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -22,7 +22,7 @@ exports[`aidrift check > snapshots github output-file contract for missing-basel
   Code: check.baseline.missing
   Reason: aidrift check requires at least one snapshot to compare against.
   Fix: Run 'aidrift snapshot' to capture a baseline, then re-run check.
-  Docs: ../aidrift-docs/PHASES/11-github-workflow-integration.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -76,11 +76,11 @@ exports[`aidrift check > snapshots json output-file contract for malformed-manif
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
-  Docs: ../aidrift-docs/MANIFEST-SPEC.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -94,7 +94,7 @@ exports[`aidrift check > snapshots json output-file contract for missing-baselin
   Code: check.baseline.missing
   Reason: aidrift check requires at least one snapshot to compare against.
   Fix: Run 'aidrift snapshot' to capture a baseline, then re-run check.
-  Docs: ../aidrift-docs/PHASES/11-github-workflow-integration.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -104,13 +104,43 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
 {
   "exitCode": 1,
   "outputFile": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": false,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 110,
+    "estimatedInputTokens": 4260,
+    "estimatedOutputTokens": 10480,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 2,
     "passed": 0,
@@ -126,6 +156,25 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -136,6 +185,25 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 19,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -145,230 +213,252 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -376,13 +466,43 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
 ",
   "stderr": "",
   "stdout": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": false,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 110,
+    "estimatedInputTokens": 4260,
+    "estimatedOutputTokens": 10480,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 2,
     "passed": 0,
@@ -398,6 +518,25 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -408,6 +547,25 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 19,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -417,230 +575,252 @@ exports[`aidrift check > snapshots json output-file contract for multiple-regres
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -653,13 +833,43 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
 {
   "exitCode": 0,
   "outputFile": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": true,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 1,
@@ -675,6 +885,25 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
       "status": "PASS",
       "score": 1,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 1,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          0,
+          0
+        ],
+        "significant": false
+      },
       "explanation": "All contains checks passed.",
       "critical": true,
       "tags": []
@@ -684,230 +913,252 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -915,13 +1166,43 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
 ",
   "stderr": "",
   "stdout": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": true,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 1,
@@ -937,6 +1218,25 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
       "status": "PASS",
       "score": 1,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 1,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          0,
+          0
+        ],
+        "significant": false
+      },
       "explanation": "All contains checks passed.",
       "critical": true,
       "tags": []
@@ -946,230 +1246,252 @@ exports[`aidrift check > snapshots json output-file contract for pass 1`] = `
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -1182,13 +1504,43 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
 {
   "exitCode": 1,
   "outputFile": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": false,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 0,
@@ -1204,6 +1556,25 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -1213,230 +1584,252 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -1444,13 +1837,43 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
 ",
   "stderr": "",
   "stdout": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": false,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 0,
@@ -1466,6 +1889,25 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
       "status": "FAIL",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": true,
       "tags": []
@@ -1475,230 +1917,252 @@ exports[`aidrift check > snapshots json output-file contract for single-regressi
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -1711,13 +2175,43 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
 {
   "exitCode": 0,
   "outputFile": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": true,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 0,
@@ -1733,6 +2227,25 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
       "status": "WARN",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": false,
       "tags": []
@@ -1742,230 +2255,252 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -1973,13 +2508,43 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
 ",
   "stderr": "",
   "stdout": "{
-  "schemaVersion": "1",
+  "schemaVersion": "3",
   "passed": true,
   "failOn": "fail",
   "baselineSnapshotId": "snap_20260101_000000",
   "startedAt": "<timestamp>",
   "completedAt": "<timestamp>",
   "durationMs": <durationMs>,
+  "execution": {
+    "samples": 5,
+    "timeoutSeconds": 30,
+    "concurrency": 4,
+    "estimatedRequests": 105,
+    "estimatedInputTokens": 4115,
+    "estimatedOutputTokens": 9200,
+    "costEstimateKnown": true,
+    "estimatedCostUsd": 0,
+    "observedCostUsd": 0,
+    "unknownObservedCostSamples": 0,
+    "pricingAsOf": "2026-09-08"
+  },
+  "artifacts": {
+    "gate": "informational",
+    "summary": {
+      "total": 1,
+      "changed": 0,
+      "unchanged": 1,
+      "added": 0,
+      "removed": 0
+    },
+    "results": [
+      {
+        "artifactKey": "models/primary",
+        "status": "unchanged",
+        "kind": "model"
+      }
+    ]
+  },
   "summary": {
     "total": 1,
     "passed": 0,
@@ -1995,6 +2560,25 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
       "status": "WARN",
       "score": 0,
       "baselineScore": 1,
+      "providerId": "mock",
+      "sampleCount": 5,
+      "latencyMs": 16,
+      "costUsd": 0,
+      "statistics": {
+        "method": "fisher_exact",
+        "sampleCount": 5,
+        "baselineSampleCount": 5,
+        "standardDeviation": 0,
+        "baselineStandardDeviation": 0,
+        "pValue": 0.003968,
+        "significanceLevel": 0.05,
+        "confidenceLevel": 0.95,
+        "confidenceInterval": [
+          -1,
+          -1
+        ],
+        "significant": true
+      },
       "explanation": "missing: IMPOSSIBLE_STRING_AIDRIFT_99999",
       "critical": false,
       "tags": []
@@ -2004,230 +2588,252 @@ exports[`aidrift check > snapshots json output-file contract for warn-only 1`] =
     "summary": {
       "total": 20,
       "passed": 0,
+      "warned": 0,
       "drifted": 0,
+      "insufficient": 0,
       "errors": 0,
       "new": 20
     },
     "results": [
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_boundary",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_clarify",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_refusal",
         "category": "behavioral",
         "status": "NEW",
-        "score": 1,
+        "score": 0.5,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "behavioral_tool_choice",
         "category": "behavioral",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_code",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_fact",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_math",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "deterministic_sort",
         "category": "deterministic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_json",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_medium",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_reasoning",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "performance_short",
         "category": "performance",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_classification",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_reasoning",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.333333,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_rewrite",
         "category": "semantic",
         "status": "NEW",
         "score": 1,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "semantic_summary",
         "category": "semantic",
         "status": "NEW",
-        "score": 1,
+        "score": 0.666667,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_array",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_json_object",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_numbered_list",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       },
       {
         "modelName": "primary",
-        "provider": "custom",
+        "provider": "mock",
         "model": "gpt-4o-2024-08-06",
         "probeId": "structural_xml_tag",
         "category": "structural",
         "status": "NEW",
-        "score": 1,
+        "score": 0,
+        "sampleCount": 5,
         "confidence": 0,
-        "explanation": "No baseline exists in the latest snapshot."
+        "explanation": "No baseline exists in the selected snapshot."
       }
     ]
   }
@@ -2240,11 +2846,11 @@ exports[`aidrift check > snapshots junit output-file contract for malformed-mani
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
-  Docs: ../aidrift-docs/MANIFEST-SPEC.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -2258,7 +2864,7 @@ exports[`aidrift check > snapshots junit output-file contract for missing-baseli
   Code: check.baseline.missing
   Reason: aidrift check requires at least one snapshot to compare against.
   Fix: Run 'aidrift snapshot' to capture a baseline, then re-run check.
-  Docs: ../aidrift-docs/PHASES/11-github-workflow-integration.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -2525,11 +3131,11 @@ exports[`aidrift check > snapshots junit output-file contract for warn-only 1`] 
 exports[`aidrift check > snapshots text contract for malformed-manifest 1`] = `
 {
   "exitCode": 2,
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
-  Docs: ../aidrift-docs/MANIFEST-SPEC.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -2542,7 +3148,7 @@ exports[`aidrift check > snapshots text contract for missing-baseline 1`] = `
   Code: check.baseline.missing
   Reason: aidrift check requires at least one snapshot to compare against.
   Fix: Run 'aidrift snapshot' to capture a baseline, then re-run check.
-  Docs: ../aidrift-docs/PHASES/11-github-workflow-integration.md
+  Docs: https://github.com/Parth2412/aidrift#readme
 ",
   "stdout": "",
 }
@@ -2554,34 +3160,38 @@ exports[`aidrift check > snapshots text contract for multiple-regressions 1`] = 
   "stderr": "",
   "stdout": "AIDRIFT Check
 Baseline: snap_20260101_000000
+Artifact changes: 0 (informational)
 Assertions: 2
 Probes: 20
+Execution bound: 30s, concurrency 4, 5 samples
+Estimated requests: 110
+Estimated cost: $0.000000
 
-fail-alpha	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999
-fail-beta	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999
+fail-alpha	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999 [p=0.003968, CI=-1.0000..-1.0000]
+fail-beta	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999 [p=0.003968, CI=-1.0000..-1.0000]
 
-primary/behavioral_boundary	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_clarify	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_refusal	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_tool_choice	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_code	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_fact	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_math	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_sort	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_json	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_medium	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_short	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_classification	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_rewrite	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_summary	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_array	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_object	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_numbered_list	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_xml_tag	NEW	new	No baseline exists in the latest snapshot.
+primary/behavioral_boundary	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_clarify	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_refusal	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_tool_choice	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_code	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_fact	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_math	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_sort	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_json	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_medium	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_short	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_classification	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_rewrite	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_summary	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_array	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_object	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_numbered_list	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_xml_tag	NEW	new	No baseline exists in the selected snapshot.
 
-Summary: 0 PASS, 0 WARN, 2 FAIL, 0 NEW; probes 0 PASS, 0 DRIFT, 0 ERROR, 20 NEW (2 regressions)
+Summary: 0 PASS, 0 WARN, 2 FAIL, 0 NEW; probes 0 PASS, 0 WARN, 0 DRIFT, 0 INSUFFICIENT, 0 ERROR, 20 NEW (2 regressions)
 Result: FAIL
 ",
 }
@@ -2593,33 +3203,37 @@ exports[`aidrift check > snapshots text contract for pass 1`] = `
   "stderr": "",
   "stdout": "AIDRIFT Check
 Baseline: snap_20260101_000000
+Artifact changes: 0 (informational)
 Assertions: 1
 Probes: 20
+Execution bound: 30s, concurrency 4, 5 samples
+Estimated requests: 105
+Estimated cost: $0.000000
 
-always-passes	PASS	1.00 -> 1.00	All contains checks passed.
+always-passes	PASS	1.00 -> 1.00	All contains checks passed. [p=1.000000, CI=0.0000..0.0000]
 
-primary/behavioral_boundary	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_clarify	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_refusal	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_tool_choice	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_code	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_fact	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_math	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_sort	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_json	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_medium	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_short	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_classification	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_rewrite	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_summary	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_array	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_object	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_numbered_list	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_xml_tag	NEW	new	No baseline exists in the latest snapshot.
+primary/behavioral_boundary	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_clarify	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_refusal	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_tool_choice	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_code	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_fact	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_math	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_sort	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_json	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_medium	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_short	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_classification	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_rewrite	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_summary	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_array	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_object	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_numbered_list	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_xml_tag	NEW	new	No baseline exists in the selected snapshot.
 
-Summary: 1 PASS, 0 WARN, 0 FAIL, 0 NEW; probes 0 PASS, 0 DRIFT, 0 ERROR, 20 NEW
+Summary: 1 PASS, 0 WARN, 0 FAIL, 0 NEW; probes 0 PASS, 0 WARN, 0 DRIFT, 0 INSUFFICIENT, 0 ERROR, 20 NEW
 Result: PASS
 ",
 }
@@ -2631,33 +3245,37 @@ exports[`aidrift check > snapshots text contract for single-regression 1`] = `
   "stderr": "",
   "stdout": "AIDRIFT Check
 Baseline: snap_20260101_000000
+Artifact changes: 0 (informational)
 Assertions: 1
 Probes: 20
+Execution bound: 30s, concurrency 4, 5 samples
+Estimated requests: 105
+Estimated cost: $0.000000
 
-will-fail	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999
+will-fail	FAIL	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999 [p=0.003968, CI=-1.0000..-1.0000]
 
-primary/behavioral_boundary	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_clarify	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_refusal	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_tool_choice	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_code	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_fact	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_math	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_sort	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_json	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_medium	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_short	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_classification	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_rewrite	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_summary	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_array	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_object	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_numbered_list	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_xml_tag	NEW	new	No baseline exists in the latest snapshot.
+primary/behavioral_boundary	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_clarify	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_refusal	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_tool_choice	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_code	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_fact	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_math	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_sort	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_json	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_medium	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_short	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_classification	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_rewrite	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_summary	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_array	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_object	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_numbered_list	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_xml_tag	NEW	new	No baseline exists in the selected snapshot.
 
-Summary: 0 PASS, 0 WARN, 1 FAIL, 0 NEW; probes 0 PASS, 0 DRIFT, 0 ERROR, 20 NEW (1 regression)
+Summary: 0 PASS, 0 WARN, 1 FAIL, 0 NEW; probes 0 PASS, 0 WARN, 0 DRIFT, 0 INSUFFICIENT, 0 ERROR, 20 NEW (1 regression)
 Result: FAIL
 ",
 }
@@ -2669,33 +3287,37 @@ exports[`aidrift check > snapshots text contract for warn-only 1`] = `
   "stderr": "",
   "stdout": "AIDRIFT Check
 Baseline: snap_20260101_000000
+Artifact changes: 0 (informational)
 Assertions: 1
 Probes: 20
+Execution bound: 30s, concurrency 4, 5 samples
+Estimated requests: 105
+Estimated cost: $0.000000
 
-will-warn	WARN	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999
+will-warn	WARN	1.00 -> 0.00	missing: IMPOSSIBLE_STRING_AIDRIFT_99999 [p=0.003968, CI=-1.0000..-1.0000]
 
-primary/behavioral_boundary	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_clarify	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_refusal	NEW	new	No baseline exists in the latest snapshot.
-primary/behavioral_tool_choice	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_code	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_fact	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_math	NEW	new	No baseline exists in the latest snapshot.
-primary/deterministic_sort	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_json	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_medium	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/performance_short	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_classification	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_reasoning	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_rewrite	NEW	new	No baseline exists in the latest snapshot.
-primary/semantic_summary	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_array	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_json_object	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_numbered_list	NEW	new	No baseline exists in the latest snapshot.
-primary/structural_xml_tag	NEW	new	No baseline exists in the latest snapshot.
+primary/behavioral_boundary	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_clarify	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_refusal	NEW	new	No baseline exists in the selected snapshot.
+primary/behavioral_tool_choice	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_code	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_fact	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_math	NEW	new	No baseline exists in the selected snapshot.
+primary/deterministic_sort	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_json	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_medium	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/performance_short	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_classification	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_reasoning	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_rewrite	NEW	new	No baseline exists in the selected snapshot.
+primary/semantic_summary	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_array	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_json_object	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_numbered_list	NEW	new	No baseline exists in the selected snapshot.
+primary/structural_xml_tag	NEW	new	No baseline exists in the selected snapshot.
 
-Summary: 0 PASS, 1 WARN, 0 FAIL, 0 NEW; probes 0 PASS, 0 DRIFT, 0 ERROR, 20 NEW
+Summary: 0 PASS, 1 WARN, 0 FAIL, 0 NEW; probes 0 PASS, 0 WARN, 0 DRIFT, 0 INSUFFICIENT, 0 ERROR, 20 NEW
 Result: PASS
 ",
 }

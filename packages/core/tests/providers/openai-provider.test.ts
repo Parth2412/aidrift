@@ -99,6 +99,82 @@ describe("createOpenAIProvider", () => {
     });
   });
 
+  it("applies the declared system prompt and supported model parameters", async () => {
+    let captured: FetchInit | undefined;
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      systemPrompt: "Follow the release policy.",
+      parameters: { temperature: 0.2, top_p: 0.9, max_tokens: 128 },
+      fetch: vi.fn(async (_url: FetchInput, init: FetchInit) => {
+        captured = init;
+        return jsonResponse(successBody("ok"));
+      }) as unknown as typeof globalThis.fetch,
+    });
+
+    await provider.generate({ input: "ping" });
+
+    expect(JSON.parse(String(captured?.body))).toEqual({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      top_p: 0.9,
+      max_tokens: 128,
+      messages: [
+        { role: "system", content: "Follow the release policy." },
+        { role: "user", content: "ping" },
+      ],
+    });
+  });
+
+  it("rejects unsupported or out-of-range model parameters before fetch", () => {
+    const fetchSpy = vi.fn();
+    expect(() =>
+      createOpenAIProvider({
+        model: "gpt-4o-mini",
+        apiKey: "sk-test",
+        parameters: { temperature: 3 },
+        fetch: fetchSpy as unknown as typeof globalThis.fetch,
+      }),
+    ).toThrow(/temperature/u);
+    expect(() =>
+      createOpenAIProvider({
+        model: "gpt-4o-mini",
+        apiKey: "sk-test",
+        parameters: { seed: 42 },
+        fetch: fetchSpy as unknown as typeof globalThis.fetch,
+      }),
+    ).toThrow(/seed/u);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("rejects unsafe direct credentials, model ids, base URLs, and request bodies", async () => {
+    const fetchSpy = vi.fn();
+    for (const options of [
+      { model: "", apiKey: "sk-test" },
+      { model: "gpt-4o-mini", apiKey: "" },
+      { model: "gpt-4o-mini", apiKey: "sk-test\ninjected" },
+      { model: "gpt-4o-mini", apiKey: "sk-test", baseUrl: "file:///tmp/provider" },
+      { model: "gpt-4o-mini", apiKey: "sk-test", baseUrl: "https://user:pass@example.com" },
+    ]) {
+      expect(() =>
+        createOpenAIProvider({
+          ...options,
+          fetch: fetchSpy as unknown as typeof globalThis.fetch,
+        }),
+      ).toThrow(ProviderError);
+    }
+
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      fetch: fetchSpy as unknown as typeof globalThis.fetch,
+    });
+    await expect(provider.generate({ input: "x".repeat(10 * 1024 * 1024 + 1) })).rejects.toThrow(
+      ProviderError,
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it("classifies a 401 response as auth_invalid", async () => {
     const fetchSpy = vi.fn(async () =>
       jsonResponse({ error: { message: "Invalid API key" } }, { status: 401 }),
@@ -155,6 +231,51 @@ describe("createOpenAIProvider", () => {
     });
   });
 
+  it("rejects provider responses whose declared size exceeds the safety limit", async () => {
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      fetch: vi.fn(async () =>
+        jsonResponse(successBody("ok"), { headers: { "content-length": "6000000" } }),
+      ) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
+  it("classifies other 4xx responses as bad_request", async () => {
+    const fetchSpy = vi.fn(async () =>
+      jsonResponse({ error: { message: "Unknown model" } }, { status: 404 }),
+    );
+    const provider = createOpenAIProvider({
+      model: "gpt-does-not-exist",
+      apiKey: "sk-test",
+      fetch: fetchSpy as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "bad_request",
+      httpStatus: 404,
+    });
+  });
+
+  it.each([
+    ["invalid JSON", new Response("{", { status: 200 })],
+    ["missing content", jsonResponse({ choices: [] })],
+  ])("classifies a successful response with %s as invalid_response", async (_label, response) => {
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      fetch: vi.fn(async () => response) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
   it("classifies an aborted request as timeout", async () => {
     const fetchSpy = vi.fn(async (_url: FetchInput, init: FetchInit) => {
       return await new Promise<Response>((_resolve, reject) => {
@@ -178,6 +299,44 @@ describe("createOpenAIProvider", () => {
 
     await expect(provider.generate({ input: "x" })).rejects.toMatchObject({
       kind: "timeout",
+    });
+  });
+
+  it("keeps the timeout active while reading the response body", async () => {
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      timeoutMs: 5,
+      fetch: vi.fn(async (_url: FetchInput, init: FetchInit) => {
+        const signal = init?.signal;
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode('{"choices":['));
+              signal?.addEventListener("abort", () =>
+                controller.error(new DOMException("aborted", "AbortError")),
+              );
+            },
+          }),
+          { status: 200 },
+        );
+      }) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "x" })).rejects.toMatchObject({ kind: "timeout" });
+  });
+
+  it("rejects invalid token usage instead of producing negative cost evidence", async () => {
+    const response = successBody("hi") as Record<string, unknown>;
+    response.usage = { prompt_tokens: -1, completion_tokens: 20 };
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      fetch: vi.fn(async () => jsonResponse(response)) as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(provider.generate({ input: "hi" })).rejects.toMatchObject({
+      kind: "invalid_response",
     });
   });
 
@@ -233,5 +392,17 @@ describe("createOpenAIProvider", () => {
 
     const output = await provider.generate({ input: "hi" });
     expect(output.costUsd).toBeUndefined();
+  });
+
+  it("returns undefined cost when provider usage evidence is missing", async () => {
+    const response = successBody("hi") as Record<string, unknown>;
+    delete response.usage;
+    const provider = createOpenAIProvider({
+      model: "gpt-4o-mini",
+      apiKey: "sk-test",
+      fetch: vi.fn(async () => jsonResponse(response)) as unknown as typeof globalThis.fetch,
+    });
+
+    expect((await provider.generate({ input: "hi" })).costUsd).toBeUndefined();
   });
 });

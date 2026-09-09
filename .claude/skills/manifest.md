@@ -1,187 +1,67 @@
-# Manifest — .aistate.yml Specification & Parsing
+# Manifest — `.aistate.yml` Contract
 
 ## When to Read This
 
-Read before: modifying the manifest schema, adding artifact types, working on `aidrift validate`, working on `aidrift init`, creating templates, or touching anything in `src/manifest/`.
+Read before changing the manifest schema/types, validation, path resolution, templates, runtime-support boundary, or `init`/`validate` behavior.
 
----
+## Sources Of Truth
 
-## .aistate.yml Structure
+- Executable schema: `packages/core/src/manifest/schema.ts`
+- TypeScript types: `packages/core/src/manifest/types.ts`
+- Parser and semantic checks: `packages/core/src/manifest/parser.ts`
+- File/assertion resolution: `packages/core/src/manifest/resolver.ts`
+- Runtime subset: `packages/core/src/manifest/runtime-support.ts`
+- Generated reference: `docs/reference/manifest.md`
+- Packaged schema: `packages/sdk/schemas/aistate.v1.schema.json`
 
-```yaml
-version: "1" # Schema version (required)
-name: "my-ai-service" # Project name (required)
-description: "..." # Optional description
+Run `pnpm docs:generate` after schema changes. CI runs `pnpm docs:check` and rejects stale generated artifacts.
 
-artifacts: # All artifacts that compose AI behavioral state
-  prompts: # Prompt files
-    <name>:
-      type: prompt
-      path: ./prompts/system.md # Relative path from manifest
-      format: text | json | jinja2 | mustache
+## Validation Layers
 
-  models: # Model configurations
-    <name>:
-      type: model
-      provider: openai | anthropic | google | mistral | cohere | local | custom
-      model: gpt-4o-2024-08-06 # Specific model ID
-      parameters:
-        temperature: 0.2
-        max_tokens: 4096
-        top_p: 1.0
+1. Bounded UTF-8 read and YAML parse.
+2. JSON Schema conformance, including unknown-field rejection where specified.
+3. Semantic checks such as unique artifact keys and secret-like manifest values.
+4. Project-boundary path/glob resolution with `.gitignore` awareness and cardinality limits.
+5. Assertion-suite parsing and issue aggregation.
+6. Command-specific runtime-support validation before capture or behavioral execution.
 
-  rag: # RAG configurations
-    <name>:
-      type: rag_config
-      path: ./rag/config.yml
-      index_hash_command: "md5sum ./rag/index.bin" # Optional command to hash index
+All artifact paths are relative to the manifest directory. Errors may describe the resolved path for diagnosis, but machine evidence and public feedback must not leak private paths unnecessarily.
 
-  tools: # Tool/function schemas
-    <name>:
-      type: tool_schema
-      path: ./tools/schemas/
-      glob: "*.json" # File pattern matching
+## Schema Versus Runtime Support
 
-  safety: # Safety rules and guardrails
-    <name>:
-      type: safety_rules
-      path: ./safety/rules.yml
+The version-1 schema reserves capabilities beyond the beta runtime. Schema-valid does not mean executable.
 
-  adapters: # Model adapters (LoRA, etc.)
-    <name>:
-      type: adapter
-      path: ./adapters/lora_v3.bin
-      hash_algorithm: sha256
+Current runtime constraints include:
 
-  custom: # User-defined artifact types
-    <name>:
-      type: custom
-      path: ./custom/
-      metadata: {}
+- snapshot storage backend must be `local`;
+- plugins are not loaded;
+- custom artifacts and RAG index hash commands are not executed;
+- adapter hashing is SHA-256 only;
+- behavioral execution requires an explicit `provider` eval target;
+- provider targets apply declared text prompts and supported model parameters;
+- RAG, tool, safety, and adapter artifacts are not applied to provider requests;
+- prompt formats other than text are not rendered for provider execution;
+- Promptfoo, HTTP, subprocess, custom, and other reserved target paths are unavailable.
 
-eval: # Evaluation configuration
-  suite: ./evals/ # Directory containing assertion YAML files
-  format: aidrift | promptfoo # Assertion format
-  samples_per_assertion: 5 # Default samples per assertion
-  significance_level: 0.05 # Statistical significance threshold
-  timeout_seconds: 30 # Per-assertion timeout
-  target: # How to interact with the AI system
-    type: provider | http | subprocess
-    # provider: uses model config directly
-    # http: { url, method, headers, body_template, response_path }
-    # subprocess: { command, input_format, output_format }
+Unsupported behavior must fail with exit `2`; never drop it silently or substitute mock execution.
 
-storage: # Snapshot storage config
-  backend: local | git
-  path: .aidrift/snapshots/
+## Initialization
 
-plugins: [] # Optional plugin references
-```
+`aidrift init` scans bounded project paths and can create a starter manifest/assertion flow. Built-in templates are `basic-llm`, `rag-pipeline`, and `agent`. The latter two may contain snapshot-compatible artifacts whose behavioral execution remains intentionally unsupported.
 
----
+Initialization rules:
 
-## JSON Schema Validation
+- do not overwrite existing files by default;
+- make non-force creation race-safe;
+- use atomic replacement for explicit force writes;
+- add `.aidrift/` to `.gitignore` without destroying existing content;
+- make `--dry-run` side-effect free;
+- keep `--yes` deterministic and non-interactive.
 
-- Schema lives at `src/manifest/schema.json`
-- Validated with `ajv` ^8.x at parse time
-- Validation checks:
-  1. YAML syntax (via `yaml` parser)
-  2. Schema conformance (required fields, types, enums)
-  3. File path existence (all `path` fields resolve to real files)
-  4. Glob patterns resolve to at least one file
-  5. Provider names are recognized
-  6. Referenced assertion files exist and parse
-  7. Plugin names are installed
+## Security And Compatibility Rules
 
----
-
-## TypeScript Interfaces
-
-Core types in `src/manifest/types.ts`:
-
-```typescript
-interface AIStateManifest {
-  version: string;
-  name: string;
-  description?: string;
-  artifacts: ArtifactGroups;
-  eval: EvalConfig;
-  storage: StorageConfig;
-  plugins?: PluginConfig[];
-}
-
-interface ArtifactGroups {
-  prompts?: Record<string, PromptArtifact>;
-  models?: Record<string, ModelArtifact>;
-  rag?: Record<string, RAGArtifact>;
-  tools?: Record<string, ToolArtifact>;
-  safety?: Record<string, SafetyArtifact>;
-  adapters?: Record<string, AdapterArtifact>;
-  custom?: Record<string, CustomArtifact>;
-}
-
-interface ArtifactBase {
-  type: string;
-  path?: string;
-  glob?: string;
-  hash_algorithm?: "sha256" | "md5";
-  metadata?: Record<string, unknown>;
-}
-```
-
----
-
-## File Path Resolution
-
-- All paths are relative to the manifest file location
-- Glob patterns use `glob` ^10.x
-- Resolution respects `.gitignore` patterns
-- `src/manifest/resolver.ts` handles: relative paths, glob expansion, existence checks, `.gitignore` filtering
-- Non-existent paths → validation error with helpful message including the resolved absolute path
-
----
-
-## Auto-Detection (aidrift init)
-
-The project scanner in `src/commands/init.ts` detects:
-
-| Artifact Type | Detection Strategy                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Prompts       | Scan `prompts/`, `templates/`, `system_prompts/` for `.md`, `.txt`, `.jinja2`, `.j2`, `.mustache`                               |
-| Model SDKs    | Parse `package.json` for `openai`, `@anthropic-ai/sdk`, `cohere-ai`; `requirements.txt`/`pyproject.toml` for Python equivalents |
-| Tool schemas  | JSON files in `tools/`, `functions/`, `schemas/` directories                                                                    |
-| RAG configs   | Known patterns: `chromadb`, `pinecone`, `weaviate` config files                                                                 |
-| Safety rules  | Files in `safety/`, `guardrails/`, `rules/` directories                                                                         |
-
-- Recursive scan but respects `.gitignore`
-- Results presented to user for confirmation (via `inquirer`)
-- `--yes` flag skips prompts, uses auto-detected defaults
-- Handles no-artifact projects gracefully (prompts manual config)
-
----
-
-## Templates
-
-Built-in templates in `src/manifest/templates/`:
-
-| Template          | Use Case                  |
-| ----------------- | ------------------------- |
-| `openai-chat`     | Simple OpenAI chatbot     |
-| `anthropic-chat`  | Anthropic-based system    |
-| `rag-pipeline`    | RAG with vector store     |
-| `multi-model`     | Primary + fallback models |
-| `agent-framework` | Multi-agent system        |
-| `local-llm`       | Ollama/vLLM local models  |
-
-Each template includes: manifest YAML + sample assertion files + explanatory comments.
-
----
-
-## Rules
-
-- `.aistate.yml` is NOT gitignored — it's part of the project
-- `.aidrift/` IS gitignored (auto-configured by `aidrift init`)
-- Manifest must be valid YAML that passes schema validation before any command runs
-- `aidrift validate --fix` can auto-fix: path normalization, add missing required fields with defaults
-- `aidrift validate --strict` treats warnings as errors (e.g., unpinned model versions like `gpt-4o` instead of `gpt-4o-2024-08-06`)
-- Never store API keys in the manifest — always environment variables
+- Never allow credentials or tokens in the manifest; providers read environment variables only.
+- Bound document depth, keys, strings, arrays, files, globs, and assertions before materializing untrusted input.
+- Keep `.aistate.yml` version-controlled; keep `.aidrift/` ignored by default.
+- Treat schema changes as public API changes and update types, generated docs/schema, templates, fixtures, SDK contracts, and migration notes together.
+- Preserve version-1 compatibility unless the release explicitly declares and tests a migration.

@@ -1,18 +1,17 @@
 import type { ManifestValidationIssue } from "./types.js";
 
+import { redactSecrets } from "../logging/redact.js";
+
 const SECRET_KEY_PATTERN =
   /(^|_|\b)(api[_-]?key|token|secret|password|authorization|bearer)(_|$|\b)/iu;
-const SECRET_VALUE_PATTERNS = [
-  /\bsk-[A-Za-z0-9_-]{8,}\b/u,
-  /\bgithub_pat_[A-Za-z0-9_]{20,}\b/u,
-  /\bgh[opsu]_[A-Za-z0-9_]{20,}\b/u,
-  /\bBearer\s+[A-Za-z0-9._-]{16,}\b/iu,
-];
-
 export function findManifestSecrets(value: unknown): readonly ManifestValidationIssue[] {
   const issues: ManifestValidationIssue[] = [];
   visitValue(value, "$", issues);
   return issues;
+}
+
+export function containsSecretLikeValue(value: string): boolean {
+  return redactSecrets(value) !== value;
 }
 
 function visitValue(value: unknown, manifestPath: string, issues: ManifestValidationIssue[]): void {
@@ -44,7 +43,7 @@ function visitValue(value: unknown, manifestPath: string, issues: ManifestValida
     return;
   }
 
-  if (SECRET_VALUE_PATTERNS.some((pattern) => pattern.test(value))) {
+  if (containsSecretLikeValue(value)) {
     issues.push({
       severity: "error",
       code: "manifest.secret.disallowed",

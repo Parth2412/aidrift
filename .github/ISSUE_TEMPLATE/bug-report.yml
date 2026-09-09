@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible AIDRIFT defect that is not a security vulnerability.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not post vulnerabilities or sensitive AI inputs/outputs. Follow SECURITY.md for private security reports.
+  - type: input
+    id: version
+    attributes:
+      label: AIDRIFT version
+      placeholder: 0.9.0-beta.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, architecture, Node.js version, and installation method.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: List sanitized files and exact commands. Never include API keys or private production evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the exit code and sanitized stderr/stdout.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I reproduced this on a supported Node.js version.
+          required: true
+        - label: I removed secrets, private prompts/outputs, customer data, and proprietary configuration.
+          required: true

@@ -4,20 +4,23 @@
 
 Before editing anything, read:
 
-1. `../aidrift-docs/PROJECT-CONTEXT.md`
-2. `../aidrift-docs/AGENT-RULES.md`
-3. `../aidrift-docs/ARCHITECTURE-PLAN.md`
-4. `../aidrift-docs/FOLDER-STRUCTURE.md`
-5. `../aidrift-docs/TASKS.md`
-6. `../aidrift-docs/PROGRESS.md`
-7. Relevant phase file in `../aidrift-docs/PHASES/`
+1. `README.md`
+2. `BETA.md`
+3. `SECURITY.md`
+4. `tasks/lessons.md`
+5. `tasks/todo.md`
+6. The relevant package README and `.claude/skills/<domain>.md`
+
+The maintainer workspace may also provide planning history under `../aidrift-docs`; use it when present, but do not make public repository instructions depend on it.
 
 ## Scope Rules
 
 - Source code lives in this repository.
-- Planning and product docs live in `../aidrift-docs`.
+- Public runtime, package, security, and contribution docs live in this repository.
 - Do not invent commands, package names, APIs, or workflow rules without checking docs and code.
 - Stop and document uncertainty instead of guessing.
+- Schema acceptance does not imply runtime support; reserved features must fail closed.
+- Rebuild `packages/action/dist` after changing the bundled CLI or Action source.
 
 ## Git Identity
 
@@ -57,5 +60,9 @@ pnpm format:check
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:coverage
 pnpm build
+pnpm docs:check
+pnpm release:check
+pnpm test:packed
 ```

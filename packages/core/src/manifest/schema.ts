@@ -22,21 +22,38 @@ export const AI_STATE_MANIFEST_SCHEMA = {
     },
     eval: {
       type: "object",
-      additionalProperties: true,
+      additionalProperties: false,
       required: ["suite"],
       properties: {
         suite: { type: "string", minLength: 1 },
         format: { enum: ["aidrift", "promptfoo"] },
-        samples_per_assertion: { type: "integer", minimum: 1 },
+        samples_per_assertion: { type: "integer", minimum: 1, maximum: 100 },
         significance_level: { type: "number", exclusiveMinimum: 0, exclusiveMaximum: 1 },
-        timeout_seconds: { type: "integer", minimum: 1 },
+        timeout_seconds: { type: "integer", minimum: 1, maximum: 3600 },
         target: {
-          type: "object",
-          additionalProperties: true,
-          required: ["type"],
-          properties: {
-            type: { enum: ["provider", "http", "subprocess"] },
-          },
+          oneOf: [
+            {
+              type: "object",
+              additionalProperties: false,
+              required: ["type", "model"],
+              properties: {
+                type: { const: "provider" },
+                model: { type: "string", minLength: 1 },
+                prompts: {
+                  type: "array",
+                  maxItems: 1_000,
+                  items: { type: "string", minLength: 1 },
+                  uniqueItems: true,
+                },
+              },
+            },
+            {
+              type: "object",
+              additionalProperties: true,
+              required: ["type"],
+              properties: { type: { enum: ["http", "subprocess"] } },
+            },
+          ],
         },
       },
     },
@@ -51,6 +68,7 @@ export const AI_STATE_MANIFEST_SCHEMA = {
     },
     plugins: {
       type: "array",
+      maxItems: 100,
       items: {
         anyOf: [
           { type: "string", minLength: 1 },
@@ -71,30 +89,37 @@ export const AI_STATE_MANIFEST_SCHEMA = {
   $defs: {
     promptArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/promptArtifact" },
     },
     modelArtifacts: {
       type: "object",
+      maxProperties: 100,
       additionalProperties: { $ref: "#/$defs/modelArtifact" },
     },
     ragArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/ragArtifact" },
     },
     toolArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/toolArtifact" },
     },
     safetyArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/safetyArtifact" },
     },
     adapterArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/adapterArtifact" },
     },
     customArtifacts: {
       type: "object",
+      maxProperties: 10_000,
       additionalProperties: { $ref: "#/$defs/customArtifact" },
     },
     artifactBase: {

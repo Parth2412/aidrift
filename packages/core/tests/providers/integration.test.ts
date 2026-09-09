@@ -6,8 +6,8 @@
  * unless explicitly provided.
  *
  * To run locally:
- *   OPENAI_API_KEY=sk-... pnpm test --reporter=verbose packages/core/tests/providers/integration.test.ts
- *   ANTHROPIC_API_KEY=sk-ant-... pnpm test --reporter=verbose packages/core/tests/providers/integration.test.ts
+ *   AIDRIFT_OPENAI_API_KEY=sk-... pnpm test --reporter=verbose packages/core/tests/providers/integration.test.ts
+ *   AIDRIFT_ANTHROPIC_API_KEY=sk-ant-... pnpm test --reporter=verbose packages/core/tests/providers/integration.test.ts
  *
  * Each test uses the cheapest available model and sends a single short probe to
  * minimise cost. See docs/development/probe-costs.md for expected cost per run.
@@ -17,12 +17,12 @@ import { describe, expect, it } from "vitest";
 import { createAnthropicProvider, createOpenAIProvider } from "../../src/providers/index.js";
 
 describe("live provider integration", () => {
-  it.skipIf(!process.env.OPENAI_API_KEY)(
+  it.skipIf(!process.env.AIDRIFT_OPENAI_API_KEY)(
     "chat-completions adapter returns a valid response shape",
     async () => {
       const provider = createOpenAIProvider({
-        model: "gpt-4o-mini",
-        apiKey: process.env.OPENAI_API_KEY,
+        model: "gpt-4.1-mini-2025-04-14",
+        apiKey: process.env.AIDRIFT_OPENAI_API_KEY!,
       });
 
       const output = await provider.generate({
@@ -40,12 +40,12 @@ describe("live provider integration", () => {
     30_000,
   );
 
-  it.skipIf(!process.env.ANTHROPIC_API_KEY)(
+  it.skipIf(!process.env.AIDRIFT_ANTHROPIC_API_KEY)(
     "messages-API adapter returns a valid response shape",
     async () => {
       const provider = createAnthropicProvider({
-        model: "claude-3-haiku-20240307",
-        apiKey: process.env.ANTHROPIC_API_KEY,
+        model: "claude-haiku-4-5-20251001",
+        apiKey: process.env.AIDRIFT_ANTHROPIC_API_KEY!,
       });
 
       const output = await provider.generate({

@@ -1,4 +1,4 @@
-import type { PartialAIDriftConfig } from "@aidrift/core";
+import type { PartialAIDriftConfig } from "@zettacore/aidrift-core";
 
 export interface GlobalCliOptions {
   readonly config?: string | undefined;

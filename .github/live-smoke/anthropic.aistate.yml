@@ -1,0 +1,18 @@
+version: "1"
+name: aidrift-anthropic-live-smoke
+artifacts:
+  models:
+    primary:
+      type: model
+      provider: anthropic
+      model: claude-haiku-4-5-20251001
+      parameters:
+        max_tokens: 16
+eval:
+  suite: ./evals
+  target:
+    type: provider
+    model: primary
+storage:
+  backend: local
+  path: ./.aidrift/snapshots

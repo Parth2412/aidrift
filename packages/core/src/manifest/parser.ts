@@ -1,9 +1,10 @@
-import { readFile } from "node:fs/promises";
-
 import { Ajv2020 } from "ajv/dist/2020.js";
 import type { ErrorObject } from "ajv/dist/2020.js";
 import { parseDocument } from "yaml";
 
+import { AIDriftError } from "../errors.js";
+import { BoundedFileReadError, readUtf8FileWithinLimit } from "../files/bounded-read.js";
+import { structuredValueLimitViolation } from "../files/structured-value.js";
 import { resolveManifestPaths } from "./resolver.js";
 import { AI_STATE_MANIFEST_SCHEMA } from "./schema.js";
 import { findManifestSecrets } from "./security.js";
@@ -18,14 +19,24 @@ import {
 
 const ajv = new Ajv2020({ allErrors: true, strict: true, allowUnionTypes: true });
 const validateSchema = ajv.compile(AI_STATE_MANIFEST_SCHEMA);
+const MAX_MANIFEST_BYTES = 2 * 1024 * 1024;
 
 export async function validateManifestFile(
   options: ValidateManifestFileOptions,
 ): Promise<ManifestValidationResult> {
+  let source: string;
   try {
-    const source = await readFile(options.manifestPath, "utf8");
-    return validateManifestSource({ ...options, source });
+    source = (await readUtf8FileWithinLimit(options.manifestPath, MAX_MANIFEST_BYTES)).content;
   } catch (error) {
+    if (error instanceof BoundedFileReadError) {
+      return manifestFileError(
+        options.manifestPath,
+        error.failure === "too_large" ? "manifest.file.too_large" : "manifest.file.invalid",
+        error.failure === "too_large"
+          ? `larger than the ${MAX_MANIFEST_BYTES}-byte limit`
+          : "not a regular file",
+      );
+    }
     return {
       valid: false,
       manifestPath: options.manifestPath,
@@ -41,11 +52,65 @@ export async function validateManifestFile(
       resolvedPaths: [],
     };
   }
+
+  try {
+    return await validateManifestSource({ ...options, source });
+  } catch (error) {
+    const issue =
+      error instanceof AIDriftError
+        ? {
+            severity: "error" as const,
+            code: error.code,
+            message: `${error.what} ${error.why}`,
+            fix: error.fix,
+          }
+        : {
+            severity: "error" as const,
+            code: "manifest.validation.failed",
+            message: "Manifest validation could not complete safely.",
+            fix: "Check referenced project files and retry validation.",
+          };
+    return {
+      valid: false,
+      manifestPath: options.manifestPath,
+      errors: [issue],
+      warnings: [],
+      resolvedPaths: [],
+    };
+  }
+}
+
+function manifestFileError(
+  manifestPath: string,
+  code: string,
+  reason: string,
+): ManifestValidationResult {
+  return {
+    valid: false,
+    manifestPath,
+    errors: [
+      {
+        severity: "error",
+        code,
+        message: `manifest file is ${reason}: ${manifestPath}`,
+        fix: "Use a readable regular .aistate.yml file no larger than 2 MiB.",
+      },
+    ],
+    warnings: [],
+    resolvedPaths: [],
+  };
 }
 
 export async function validateManifestSource(
   options: ValidateManifestSourceOptions,
 ): Promise<ManifestValidationResult> {
+  if (Buffer.byteLength(options.source, "utf8") > MAX_MANIFEST_BYTES) {
+    return manifestFileError(
+      options.manifestPath,
+      "manifest.file.too_large",
+      `larger than the ${MAX_MANIFEST_BYTES}-byte limit`,
+    );
+  }
   const errors: ManifestValidationIssue[] = [];
   const warnings: ManifestValidationIssue[] = [];
   const document = parseDocument(options.source, { prettyErrors: false });
@@ -67,7 +132,48 @@ export async function validateManifestSource(
     };
   }
 
-  const parsed = document.toJS({ mapAsMap: false }) as unknown;
+  let parsed: unknown;
+  try {
+    parsed = document.toJS({ mapAsMap: false, maxAliasCount: 100 }) as unknown;
+  } catch (error) {
+    return {
+      valid: false,
+      manifestPath: options.manifestPath,
+      errors: [
+        {
+          severity: "error",
+          code: "manifest.yaml.invalid",
+          message:
+            error instanceof Error ? error.message : "Manifest YAML could not be expanded safely.",
+          fix: "Remove excessive YAML aliases and use explicit bounded manifest values.",
+        },
+      ],
+      warnings: [],
+      resolvedPaths: [],
+    };
+  }
+
+  const complexityViolation = structuredValueLimitViolation(parsed, {
+    maximumNodes: 100_000,
+    maximumDepth: 64,
+    maximumCollectionEntries: 10_000,
+  });
+  if (complexityViolation !== undefined) {
+    return {
+      valid: false,
+      manifestPath: options.manifestPath,
+      errors: [
+        {
+          severity: "error",
+          code: "manifest.complexity.exceeded",
+          message: complexityViolation,
+          fix: "Flatten or split the manifest so it stays within documented structural limits.",
+        },
+      ],
+      warnings: [],
+      resolvedPaths: [],
+    };
+  }
 
   errors.push(...findManifestSecrets(parsed));
 
@@ -80,7 +186,10 @@ export async function validateManifestSource(
   }
 
   const manifest = parsed as AIStateManifest;
-  const semanticIssues = validateModelArtifacts(manifest);
+  const semanticIssues = [
+    ...validateModelArtifacts(manifest),
+    ...validateEvalTargetArtifacts(manifest),
+  ];
   errors.push(...semanticIssues.filter((issue) => issue.severity === "error"));
   warnings.push(...semanticIssues.filter((issue) => issue.severity === "warning"));
 
@@ -151,10 +260,59 @@ function validateModelArtifacts(manifest: AIStateManifest): readonly ManifestVal
         code: "manifest.model.unpinned",
         message: `Model "${model.model}" does not look pinned to a dated or versioned release.`,
         manifestPath: `artifacts.models.${name}.model`,
-        fix: "Use a specific model ID such as gpt-4o-2024-08-06 instead of a rolling alias.",
+        fix: "Use a dated or canonical versioned model ID instead of a rolling alias.",
       });
     }
   });
+
+  return issues;
+}
+
+function validateEvalTargetArtifacts(
+  manifest: AIStateManifest,
+): readonly ManifestValidationIssue[] {
+  const target = manifest.eval.target;
+  if (target?.type !== "provider") {
+    return [];
+  }
+
+  const issues: ManifestValidationIssue[] = [];
+  const modelNames = Object.keys(manifest.artifacts.models ?? {});
+  if (!modelNames.includes(target.model)) {
+    issues.push({
+      severity: "error",
+      code: "manifest.eval.target.model_unknown",
+      message: `Eval target references unknown model artifact "${target.model}".`,
+      manifestPath: "eval.target.model",
+      fix: "Reference a key declared under artifacts.models.",
+    });
+  }
+
+  const declaredPromptNames = Object.keys(manifest.artifacts.prompts ?? {}).sort();
+  const selectedPromptNames = [...(target.prompts ?? [])].sort();
+  const unknownPrompts = selectedPromptNames.filter((name) => !declaredPromptNames.includes(name));
+  const unappliedPrompts = declaredPromptNames.filter(
+    (name) => !selectedPromptNames.includes(name),
+  );
+
+  if (unknownPrompts.length > 0) {
+    issues.push({
+      severity: "error",
+      code: "manifest.eval.target.prompt_unknown",
+      message: `Eval target references unknown prompt artifact(s): ${unknownPrompts.join(", ")}.`,
+      manifestPath: "eval.target.prompts",
+      fix: "Reference only keys declared under artifacts.prompts.",
+    });
+  }
+  if (unappliedPrompts.length > 0) {
+    issues.push({
+      severity: "error",
+      code: "manifest.eval.target.prompt_unapplied",
+      message: `Declared prompt artifact(s) are not applied by the eval target: ${unappliedPrompts.join(", ")}.`,
+      manifestPath: "eval.target.prompts",
+      fix: "List every declared prompt artifact in eval.target.prompts, in execution order.",
+    });
+  }
 
   return issues;
 }

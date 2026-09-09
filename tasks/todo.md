@@ -4,26 +4,41 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: Phase 11 — GitHub Workflow Check Command
-
-### In Progress
-
-- [x] Implement `aidrift check` command with CI-safe non-interactive behavior.
-- [x] Support `--format text|json|junit|github`, `--baseline`, `--output`, and `--fail-on warn|fail`.
-- [x] Run evals and provider probes against snapshot baselines.
-- [x] Add JSON schema, JUnit XML, GitHub annotation, snapshot, and exit-code contract tests.
-- [ ] Finish full validation, commit, push, and open PR.
+## Current Phase: M4 Owner and External Beta Gates
 
 ### To Do
+
+- [ ] Review the full remediation diff, decide the disposition of user-owned untracked helper files, and create an owner-authored candidate commit; current `HEAD` is still the pre-remediation `9d88c2a` base.
+- [ ] Obtain remote macOS/Windows platform evidence for the exact candidate commit (GitHub owner/CI action).
+- [ ] Complete owner npm/GitHub setup and publish only after every release gate is green.
+- [ ] Recruit external beta users and record real false-positive/false-negative evidence.
+
+### Owner / Release Follow-Up
 
 - [x] Implement Phase 10 canonical probe suite, mocked-provider probe runner, local cache, cost estimator, `aidrift probe` command, and `plan --probe-providers` execution path.
 - [x] Implement live provider adapters (OpenAI, Anthropic first) using env-only credentials and mocked/recorded tests.
 - [x] Wire `--provider` flag through `aidrift probe` and `aidrift plan --probe-providers` to surface the live adapter registry to end users.
 - [ ] Configure GitHub branch protection in GitHub UI (owner action required).
 - [ ] Set GitHub repository default branch to `development` after branch protection is configured (owner action required).
-- [ ] Review and merge or close 5 open Dependabot PRs on origin before starting Phase 10 implementation.
+- [ ] Re-authenticate GitHub CLI and review current Dependabot alerts/PRs before release (owner action required).
 
 ### Done
+
+- [x] Make `init` generate a starter eval suite and prove the no-YAML-edit init/validate/snapshot/plan/check journey from clean installed tarballs.
+- [x] Add and test a machine-versioned offline example that exits 0 unchanged and exits 1 on the included behavioral regression.
+- [x] Add a six-cell Linux/macOS/Windows × Node 22.14/24.20 package/quickstart matrix; validate Linux Node 22.14 and 24.20 locally.
+- [x] Prepare beta limitations, structured feedback/bug intake, evidence ledger, draft release notes, and owner publication/incident runbook.
+- [x] Complete M3 test/security gates: zero dependency advisories, package-wide coverage, statistical property tests, SDK contracts, modern redaction, Gitleaks, Dependency Review, CodeQL, CycloneDX SBOM, SHA-pinned Actions, and spend-bounded protected provider smokes.
+- [x] Complete M2 npm release engineering: coordinated prerelease metadata, strict tarball allowlists and budgets, installed-tarball smoke tests, Node 24.20.0/npm 11.5.1+ release contract, and a protected OIDC/provenance publish workflow.
+- [x] Complete H1 runtime contract integrity: fail closed on unsupported features, remove implicit mock fallback, route live models explicitly, correct provider/runtime errors, use stable help links, and prove a clean build.
+- [x] Complete H2 snapshot/history/diff integrity: safe custom storage, schema validation, immutable IDs, portable collection capture, semantic/current-state diff, filters/formats, and secure persistence.
+- [x] Complete H3 behavioral baseline creation: executable snapshot flags, full evidence persistence, live-provider safety gates, and baseline-to-check proof.
+- [x] Complete H4 eval/plan correctness: explicit prompt/model targets, sampling, filtering, timeouts, budgets, statistical distributions/evidence, version-neutral unsupported assertions, a 90% eval coverage gate, and end-to-end prompt-regression proof.
+- [x] Complete H5 provider drift correctness: all-sample category comparators, computed evidence, strict identity, current token pricing, unknown-cost handling, and controlled distributions.
+- [x] Complete H6 `check`: artifact evidence, CI workload/time/cost bounds, check-output v3, a 90% coverage gate, and built-CLI 0/1/2 proof.
+- [x] Complete H7 GitHub workflow integration: bundled Node 24 Action, validated inputs/outputs, one-pass evidence, annotations, artifact upload, secure PR comments, coverage enforcement, and built-Action 0/1/2 proof.
+- [x] Complete M1 documentation generation: executable-derived CLI/manifest references, packaged manifest schema, deterministic staleness checks, generator tests, and contract reconciliation.
+- [x] Complete the low-priority full-system go-live audit: fail-closed accepted contracts, bounded parsing and provider I/O, regex/JSON Schema safety, complete Action evidence validation, direct-SDK snapshot validation, atomic initialization, typed test sources, current provider pricing, dependency/license/SBOM review, Node 22/24 installed-package proofs, and synchronized release documentation.
 
 - [x] Git repository initialized by owner.
 - [x] `main` pushed by owner.
@@ -68,7 +83,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ## Sprint Deliverable
 
-Provider drift probes and `aidrift probe` — Phase 10 of TASKS.md.
+The locally verified beta candidate has a clean-install five-minute example, Linux evidence for both supported Node lines, truthful release notes, and an owner-ready publication/feedback runbook. Remote macOS/Windows, registry publication, protected settings, live credentials, and external beta evidence remain deliberately open.
 
 ## Notes
 

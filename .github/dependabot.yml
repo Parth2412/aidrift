@@ -10,3 +10,13 @@ updates:
       - chore
     commit-message:
       prefix: chore
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: development
+    labels:
+      - dependencies
+      - chore
+    commit-message:
+      prefix: chore

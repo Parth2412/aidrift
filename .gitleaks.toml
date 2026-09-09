@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated Action bundles reproduce audited upstream dependencies; source remains scanned."
+paths = ['''^packages/action/dist/(?:index\.js|cli/index\.js)$''']
+
+[[allowlists]]
+description = "Literal GitLab example used to prove runtime redaction."
+regexTarget = "match"
+regexes = ['''glpat-abcdefghijklmnopqrst''']

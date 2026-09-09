@@ -7,10 +7,10 @@ artifacts:
     primary:
       type: model
       provider: openai
-      model: gpt-4o-2024-08-06
+      model: gpt-4.1-mini-2025-04-14
       parameters:
-        temperature: 0.3
-        max_tokens: 4096
+        temperature: 0
+        max_completion_tokens: 4096
   rag:
     knowledge_base:
       type: rag_config
@@ -19,6 +19,9 @@ artifacts:
 eval:
   suite: ./evals
   format: aidrift
+  target:
+    type: provider
+    model: primary
 
 storage:
   backend: local

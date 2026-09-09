@@ -24,7 +24,6 @@ describe("diffJson", () => {
     expect(result[0]).toMatchObject<Partial<JsonDiffEntry>>({
       key: "newKey",
       status: "added",
-      valueA: undefined,
       valueB: "value",
     });
   });
@@ -35,12 +34,19 @@ describe("diffJson", () => {
       key: "oldKey",
       status: "removed",
       valueA: "value",
-      valueB: undefined,
     });
   });
 
-  it("handles nested objects as opaque values", () => {
+  it("reports nested object changes by semantic key path", () => {
     const result = diffJson({ nested: { x: 1 } }, { nested: { x: 2 } });
-    expect(result[0]?.status).toBe("modified");
+    expect(result).toEqual([{ key: "nested.x", status: "modified", valueA: 1, valueB: 2 }]);
+  });
+
+  it("ignores object key ordering and reports array indexes", () => {
+    expect(diffJson({ b: 2, a: 1 }, { a: 1, b: 2 })).toEqual([]);
+    expect(diffJson({ values: [1, 2] }, { values: [1, 3, 4] })).toEqual([
+      { key: "values[1]", status: "modified", valueA: 2, valueB: 3 },
+      { key: "values[2]", status: "added", valueB: 4 },
+    ]);
   });
 });

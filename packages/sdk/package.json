@@ -1,24 +1,58 @@
 {
-  "name": "@aidrift/sdk",
-  "version": "0.0.0",
-  "description": "Public extension interfaces for AIDRIFT plugins.",
+  "name": "@zettacore/aidrift-sdk",
+  "version": "0.9.0-beta.0",
+  "description": "Versioned TypeScript and JSON Schema contracts for AIDrift by ZettaCore.",
   "license": "Apache-2.0",
+  "author": "Parth Kaloliya (https://github.com/Parth2412)",
+  "homepage": "https://github.com/Parth2412/aidrift#readme",
+  "bugs": {
+    "url": "https://github.com/Parth2412/aidrift/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Parth2412/aidrift.git",
+    "directory": "packages/sdk"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "json-schema",
+    "behavioral-testing",
+    "model-drift"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas/*": "./schemas/*"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
   "files": [
     "dist",
-    "README.md"
+    "schemas",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf dist *.tsbuildinfo",
+    "clean": "rm -rf dist .tsbuildinfo *.tsbuildinfo",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vitest": "^3.1.2"
+    "vitest": "4.1.11"
   }
 }

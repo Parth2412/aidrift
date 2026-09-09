@@ -4,6 +4,7 @@ import { diffParameters } from "./parameters.js";
 import { diffText } from "./text.js";
 import type { ArtifactDiffResult, DiffStatus, SnapshotDiffResult } from "./types.js";
 import type { Snapshot, SnapshotArtifact } from "../snapshot/types.js";
+import { parse as parseYaml } from "yaml";
 
 function diffArtifact(
   key: string,
@@ -32,7 +33,40 @@ function diffArtifact(
     };
   }
 
+  if (artifactA.kind !== artifactB.kind) {
+    return {
+      artifactKey: key,
+      status: "modified",
+      kind: artifactB.kind,
+      hashA: artifactA.hash,
+      hashB: artifactB.hash,
+    };
+  }
+
   if (artifactA.kind === "text" && artifactB.kind === "text") {
+    const structuredA = parseStructuredArtifact(artifactA);
+    const structuredB = parseStructuredArtifact(artifactB);
+    if (structuredA.ok && structuredB.ok) {
+      const jsonDiff = diffJson(structuredA.value, structuredB.value);
+      if (jsonDiff.length === 0) {
+        return {
+          artifactKey: key,
+          status: "unchanged",
+          kind: "text",
+          hashA: artifactA.hash,
+          hashB: artifactB.hash,
+        };
+      }
+      return {
+        artifactKey: key,
+        status: "modified",
+        kind: "text",
+        hashA: artifactA.hash,
+        hashB: artifactB.hash,
+        jsonDiff,
+      };
+    }
+
     const textDiff = diffText(artifactA.content ?? "", artifactB.content ?? "");
     return {
       artifactKey: key,
@@ -91,7 +125,7 @@ export function diffSnapshots(snapshotA: Snapshot, snapshotB: Snapshot): Snapsho
   let addedCount = 0;
   let removedCount = 0;
 
-  for (const key of allKeys) {
+  for (const key of [...allKeys].sort()) {
     const result = diffArtifact(key, snapshotA.artifacts[key], snapshotB.artifacts[key]);
     artifacts.push(result);
 
@@ -122,4 +156,39 @@ export function diffSnapshots(snapshotA: Snapshot, snapshotB: Snapshot): Snapsho
     addedCount,
     removedCount,
   };
+}
+
+function parseStructuredArtifact(
+  artifact: SnapshotArtifact,
+): { readonly ok: true; readonly value: unknown } | { readonly ok: false } {
+  const contentType = artifact.contentType ?? contentTypeFromPath(artifact.path);
+  if ((contentType !== "json" && contentType !== "yaml") || artifact.content === undefined) {
+    return { ok: false };
+  }
+
+  try {
+    return {
+      ok: true,
+      value:
+        contentType === "json"
+          ? (JSON.parse(artifact.content) as unknown)
+          : parseYaml(artifact.content),
+    };
+  } catch {
+    return { ok: false };
+  }
+}
+
+function contentTypeFromPath(filePath: string | undefined): "json" | "yaml" | undefined {
+  if (filePath === undefined) {
+    return undefined;
+  }
+  const lower = filePath.toLowerCase();
+  if (lower.endsWith(".json")) {
+    return "json";
+  }
+  if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+    return "yaml";
+  }
+  return undefined;
 }

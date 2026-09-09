@@ -1,4 +1,6 @@
-# Contributing To AIDRIFT
+# Contributing To AIDrift
+
+Participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Never include credentials, private prompts/model outputs, customer data, or proprietary configuration in an issue or pull request.
 
 ## Required Branch Flow
 
@@ -23,16 +25,9 @@ Commits must be authored only by the repository owner's configured Git identity.
 
 ## Before Coding
 
-Read the project source-of-truth docs:
+Read the repository [README](README.md), [beta boundary](BETA.md), [security policy](SECURITY.md), and [runtime safety contract](docs/reference/safety-limits.md). Read the relevant package README before changing a public package.
 
-```text
-../aidrift-docs/PROJECT-CONTEXT.md
-../aidrift-docs/AGENT-RULES.md
-../aidrift-docs/ARCHITECTURE-PLAN.md
-../aidrift-docs/FOLDER-STRUCTURE.md
-../aidrift-docs/TASKS.md
-../aidrift-docs/PROGRESS.md
-```
+Open an issue before changing CLI exit semantics, the manifest schema, evidence schemas, snapshot compatibility, package names, or the release process. Those contracts require explicit migration and release review.
 
 ## Validation
 
@@ -42,6 +37,12 @@ Run the relevant checks before opening a PR:
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:coverage
+pnpm audit:dependencies
+pnpm audit:licenses
 pnpm build
 pnpm format:check
+pnpm release:check
+pnpm test:packed
+pnpm test:platform
 ```

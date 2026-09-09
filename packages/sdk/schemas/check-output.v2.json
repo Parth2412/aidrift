@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://aidrift.dev/schemas/check-output.v2.json",
+  "title": "AIDrift Check Output v2",
+  "description": "Stable schema for category-aware `aidrift check --format=json` output.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "passed",
+    "failOn",
+    "summary",
+    "results",
+    "probes",
+    "startedAt",
+    "completedAt",
+    "durationMs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "2" },
+    "passed": { "type": "boolean" },
+    "failOn": { "type": "string", "enum": ["fail", "warn"] },
+    "baselineSnapshotId": { "type": "string" },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "number", "minimum": 0 },
+    "summary": { "$ref": "#/$defs/evalSummary" },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evalResult" }
+    },
+    "probes": {
+      "type": "object",
+      "required": ["summary", "results"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "$ref": "#/$defs/probeSummary" },
+        "results": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/probeResult" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evalSummary": {
+      "type": "object",
+      "required": ["total", "passed", "warned", "failed", "new", "regressions"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "warned": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "new": { "type": "integer", "minimum": 0 },
+        "regressions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "evalResult": {
+      "type": "object",
+      "required": ["assertionId", "type", "status", "score", "explanation", "critical", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "assertionId": { "type": "string" },
+        "type": { "type": "string" },
+        "status": { "type": "string", "enum": ["PASS", "WARN", "FAIL", "NEW"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "explanation": { "type": "string" },
+        "critical": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "probeSummary": {
+      "type": "object",
+      "required": ["total", "passed", "warned", "drifted", "insufficient", "errors", "new"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "warned": { "type": "integer", "minimum": 0 },
+        "drifted": { "type": "integer", "minimum": 0 },
+        "insufficient": { "type": "integer", "minimum": 0 },
+        "errors": { "type": "integer", "minimum": 0 },
+        "new": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "probeResult": {
+      "type": "object",
+      "required": [
+        "modelName",
+        "provider",
+        "model",
+        "probeId",
+        "category",
+        "status",
+        "score",
+        "confidence",
+        "explanation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "modelName": { "type": "string" },
+        "provider": { "type": "string" },
+        "model": { "type": "string" },
+        "probeId": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["deterministic", "structural", "semantic", "behavioral", "performance"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "WARN", "DRIFT", "INSUFFICIENT", "ERROR", "NEW"]
+        },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "explanation": { "type": "string" },
+        "statistics": { "$ref": "#/$defs/statistics" }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "required": [
+        "method",
+        "current",
+        "baseline",
+        "delta",
+        "pValue",
+        "significanceLevel",
+        "confidenceLevel",
+        "confidenceInterval",
+        "significant"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["fisher_exact", "welch_t"] },
+        "current": { "$ref": "#/$defs/distribution" },
+        "baseline": { "$ref": "#/$defs/distribution" },
+        "delta": { "type": "number" },
+        "pValue": { "type": "number", "minimum": 0, "maximum": 1 },
+        "significanceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceInterval": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "significant": { "type": "boolean" }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": ["sampleCount", "mean", "standardDeviation"],
+      "additionalProperties": false,
+      "properties": {
+        "sampleCount": { "type": "integer", "minimum": 1 },
+        "mean": { "type": "number" },
+        "standardDeviation": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

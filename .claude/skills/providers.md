@@ -1,166 +1,60 @@
-# Providers — LLM Provider Adapters
+# Providers — Runtime Adapters
 
 ## When to Read This
 
-Read before: adding a new provider adapter, modifying the provider interface, working on provider health checks, or debugging API interactions in `src/providers/`.
+Read before changing provider interfaces, request construction, response validation, identity, pricing, credentials, or live-network behavior.
 
----
+## Current Interface
 
-## Provider Interface (`src/providers/interface.ts`)
+`packages/core/src/providers/types.ts` defines the minimal `EvalProvider` contract:
 
-```typescript
-interface LLMProvider {
-  name: string;
+- a stable provider `id`;
+- `generate({ input, assertionId?, probeId?, modelName?, signal? })`;
+- bounded `content`, measured `latencyMs`, optional observed `costUsd`, and optional internal raw evidence.
 
-  // Send a prompt and get a response
-  complete(request: CompletionRequest): Promise<CompletionResponse>;
-
-  // Get model metadata (for versioning)
-  getModelInfo(modelId: string): Promise<ModelInfo>;
-
-  // Check if provider is reachable
-  healthCheck(): Promise<boolean>;
-}
-
-interface CompletionRequest {
-  model: string;
-  messages: Message[];
-  parameters: ModelParameters;
-  tools?: ToolDefinition[];
-  timeout_ms?: number;
-}
-
-interface CompletionResponse {
-  content: string;
-  tool_calls?: ToolCall[];
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-  latency_ms: number;
-  model_version?: string; // Actual model version returned by provider
-  cost_usd: number;
-}
-
-interface ModelParameters {
-  temperature?: number;
-  max_tokens?: number;
-  top_p?: number;
-  frequency_penalty?: number;
-  presence_penalty?: number;
-  stop?: string[];
-  [key: string]: unknown; // Provider-specific params
-}
-```
-
----
+Callers depend on this normalized contract and must not inspect provider-specific response objects.
 
 ## Supported Providers
 
-### OpenAI (`src/providers/openai.ts`)
+- `mock`: deterministic, offline, and the default for development/tests.
+- `openai`: OpenAI Chat Completions over native `fetch`; credential `AIDRIFT_OPENAI_API_KEY`.
+- `anthropic`: Anthropic Messages over native `fetch`; credential `AIDRIFT_ANTHROPIC_API_KEY`.
 
-- SDK: `openai` ^4.x
-- Env key: `AIDRIFT_OPENAI_API_KEY`
-- Supports: chat completions, tool calls, JSON mode, vision
-- Cost calculation: uses OpenAI's published per-token pricing
-- Model version tracking: parse `model` field from response (may differ from request)
-- Rate limit handling: respect `x-ratelimit-*` headers, exponential backoff
-- Tool calling: maps `ToolDefinition` to OpenAI function calling format
+No Google, Mistral, Cohere, local OpenAI-compatible endpoint, custom HTTP provider, SDK-based adapter, tool-call execution, or vision path is implemented. Reserved manifest provider names must fail closed when selected.
 
-### Anthropic (`src/providers/anthropic.ts`)
+## Request Contract
 
-- SDK: `@anthropic-ai/sdk` ^0.x
-- Env key: `AIDRIFT_ANTHROPIC_API_KEY`
-- Supports: messages API, tool use, system prompts
-- Quirk: system prompt is a separate field (not a message role)
-- Quirk: tool_use results returned as content blocks, not separate field
-- Cost calculation: per-token pricing from Anthropic docs
+- The explicit eval target selects a named model artifact and declared text prompts.
+- Only the documented allowlist of provider parameters is sent.
+- Model, prompt, assertion/probe, sample, timeout, concurrency, and cost identity must remain visible in evidence.
+- Use HTTPS endpoints controlled by the adapter; do not accept arbitrary endpoint overrides in this release.
+- Pass the run's `AbortSignal` into every request.
+- Reject invalid parameters and missing credentials before network access.
 
-### Google (`src/providers/google.ts`)
+## Response Contract
 
-- SDK: `@google/generative-ai` (when implemented)
-- Env key: `AIDRIFT_GOOGLE_API_KEY`
-- Supports: Gemini models
-- Phase: Sprint 3 or post-launch (v0.3)
+- Bound the HTTP body while streaming; do not call an unbounded `response.text()` on provider data.
+- Validate status, content type/shape, required text, usage fields, numeric ranges, and output byte ceilings.
+- Treat malformed or oversized responses as configuration/runtime failures.
+- Measure latency locally and calculate observed cost only from validated usage plus a known model price.
+- Sanitize provider text before exposing an error. Never include keys, authorization headers, or raw private output in normal logs.
 
-### Mistral (`src/providers/mistral.ts`)
+## Costs
 
-- SDK: `@mistralai/mistralai`
-- Env key: `AIDRIFT_MISTRAL_API_KEY`
-- Phase: post-launch (v0.3)
+`packages/core/src/providers/cost-tables.ts` is a dated, source-verified table for supported model IDs. Refresh it from first-party provider pricing before release when pricing or supported IDs may have changed.
 
-### Cohere (`src/providers/cohere.ts`)
+- Estimates distinguish input and output tokens.
+- Unknown model pricing remains unknown; never coerce it to zero.
+- A live CI check cannot pass a dollar budget when any selected cost is unknown.
+- Preflight estimates and observed totals must both respect the run-wide ceiling.
 
-- SDK: `cohere-ai`
-- Env key: `AIDRIFT_COHERE_API_KEY`
-- Phase: post-launch (v0.3)
+## Failure And Retry Policy
 
-### Local (`src/providers/local.ts`)
+Provider calls are not automatically retried in this beta. Automatic retries could amplify cost and make sample identity ambiguous. Return a classified, redacted error and let the user deliberately rerun after checking provider status and recorded spend.
 
-- No SDK — uses OpenAI-compatible HTTP endpoint
-- Default endpoint: `http://localhost:11434/v1` (Ollama)
-- Also works with: vLLM, llama.cpp server, LocalAI, LM Studio
-- No API key required (unless configured)
-- No cost calculation (local inference is free)
-- Critical for offline mode
+## Testing Rules
 
-### Custom HTTP (`src/providers/custom.ts`)
-
-- Generic HTTP adapter for any endpoint
-- Configured via manifest `eval.target` section
-- Supports: custom URL, method, headers, body template, response path extraction
-- Uses JSONPath (`response_path`) to extract text from arbitrary response shapes
-- TLS certificate verification enabled by default
-
----
-
-## Provider Registry (`src/providers/registry.ts`)
-
-- Maps provider name strings to adapter classes
-- Lookup: `registry.get("openai")` → `OpenAIProvider` instance
-- Providers are instantiated lazily (only when first used)
-- Health check runs before first API call
-
----
-
-## Error Handling
-
-Every provider adapter must:
-
-1. Catch and classify errors: `auth_error`, `rate_limit`, `timeout`, `server_error`, `network_error`
-2. Provide actionable error messages (e.g., "Set AIDRIFT_OPENAI_API_KEY environment variable")
-3. Implement retry logic for transient errors (rate limits, server errors)
-4. Respect `timeout_ms` from the request
-5. Never expose raw API keys in error messages or logs
-6. Log HTTP details at `debug` level with keys redacted
-
----
-
-## Cost Calculation
-
-Each provider adapter maintains a cost table:
-
-```typescript
-const OPENAI_COSTS: Record<string, { input: number; output: number }> = {
-  "gpt-4o": { input: 2.5 / 1_000_000, output: 10.0 / 1_000_000 },
-  "gpt-4o-mini": { input: 0.15 / 1_000_000, output: 0.6 / 1_000_000 },
-  // ...
-};
-```
-
-- Cost is per-token, calculated from `usage` in the response
-- Cost tables should be periodically updated (they change)
-- If model not in cost table, log a warning and return `cost_usd: 0`
-
----
-
-## Rules
-
-- Every provider MUST implement the full `LLMProvider` interface — no partial implementations
-- API keys are loaded from environment variables ONLY — never from config files or arguments
-- Provider-specific response formats must be normalized to `CompletionResponse` — consumers never see raw provider responses
-- All HTTPS, no HTTP for cloud providers
-- Proxy support via `HTTPS_PROXY` environment variable
-- Provider adapters must be unit-testable with mocked HTTP responses
-- Never add provider-specific logic outside `src/providers/` — if something needs to know about OpenAI vs Anthropic, it goes in the adapter
+- Inject `fetch` for hermetic unit and contract tests.
+- Test auth, status, malformed JSON, invalid shapes, oversized/streamed bodies, aborts, parameter allowlists, identity, usage, and cost behavior.
+- Keep default CI network-free. Live integration tests must be environment-gated and spend-bounded.
+- Never use a live credential in fixtures, source, command arguments, or test output.
