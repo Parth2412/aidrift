@@ -52,7 +52,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
+    "typescript": "^7.0.2",
     "vitest": "4.1.11"
   }
 }
