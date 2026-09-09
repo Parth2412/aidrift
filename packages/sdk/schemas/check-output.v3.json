@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://aidrift.dev/schemas/check-output.v3.json",
+  "title": "AIDrift Check Output v3",
+  "description": "Stable schema for bounded, artifact-aware `aidrift check --format=json` evidence.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "passed",
+    "failOn",
+    "summary",
+    "results",
+    "probes",
+    "artifacts",
+    "execution",
+    "startedAt",
+    "completedAt",
+    "durationMs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "3" },
+    "passed": { "type": "boolean" },
+    "failOn": { "type": "string", "enum": ["fail", "warn"] },
+    "baselineSnapshotId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "startedAt": { "type": "string", "format": "date-time", "maxLength": 64 },
+    "completedAt": { "type": "string", "format": "date-time", "maxLength": 64 },
+    "durationMs": { "type": "number", "minimum": 0 },
+    "execution": { "$ref": "#/$defs/execution" },
+    "artifacts": { "$ref": "#/$defs/artifacts" },
+    "summary": { "$ref": "#/$defs/evalSummary" },
+    "results": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": { "$ref": "#/$defs/evalResult" }
+    },
+    "probes": {
+      "type": "object",
+      "required": ["summary", "results"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "$ref": "#/$defs/probeSummary" },
+        "results": {
+          "type": "array",
+          "maxItems": 2000,
+          "items": { "$ref": "#/$defs/probeResult" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "execution": {
+      "type": "object",
+      "required": [
+        "samples",
+        "timeoutSeconds",
+        "concurrency",
+        "estimatedRequests",
+        "estimatedInputTokens",
+        "estimatedOutputTokens",
+        "costEstimateKnown",
+        "observedCostUsd",
+        "unknownObservedCostSamples",
+        "pricingAsOf"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "samples": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 3600 },
+        "concurrency": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "estimatedRequests": { "type": "integer", "minimum": 0, "maximum": 200000 },
+        "estimatedInputTokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "estimatedOutputTokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "costEstimateKnown": { "type": "boolean" },
+        "estimatedCostUsd": { "type": "number", "minimum": 0 },
+        "unknownModels": {
+          "type": "array",
+          "maxItems": 101,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 1024 }
+        },
+        "observedCostUsd": { "type": "number", "minimum": 0 },
+        "unknownObservedCostSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200000
+        },
+        "pricingAsOf": { "type": "string", "format": "date" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["gate", "summary", "results"],
+      "additionalProperties": false,
+      "properties": {
+        "gate": { "type": "string", "const": "informational" },
+        "summary": {
+          "type": "object",
+          "required": ["total", "changed", "unchanged", "added", "removed"],
+          "additionalProperties": false,
+          "properties": {
+            "total": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "changed": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "unchanged": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "added": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "removed": { "type": "integer", "minimum": 0, "maximum": 10000 }
+          }
+        },
+        "results": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "required": ["artifactKey", "status", "kind"],
+            "additionalProperties": false,
+            "properties": {
+              "artifactKey": { "type": "string", "minLength": 1, "maxLength": 512 },
+              "status": {
+                "type": "string",
+                "enum": ["unchanged", "added", "removed", "modified"]
+              },
+              "kind": { "type": "string", "enum": ["text", "binary", "model"] }
+            }
+          }
+        }
+      }
+    },
+    "evalSummary": {
+      "type": "object",
+      "required": ["total", "passed", "warned", "failed", "new", "regressions"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "passed": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "warned": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "failed": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "new": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "regressions": { "type": "integer", "minimum": 0, "maximum": 10000 }
+      }
+    },
+    "evalResult": {
+      "type": "object",
+      "required": [
+        "assertionId",
+        "type",
+        "status",
+        "score",
+        "providerId",
+        "sampleCount",
+        "latencyMs",
+        "costUsd",
+        "explanation",
+        "critical",
+        "tags"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "assertionId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "type": { "type": "string", "enum": ["contains", "regex", "json_schema"] },
+        "status": { "type": "string", "enum": ["PASS", "WARN", "FAIL", "NEW"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "sampleCount": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "latencyMs": { "type": "number", "minimum": 0, "maximum": 3600000 },
+        "costUsd": { "type": "number", "minimum": 0 },
+        "statistics": { "$ref": "#/$defs/assertionStatistics" },
+        "explanation": { "type": "string", "minLength": 1, "maxLength": 8192 },
+        "critical": { "type": "boolean" },
+        "tags": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    },
+    "assertionStatistics": {
+      "type": "object",
+      "required": [
+        "method",
+        "sampleCount",
+        "baselineSampleCount",
+        "standardDeviation",
+        "baselineStandardDeviation",
+        "pValue",
+        "significanceLevel",
+        "confidenceLevel",
+        "confidenceInterval",
+        "significant"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["fisher_exact", "welch_t"] },
+        "sampleCount": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "baselineSampleCount": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "standardDeviation": { "type": "number", "minimum": 0 },
+        "baselineStandardDeviation": { "type": "number", "minimum": 0 },
+        "pValue": { "type": "number", "minimum": 0, "maximum": 1 },
+        "significanceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceInterval": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "significant": { "type": "boolean" }
+      }
+    },
+    "probeSummary": {
+      "type": "object",
+      "required": ["total", "passed", "warned", "drifted", "insufficient", "errors", "new"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "passed": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "warned": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "drifted": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "insufficient": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "errors": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "new": { "type": "integer", "minimum": 0, "maximum": 2000 }
+      }
+    },
+    "probeResult": {
+      "type": "object",
+      "required": [
+        "modelName",
+        "provider",
+        "model",
+        "probeId",
+        "category",
+        "status",
+        "score",
+        "sampleCount",
+        "confidence",
+        "explanation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "modelName": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "provider": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "model": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "probeId": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "category": {
+          "type": "string",
+          "enum": ["deterministic", "structural", "semantic", "behavioral", "performance"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "WARN", "DRIFT", "INSUFFICIENT", "ERROR", "NEW"]
+        },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "baselineScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sampleCount": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "explanation": { "type": "string", "minLength": 1, "maxLength": 8192 },
+        "statistics": { "$ref": "#/$defs/probeStatistics" }
+      }
+    },
+    "probeStatistics": {
+      "type": "object",
+      "required": [
+        "method",
+        "current",
+        "baseline",
+        "delta",
+        "pValue",
+        "significanceLevel",
+        "confidenceLevel",
+        "confidenceInterval",
+        "significant"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["fisher_exact", "welch_t"] },
+        "current": { "$ref": "#/$defs/distribution" },
+        "baseline": { "$ref": "#/$defs/distribution" },
+        "delta": { "type": "number" },
+        "pValue": { "type": "number", "minimum": 0, "maximum": 1 },
+        "significanceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceLevel": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "confidenceInterval": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "significant": { "type": "boolean" }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": ["sampleCount", "mean", "standardDeviation"],
+      "additionalProperties": false,
+      "properties": {
+        "sampleCount": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "mean": { "type": "number" },
+        "standardDeviation": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

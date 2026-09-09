@@ -1,0 +1,86 @@
+name: Live Provider Smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-provider-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Spend-bounded provider adapters
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: provider-smoke
+    env:
+      AIDRIFT_OPENAI_API_KEY: ${{ secrets.AIDRIFT_OPENAI_API_KEY }}
+      AIDRIFT_ANTHROPIC_API_KEY: ${{ secrets.AIDRIFT_ANTHROPIC_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.28.2
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Require at least one protected provider credential
+        shell: bash
+        run: |
+          if [[ -z "$AIDRIFT_OPENAI_API_KEY" && -z "$AIDRIFT_ANTHROPIC_API_KEY" ]]; then
+            echo "::error::Configure at least one provider-smoke environment credential."
+            exit 1
+          fi
+
+      - name: Install and build without lifecycle scripts
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm build
+
+      - name: Smoke OpenAI adapter within USD 0.001
+        if: env.AIDRIFT_OPENAI_API_KEY != ''
+        shell: bash
+        run: |
+          result_file="$(mktemp)"
+          trap 'rm -f "$result_file"' EXIT
+          node packages/cli/dist/cli.js probe \
+            --config .github/live-smoke/openai.aistate.yml \
+            --provider openai \
+            --category deterministic \
+            --samples 1 \
+            --concurrency 1 \
+            --no-cache \
+            --cost-budget 0.001 \
+            --format json > "$result_file"
+          node scripts/verify-live-smoke.mjs "$result_file" openai 0.001
+
+      - name: Smoke Anthropic adapter within USD 0.003
+        if: env.AIDRIFT_ANTHROPIC_API_KEY != ''
+        shell: bash
+        run: |
+          result_file="$(mktemp)"
+          trap 'rm -f "$result_file"' EXIT
+          node packages/cli/dist/cli.js probe \
+            --config .github/live-smoke/anthropic.aistate.yml \
+            --provider anthropic \
+            --category deterministic \
+            --samples 1 \
+            --concurrency 1 \
+            --no-cache \
+            --cost-budget 0.003 \
+            --format json > "$result_file"
+          node scripts/verify-live-smoke.mjs "$result_file" anthropic 0.003

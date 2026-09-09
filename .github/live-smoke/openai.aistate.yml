@@ -1,0 +1,18 @@
+version: "1"
+name: aidrift-openai-live-smoke
+artifacts:
+  models:
+    primary:
+      type: model
+      provider: openai
+      model: gpt-4.1-mini-2025-04-14
+      parameters:
+        max_completion_tokens: 16
+eval:
+  suite: ./evals
+  target:
+    type: provider
+    model: primary
+storage:
+  backend: local
+  path: ./.aidrift/snapshots

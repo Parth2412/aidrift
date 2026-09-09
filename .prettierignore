@@ -1,0 +1,9 @@
+dist
+coverage
+node_modules
+.aidrift
+.turbo
+pnpm-lock.yaml
+*.tgz
+.agents
+skills-lock.json

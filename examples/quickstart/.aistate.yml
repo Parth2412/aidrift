@@ -1,0 +1,31 @@
+version: "1"
+name: aidrift-quickstart
+description: "Offline five-minute behavioral regression example for AIDRIFT 0.9.0-beta.0."
+
+artifacts:
+  models:
+    primary:
+      type: model
+      provider: mock
+      model: mock-v1
+      parameters:
+        temperature: 0
+  prompts:
+    system:
+      type: prompt
+      path: ./prompts/system.md
+
+eval:
+  suite: ./evals
+  samples_per_assertion: 5
+  significance_level: 0.05
+  timeout_seconds: 30
+  target:
+    type: provider
+    model: primary
+    prompts:
+      - system
+
+storage:
+  backend: local
+  path: ./.aidrift/snapshots

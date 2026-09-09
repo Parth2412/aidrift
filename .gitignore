@@ -1,13 +1,38 @@
 # AIDrift snapshot data (may contain prompt content)
 .aidrift/
 
-# Claude Code personal settings
-.claude/settings.local.json
-
 # Environment files
 .env
 .env.*
 
-.claude
-CLAUDE.md
-tasks/
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+!packages/action/dist/
+!packages/action/dist/**
+coverage/
+.turbo/
+.release/
+*.tsbuildinfo
+*.tgz
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package manager / publishing secrets
+.npmrc
+.pypirc
+
+# Local IDE / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Agent-local personal settings
+.claude/settings.local.json

@@ -1,0 +1,16 @@
+version: "1"
+name: check-fixture
+artifacts:
+  models:
+    primary:
+      type: model
+      provider: mock
+      model: gpt-4o-2024-08-06
+eval:
+  suite: ./evals
+  target:
+    type: provider
+    model: primary
+storage:
+  backend: local
+  path: ./.aidrift/snapshots

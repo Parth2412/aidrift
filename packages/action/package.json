@@ -1,0 +1,41 @@
+{
+  "name": "@zettacore/aidrift-action",
+  "version": "0.9.0-beta.0",
+  "private": true,
+  "description": "GitHub Action wrapper for AIDrift by ZettaCore checks.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "action.yml",
+    "README.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "pnpm run typecheck && pnpm run bundle",
+    "bundle": "pnpm run clean && ncc build ../cli/dist/cli.js -o dist/cli --minify --target es2022 --license licenses.txt && ncc build src/main.ts -o dist --minify --target es2022 --license licenses.txt && node ../../scripts/finalize-action-bundle.mjs",
+    "clean": "rm -rf dist .tsbuildinfo *.tsbuildinfo",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:built": "node --test tests/e2e/action-built.mjs",
+    "test:coverage": "vitest run --coverage.enabled true --coverage.provider v8 --coverage.include src/**/*.ts --coverage.exclude src/main.ts --coverage.thresholds.lines 85",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "0.45.0",
+    "typescript": "^5.8.3",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "@actions/artifact": "6.2.1",
+    "@actions/core": "3.0.1",
+    "@actions/exec": "3.0.0",
+    "@actions/github": "9.1.1",
+    "@zettacore/aidrift": "workspace:*"
+  }
+}

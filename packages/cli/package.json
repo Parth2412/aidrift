@@ -1,0 +1,70 @@
+{
+  "name": "@zettacore/aidrift",
+  "version": "0.9.0-beta.0",
+  "description": "AIDrift by ZettaCore CLI for versioning, testing, and gating AI behavioral state.",
+  "license": "Apache-2.0",
+  "author": "Parth Kaloliya (https://github.com/Parth2412)",
+  "homepage": "https://github.com/Parth2412/aidrift#readme",
+  "bugs": {
+    "url": "https://github.com/Parth2412/aidrift/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Parth2412/aidrift.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "behavioral-testing",
+    "regression-testing",
+    "model-drift",
+    "cli"
+  ],
+  "type": "module",
+  "bin": {
+    "aidrift": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist .tsbuildinfo *.tsbuildinfo",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:built": "node --test tests/e2e/check-built.mjs",
+    "test:check-coverage": "vitest run tests/check.test.ts --coverage.enabled true --coverage.provider v8 --coverage.include src/commands/check.ts --coverage.reporter text --coverage.thresholds.lines 90",
+    "test:coverage": "vitest run --coverage.enabled true --coverage.provider v8 --coverage.include='src/**/*.ts' --coverage.exclude='src/cli.ts' --coverage.thresholds.lines=85 --coverage.thresholds.statements=85 --coverage.thresholds.functions=80 --coverage.thresholds.branches=70",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
+  },
+  "dependencies": {
+    "@zettacore/aidrift-core": "workspace:*",
+    "@zettacore/aidrift-sdk": "workspace:*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "ajv": "^8.20.0",
+    "typescript": "^5.8.3",
+    "vitest": "4.1.11"
+  }
+}

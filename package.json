@@ -1,0 +1,56 @@
+{
+  "name": "zettacore-aidrift-monorepo",
+  "version": "0.9.0-beta.0",
+  "private": true,
+  "description": "AIDrift by ZettaCore monorepo for AI behavioral state management tooling.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22.14.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "audit:dependencies": "pnpm audit --audit-level high",
+    "audit:licenses": "node scripts/verify-production-licenses.mjs",
+    "clean": "turbo run clean",
+    "docs:build-inputs": "turbo run build --filter=@zettacore/aidrift",
+    "docs:check": "pnpm docs:build-inputs && node scripts/generate-reference-docs.mjs --check",
+    "docs:generate": "pnpm docs:build-inputs && node scripts/generate-reference-docs.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint",
+    "pack:dry": "pnpm release:check",
+    "release:check": "node scripts/verify-release-packages.mjs",
+    "release:artifacts": "node scripts/verify-release-packages.mjs --pack-destination .release/packages --sbom-destination .release/sbom/aidrift.cdx.json",
+    "release:pack": "node scripts/verify-release-packages.mjs --pack-destination .release/packages",
+    "release:sbom": "node scripts/verify-release-packages.mjs --sbom-destination .release/sbom/aidrift.cdx.json",
+    "test": "turbo run test && node --test scripts/tests/*.test.mjs",
+    "test:built-cli": "pnpm --filter @zettacore/aidrift test:built",
+    "test:built-action": "pnpm --filter @zettacore/aidrift-action test:built",
+    "test:packed": "node scripts/verify-release-packages.mjs --install-smoke",
+    "test:platform": "node scripts/verify-release-packages.mjs --platform-smoke",
+    "test:coverage": "pnpm --filter @zettacore/aidrift-core test:coverage && pnpm --filter @zettacore/aidrift test:coverage && pnpm --filter @zettacore/aidrift-action test:coverage",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "prettier": "^3.5.3",
+    "turbo": "2.10.12",
+    "typescript": "^5.8.3",
+    "vite": "7.3.5",
+    "vitest": "4.1.11"
+  },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@2.1.0": "2.1.4",
+      "esbuild@0.27.7": "0.28.1",
+      "fast-uri@3.1.0": "3.1.6",
+      "nanoid@3.3.11": "3.3.18",
+      "postcss@8.5.10": "8.5.23",
+      "vite": "7.3.5"
+    }
+  }
+}

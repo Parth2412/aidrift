@@ -1,0 +1,16 @@
+version: "1"
+name: fixture-unpinned-model
+
+artifacts:
+  models:
+    primary:
+      type: model
+      provider: openai
+      model: gpt-4o
+
+eval:
+  suite: ./evals
+
+storage:
+  backend: local
+  path: ./.aidrift/snapshots

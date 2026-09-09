@@ -1,0 +1,69 @@
+{
+  "name": "@zettacore/aidrift-core",
+  "version": "0.9.0-beta.0",
+  "description": "Core engines for AIDrift by ZettaCore behavioral state management.",
+  "license": "Apache-2.0",
+  "author": "Parth Kaloliya (https://github.com/Parth2412)",
+  "homepage": "https://github.com/Parth2412/aidrift#readme",
+  "bugs": {
+    "url": "https://github.com/Parth2412/aidrift/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Parth2412/aidrift.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "behavioral-testing",
+    "regression-testing",
+    "model-drift"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist .tsbuildinfo *.tsbuildinfo",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage.enabled true --coverage.provider v8 --coverage.include='src/**/*.ts' --coverage.thresholds.lines=85 --coverage.thresholds.statements=85 --coverage.thresholds.functions=85 --coverage.thresholds.branches=75",
+    "test:eval-coverage": "vitest run --coverage --coverage.include='src/eval/**/*.ts' --coverage.exclude='src/eval/index.ts' --coverage.thresholds.lines=90",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "4.1.11",
+    "fast-check": "4.9.0",
+    "typescript": "^5.8.3",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "diff": "^9.0.0",
+    "glob": "^13.0.6",
+    "ignore": "^7.0.8",
+    "re2js": "^2.8.6",
+    "safe-regex2": "^5.1.1",
+    "yaml": "^2.9.0"
+  }
+}

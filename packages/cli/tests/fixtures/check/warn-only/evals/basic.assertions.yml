@@ -1,0 +1,7 @@
+suite: warn-only
+assertions:
+  - id: will-warn
+    type: contains
+    input: "return the word mock"
+    expected_contains: ["IMPOSSIBLE_STRING_AIDRIFT_99999"]
+    critical: false

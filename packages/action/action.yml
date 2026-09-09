@@ -1,0 +1,70 @@
+name: AIDRIFT Check
+description: Run AIDRIFT behavioral checks in GitHub Actions.
+author: Parth
+inputs:
+  manifest:
+    description: Path to the AIDRIFT manifest.
+    required: false
+    default: .aistate.yml
+  baseline:
+    description: Optional snapshot id, label, tag, or git SHA prefix.
+    required: false
+  fail-on:
+    description: Gate threshold, either fail or warn.
+    required: false
+    default: fail
+  assertions:
+    description: Optional comma-separated assertion IDs.
+    required: false
+  tags:
+    description: Optional comma-separated assertion tags.
+    required: false
+  samples:
+    description: Optional samples per assertion and provider probe.
+    required: false
+  probe-model:
+    description: Optional model artifact name to probe.
+    required: false
+  probe-category:
+    description: Optional deterministic, structural, semantic, behavioral, or performance category.
+    required: false
+  concurrency:
+    description: Optional maximum concurrent evals and probes.
+    required: false
+  timeout:
+    description: Optional total check deadline in seconds.
+    required: false
+  cost-budget:
+    description: Required USD ceiling when the manifest uses a live provider.
+    required: false
+  comment-mode:
+    description: Pull request comment behavior, one of upsert, new, or none.
+    required: false
+    default: upsert
+  github-token:
+    description: GitHub token used only for same-repository PR comments.
+    required: false
+  upload-artifact:
+    description: Upload JSON and JUnit evidence to this workflow run.
+    required: false
+    default: "true"
+  artifact-name:
+    description: Unique artifact name within the workflow job.
+    required: false
+    default: aidrift-results
+  retention-days:
+    description: Evidence retention from 1 through 90 days.
+    required: false
+    default: "7"
+outputs:
+  result:
+    description: pass, warn, fail, or error.
+  regressions:
+    description: Number of eval regressions, probe drift, and insufficient probe results.
+  artifact-id:
+    description: Uploaded artifact id when upload-artifact is true.
+  artifact-url:
+    description: Authenticated workflow artifact URL when available.
+runs:
+  using: node24
+  main: dist/index.js
