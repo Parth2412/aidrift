@@ -59,7 +59,7 @@
   "dependencies": {
     "@zettacore/aidrift-core": "workspace:*",
     "@zettacore/aidrift-sdk": "workspace:*",
-    "commander": "^12.1.0"
+    "commander": "^15.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
