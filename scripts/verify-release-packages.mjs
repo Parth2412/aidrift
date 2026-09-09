@@ -410,7 +410,12 @@ async function smokeTestQuickstart(executable, version, installDirectory) {
 
   invoke(["validate"]);
   invoke(["snapshot", "--with-evals", "--with-probes", "--samples", "5", "--label", "clean"]);
-  const passing = JSON.parse(invoke(["check", "--samples", "5", "--format", "json"]).stdout);
+  const passingResult = invoke(["check", "--samples", "5", "--format", "json"]);
+  assert(
+    Buffer.byteLength(passingResult.stdout, "utf8") > 8 * 1024,
+    "Quickstart JSON must exercise stdout larger than one 8 KiB write buffer.",
+  );
+  const passing = JSON.parse(passingResult.stdout);
   assert(passing.passed === true, "Quickstart unchanged check must pass.");
 
   await fs.copyFile(

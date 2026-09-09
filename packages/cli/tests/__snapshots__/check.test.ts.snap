@@ -4,7 +4,7 @@ exports[`aidrift check > snapshots github output-file contract for malformed-man
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
@@ -76,7 +76,7 @@ exports[`aidrift check > snapshots json output-file contract for malformed-manif
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
@@ -2846,7 +2846,7 @@ exports[`aidrift check > snapshots junit output-file contract for malformed-mani
 {
   "exitCode": 2,
   "outputFile": "",
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.
@@ -3131,7 +3131,7 @@ exports[`aidrift check > snapshots junit output-file contract for warn-only 1`] 
 exports[`aidrift check > snapshots text contract for malformed-manifest 1`] = `
 {
   "exitCode": 2,
-  "stderr": "Error: Cannot run check for manifest: /home/vulcan/personal/zettacore/ai-tools/aidrift-project/aidrift-code/packages/cli/tests/fixtures/check/malformed-manifest/.aistate.yml
+  "stderr": "Error: Cannot run check for manifest: <fixtures>/malformed-manifest/.aistate.yml
   Code: manifest.schema.invalid
   Reason: [manifest.schema.invalid] Missing required field "name".; [manifest.schema.invalid] Missing required field "artifacts".; [manifest.schema.invalid] Missing required field "eval".; [manifest.schema.invalid] Missing required field "storage".; [manifest.schema.invalid] Schema validation failed at "/": must NOT have additional properties.
   Fix: Update .aistate.yml to match the manifest v1 schema.

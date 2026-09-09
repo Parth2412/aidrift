@@ -52,6 +52,7 @@ function createTestIo() {
 
 function normalizeContractOutput(value: string): string {
   return value
+    .replaceAll(`${fixturesDir}${path.sep}`, "<fixtures>/")
     .replace(/"startedAt": "[^"]+"/gu, '"startedAt": "<timestamp>"')
     .replace(/"completedAt": "[^"]+"/gu, '"completedAt": "<timestamp>"')
     .replace(/"durationMs": [0-9]+/gu, '"durationMs": <durationMs>')
