@@ -6,7 +6,9 @@ The project follows Semantic Versioning.
 
 ## Unreleased (development)
 
-No unreleased changes.
+### Documentation
+
+- Updated beta and security guidance to point directly to the enabled private vulnerability reporting channel.
 
 ## [0.9.0-beta.1] - 2026-09-09
 

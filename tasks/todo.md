@@ -4,29 +4,31 @@ Canonical project task tracking now lives in `../aidrift-docs/TASKS.md` and `../
 
 Use this file only for local implementation notes that are too detailed for the project-level tracker.
 
-## Current Phase: M4 Owner and External Beta Gates
+## Current Phase: M4 External Beta Gates
 
 ### To Do
 
-- [ ] Review the full remediation diff, decide the disposition of user-owned untracked helper files, and create an owner-authored candidate commit; current `HEAD` is still the pre-remediation `9d88c2a` base.
-- [ ] Obtain remote macOS/Windows platform evidence for the exact candidate commit (GitHub owner/CI action).
-- [ ] Complete owner npm/GitHub setup and publish only after every release gate is green.
-- [ ] Recruit external beta users and record real false-positive/false-negative evidence.
+- [ ] Confirm a working private Code of Conduct reporting contact before active beta recruitment.
+- [ ] Configure the protected `provider-smoke` environment and scoped live-provider credentials.
+- [ ] Recruit at least 10 external beta users, capture at least 3 actionable reports, dogfood one consent-safe public project, classify false positives/missed regressions, and complete the 14-day observation gate begun on 2026-09-09.
 
 ### Owner / Release Follow-Up
 
 - [x] Implement Phase 10 canonical probe suite, mocked-provider probe runner, local cache, cost estimator, `aidrift probe` command, and `plan --probe-providers` execution path.
 - [x] Implement live provider adapters (OpenAI, Anthropic first) using env-only credentials and mocked/recorded tests.
 - [x] Wire `--provider` flag through `aidrift probe` and `aidrift plan --probe-providers` to surface the live adapter registry to end users.
-- [ ] Configure GitHub branch protection in GitHub UI (owner action required).
-- [ ] Set GitHub repository default branch to `development` after branch protection is configured (owner action required).
-- [ ] Re-authenticate GitHub CLI and review current Dependabot alerts/PRs before release (owner action required).
+- [x] Protect `main` and `development` with strict required checks, signed commits, PR-only changes, conversation resolution, and administrator enforcement.
+- [x] Set `main` as the public repository default and retain `development` as the integration branch.
+- [x] Authenticate the owner, clear stale credentials, and verify zero open Dependabot, CodeQL, or secret-scanning alerts at release.
 
 ### Done
 
 - [x] Make `init` generate a starter eval suite and prove the no-YAML-edit init/validate/snapshot/plan/check journey from clean installed tarballs.
 - [x] Add and test a machine-versioned offline example that exits 0 unchanged and exits 1 on the included behavioral regression.
 - [x] Add a six-cell Linux/macOS/Windows × Node 22.14/24.20 package/quickstart matrix; validate Linux Node 22.14 and 24.20 locally.
+- [x] Pass all six remote platform cells plus CI and security checks on exact release commit `252a01588a694088d47539e9852bfcef08aaf838`.
+- [x] Publish signed GitHub prerelease `v0.9.0-beta.1`, all three npm packages under `next` with OIDC provenance, and the release-generated CycloneDX SBOM.
+- [x] Verify a credential-free registry install, package signatures/attestations, imports, and the complete offline first-run workflow.
 - [x] Prepare beta limitations, structured feedback/bug intake, evidence ledger, draft release notes, and owner publication/incident runbook.
 - [x] Complete M3 test/security gates: zero dependency advisories, package-wide coverage, statistical property tests, SDK contracts, modern redaction, Gitleaks, Dependency Review, CodeQL, CycloneDX SBOM, SHA-pinned Actions, and spend-bounded protected provider smokes.
 - [x] Complete M2 npm release engineering: coordinated prerelease metadata, strict tarball allowlists and budgets, installed-tarball smoke tests, Node 24.20.0/npm 11.5.1+ release contract, and a protected OIDC/provenance publish workflow.
@@ -83,7 +85,7 @@ Use this file only for local implementation notes that are too detailed for the 
 
 ## Sprint Deliverable
 
-The locally verified beta candidate has a clean-install five-minute example, Linux evidence for both supported Node lines, truthful release notes, and an owner-ready publication/feedback runbook. Remote macOS/Windows, registry publication, protected settings, live credentials, and external beta evidence remain deliberately open.
+The public beta has a clean-install five-minute example, all six supported OS/runtime checks, signed release notes/tag, OIDC-proven npm packages, an SBOM, protected repository settings, and a verified anonymous registry workflow. Live-provider credentials, a private conduct contact, and external beta evidence remain deliberately open.
 
 ## Notes
 
