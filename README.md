@@ -6,6 +6,10 @@ One-line pitch: Terraform for AI behavior.
 
 AIDrift treats prompts, model settings, eval expectations, provider probes, and observed outputs as versioned behavioral state. It gives teams a reproducible baseline and a CI gate for detecting statistically supported regressions instead of relying on ad hoc prompt checks.
 
+![AIDrift terminal demo showing a behavioral baseline, a passing check, and a blocked prompt regression](docs/assets/aidrift-terminal-demo.gif)
+
+The animation uses AIDrift's deterministic mock provider: no API key, network request, or provider cost. [Run the complete offline regression example](examples/quickstart/README.md).
+
 ## Current Status
 
 `0.9.0-beta.1` is the first public beta. The CLI packages are distributed through npm's `next` channel, and the GitHub Action is available from the matching immutable release tag. The following commands are available:
