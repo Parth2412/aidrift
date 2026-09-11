@@ -1,0 +1,185 @@
+<!-- Source artwork for aidrift-terminal-demo.gif. GitHub renders SVG files but disables their inline animation. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">AIDrift offline behavioral regression demo</title>
+  <desc id="description">An animated terminal captures a behavioral baseline, verifies a passing check, changes a prompt, and blocks the resulting regression with exit code one.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f" />
+      <stop offset="1" stop-color="#111936" />
+    </linearGradient>
+    <linearGradient id="terminal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101827" />
+      <stop offset="1" stop-color="#0b1220" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020617" flood-opacity="0.55" />
+    </filter>
+    <style>
+      text {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      }
+
+      .frame {
+        opacity: 0;
+        animation-duration: 15s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      .frame-1 { animation-name: frame-1; }
+      .frame-2 { animation-name: frame-2; }
+      .frame-3 { animation-name: frame-3; }
+      .frame-4 { animation-name: frame-4; }
+      .frame-5 { animation-name: frame-5; }
+
+      .cursor {
+        animation: cursor 0.85s steps(1, end) infinite;
+      }
+
+      @keyframes frame-1 {
+        0%, 16% { opacity: 1; }
+        18%, 100% { opacity: 0; }
+      }
+
+      @keyframes frame-2 {
+        0%, 16% { opacity: 0; }
+        18%, 35% { opacity: 1; }
+        37%, 100% { opacity: 0; }
+      }
+
+      @keyframes frame-3 {
+        0%, 35% { opacity: 0; }
+        37%, 54% { opacity: 1; }
+        56%, 100% { opacity: 0; }
+      }
+
+      @keyframes frame-4 {
+        0%, 54% { opacity: 0; }
+        56%, 69% { opacity: 1; }
+        71%, 100% { opacity: 0; }
+      }
+
+      @keyframes frame-5 {
+        0%, 69% { opacity: 0; }
+        71%, 98% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes cursor {
+        0%, 48% { opacity: 1; }
+        49%, 100% { opacity: 0; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .frame { animation: none; opacity: 0; }
+        .frame-5 { opacity: 1; }
+        .cursor { animation: none; opacity: 1; }
+      }
+    </style>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#background)" />
+  <circle cx="1090" cy="70" r="180" fill="#22d3ee" opacity="0.04" />
+  <circle cx="110" cy="610" r="210" fill="#8b5cf6" opacity="0.045" />
+
+  <g filter="url(#shadow)">
+    <rect x="34" y="28" width="1132" height="619" rx="18" fill="url(#terminal)" stroke="#334155" stroke-width="2" />
+    <path d="M34 88H1166" stroke="#334155" stroke-width="2" />
+  </g>
+
+  <circle cx="69" cy="58" r="8" fill="#fb7185" />
+  <circle cx="96" cy="58" r="8" fill="#fbbf24" />
+  <circle cx="123" cy="58" r="8" fill="#4ade80" />
+  <text x="154" y="66" fill="#cbd5e1" font-size="22" font-weight="700">AIDrift</text>
+  <text x="270" y="66" fill="#64748b" font-size="18">offline regression demo</text>
+  <rect x="888" y="43" width="236" height="31" rx="15" fill="#0f2531" stroke="#155e75" />
+  <text x="1006" y="64" text-anchor="middle" fill="#67e8f9" font-size="15" font-weight="700">NO API KEY · NO NETWORK</text>
+
+  <g class="frame frame-1">
+    <text x="74" y="135" fill="#22d3ee" font-size="17" font-weight="700">01 / 04 · CAPTURE A BEHAVIORAL BASELINE</text>
+    <text x="74" y="196" fill="#4ade80" font-size="23">$</text>
+    <text x="106" y="196" fill="#f8fafc" font-size="23">aidrift snapshot --with-evals --with-probes --samples 5 --label clean</text>
+    <rect class="cursor" x="1033" y="174" width="13" height="27" rx="2" fill="#67e8f9" />
+    <text x="74" y="270" fill="#94a3b8" font-size="20">Version prompts, model configuration, evals, probes, and observed behavior.</text>
+    <rect x="74" y="322" width="1010" height="1" fill="#1e293b" />
+    <text x="74" y="377" fill="#64748b" font-size="18">A deterministic mock provider makes this demo reproducible and cost-free.</text>
+  </g>
+
+  <g class="frame frame-2">
+    <text x="74" y="135" fill="#22d3ee" font-size="17" font-weight="700">01 / 04 · CAPTURE A BEHAVIORAL BASELINE</text>
+    <text x="74" y="196" fill="#4ade80" font-size="23">$</text>
+    <text x="106" y="196" fill="#f8fafc" font-size="23">aidrift snapshot --with-evals --with-probes --samples 5 --label clean</text>
+    <text x="74" y="267" fill="#e2e8f0" font-size="21">Snapshot created:</text>
+    <text x="300" y="267" fill="#67e8f9" font-size="21">snap_...</text>
+    <text x="74" y="313" fill="#94a3b8" font-size="20">Artifacts</text>
+    <text x="200" y="313" fill="#f8fafc" font-size="20">2</text>
+    <text x="270" y="313" fill="#94a3b8" font-size="20">Eval baselines</text>
+    <text x="458" y="313" fill="#f8fafc" font-size="20">1</text>
+    <text x="528" y="313" fill="#94a3b8" font-size="20">Probe baselines</text>
+    <text x="728" y="313" fill="#f8fafc" font-size="20">20</text>
+    <text x="74" y="359" fill="#94a3b8" font-size="20">Baseline provider</text>
+    <text x="282" y="359" fill="#f8fafc" font-size="20">mock</text>
+    <text x="349" y="359" fill="#64748b" font-size="20">(offline synthetic)</text>
+    <rect x="74" y="418" width="255" height="47" rx="8" fill="#0d2f26" stroke="#166534" />
+    <text x="202" y="449" text-anchor="middle" fill="#4ade80" font-size="18" font-weight="700">BASELINE READY</text>
+  </g>
+
+  <g class="frame frame-3">
+    <text x="74" y="135" fill="#22d3ee" font-size="17" font-weight="700">02 / 04 · VERIFY STABLE BEHAVIOR</text>
+    <text x="74" y="196" fill="#4ade80" font-size="23">$</text>
+    <text x="106" y="196" fill="#f8fafc" font-size="23">aidrift check --samples 5</text>
+    <text x="74" y="267" fill="#e2e8f0" font-size="21">AIDRIFT Check</text>
+    <text x="74" y="313" fill="#94a3b8" font-size="20">Artifact changes:</text>
+    <text x="282" y="313" fill="#f8fafc" font-size="20">0</text>
+    <text x="337" y="313" fill="#64748b" font-size="20">(informational)</text>
+    <text x="74" y="359" fill="#94a3b8" font-size="20">Summary:</text>
+    <text x="180" y="359" fill="#4ade80" font-size="20">1 PASS</text>
+    <text x="284" y="359" fill="#64748b" font-size="20">· probes 20 PASS · 0 DRIFT · 0 ERROR</text>
+    <rect x="74" y="418" width="232" height="64" rx="10" fill="#0d2f26" stroke="#22c55e" stroke-width="2" />
+    <text x="190" y="459" text-anchor="middle" fill="#4ade80" font-size="27" font-weight="800">RESULT: PASS</text>
+    <text x="74" y="538" fill="#64748b" font-size="18">Behavior matches the committed baseline.</text>
+  </g>
+
+  <g class="frame frame-4">
+    <text x="74" y="135" fill="#fbbf24" font-size="17" font-weight="700">03 / 04 · SIMULATE A PROMPT REGRESSION</text>
+    <text x="74" y="196" fill="#4ade80" font-size="23">$</text>
+    <text x="106" y="196" fill="#f8fafc" font-size="23">cp fixtures/regressed-system.md prompts/system.md</text>
+    <rect class="cursor" x="761" y="174" width="13" height="27" rx="2" fill="#fbbf24" />
+    <text x="74" y="285" fill="#94a3b8" font-size="20">One declared prompt artifact is intentionally changed.</text>
+    <rect x="74" y="346" width="504" height="56" rx="9" fill="#2a2112" stroke="#92400e" />
+    <circle cx="104" cy="374" r="8" fill="#fbbf24" />
+    <text x="128" y="381" fill="#fde68a" font-size="20">prompts/system.md</text>
+    <text x="361" y="381" fill="#fbbf24" font-size="20" font-weight="700">MODIFIED</text>
+  </g>
+
+  <g class="frame frame-5">
+    <text x="74" y="135" fill="#fb7185" font-size="17" font-weight="700">04 / 04 · BLOCK THE BEHAVIORAL REGRESSION</text>
+    <text x="74" y="196" fill="#4ade80" font-size="23">$</text>
+    <text x="106" y="196" fill="#f8fafc" font-size="23">aidrift check --samples 5</text>
+    <text x="74" y="258" fill="#94a3b8" font-size="19">artifact:prompts/system</text>
+    <text x="353" y="258" fill="#fbbf24" font-size="19" font-weight="700">MODIFIED</text>
+    <text x="74" y="306" fill="#e2e8f0" font-size="19">system-prompt-remains-safe</text>
+    <text x="392" y="306" fill="#fb7185" font-size="19" font-weight="800">FAIL</text>
+    <text x="462" y="306" fill="#e2e8f0" font-size="19">1.00 → 0.00</text>
+    <text x="74" y="349" fill="#fda4af" font-size="18">forbidden behavior detected</text>
+    <text x="385" y="349" fill="#94a3b8" font-size="18">[Fisher exact p=0.003968]</text>
+    <text x="74" y="404" fill="#94a3b8" font-size="19">Summary:</text>
+    <text x="180" y="404" fill="#fb7185" font-size="19">1 FAIL</text>
+    <text x="271" y="404" fill="#64748b" font-size="19">· 1 regression</text>
+    <rect x="74" y="449" width="230" height="64" rx="10" fill="#35151d" stroke="#f43f5e" stroke-width="2" />
+    <text x="189" y="490" text-anchor="middle" fill="#fb7185" font-size="27" font-weight="800">RESULT: FAIL</text>
+    <rect x="330" y="449" width="168" height="64" rx="10" fill="#172033" stroke="#475569" />
+    <text x="414" y="490" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">EXIT CODE 1</text>
+    <text x="74" y="570" fill="#67e8f9" font-size="20" font-weight="700">Regression blocked before release.</text>
+  </g>
+
+  <g transform="translate(866 604)">
+    <circle cx="0" cy="0" r="5" fill="#22d3ee" opacity="0.35" />
+    <circle cx="23" cy="0" r="5" fill="#22d3ee" opacity="0.5" />
+    <circle cx="46" cy="0" r="5" fill="#22d3ee" opacity="0.65" />
+    <circle cx="69" cy="0" r="5" fill="#22d3ee" opacity="0.8" />
+    <circle cx="92" cy="0" r="5" fill="#22d3ee" />
+    <text x="119" y="6" fill="#64748b" font-size="16">15 second loop</text>
+  </g>
+</svg>
