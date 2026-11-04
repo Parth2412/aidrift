@@ -33,7 +33,7 @@ Until those controls exist, plugins must remain non-executable and no command ma
 
 ## Naming Direction
 
-If first-party plugins are introduced, use the controlled ZettaCore scope, such as `@zettacore/aidrift-plugin-<name>`. Community naming and trust indicators must be designed before publication; do not reserve third-party package names by assumption.
+If first-party plugins are introduced, use the controlled package scope, such as `@zettacore/aidrift-plugin-<name>`. Community naming and trust indicators must be designed before publication; do not reserve third-party package names by assumption.
 
 ## Rules
 

@@ -1,7 +1,7 @@
 {
   "name": "@zettacore/aidrift-sdk",
   "version": "0.9.0-beta.1",
-  "description": "Versioned TypeScript and JSON Schema contracts for AIDrift by ZettaCore.",
+  "description": "Versioned TypeScript and JSON Schema contracts for AIDrift.",
   "license": "Apache-2.0",
   "author": "Parth Kaloliya (https://github.com/Parth2412)",
   "homepage": "https://github.com/Parth2412/aidrift#readme",

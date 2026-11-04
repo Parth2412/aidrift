@@ -1,6 +1,6 @@
-# AIDrift by ZettaCore
+# AIDrift
 
-AIDrift is a local-first, Git-native CLI for versioning, diffing, testing, and gating the behavioral state of AI systems. It is an open-source project from [ZettaCore](https://zettacorelabs.com).
+AIDrift is an open-source, local-first, Git-native CLI for versioning, diffing, testing, and gating the behavioral state of AI systems.
 
 One-line pitch: Terraform for AI behavior.
 
