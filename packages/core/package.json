@@ -1,6 +1,6 @@
 {
   "name": "@zettacore/aidrift-core",
-  "version": "0.9.0-beta.1",
+  "version": "0.9.0-beta.2",
   "description": "Core engines for AIDrift behavioral state management.",
   "license": "Apache-2.0",
   "author": "Parth Kaloliya (https://github.com/Parth2412)",

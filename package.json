@@ -1,6 +1,6 @@
 {
   "name": "zettacore-aidrift-monorepo",
-  "version": "0.9.0-beta.1",
+  "version": "0.9.0-beta.2",
   "private": true,
   "description": "AIDrift monorepo for AI behavioral state management tooling.",
   "license": "Apache-2.0",

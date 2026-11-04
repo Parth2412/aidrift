@@ -2,7 +2,7 @@
 
 ## Release status
 
-`0.9.0-beta.1` is the first announced public beta. Install the CLI from npm with `@zettacore/aidrift@next`, or pin the GitHub Action to `Parth2412/aidrift/packages/action@v0.9.0-beta.1`. The unannounced `0.9.0-beta.0` registry bootstrap exists only to establish trusted publishing for the new package names.
+`0.9.0-beta.2` is the current public beta. Install the CLI from npm with `@zettacore/aidrift@next`, or pin the GitHub Action to `Parth2412/aidrift/packages/action@v0.9.0-beta.2`. The unannounced `0.9.0-beta.0` registry bootstrap exists only to establish trusted publishing for the new package names.
 
 ## Supported beta boundary
 

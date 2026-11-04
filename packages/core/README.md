@@ -8,4 +8,4 @@ Runtime support is deliberately narrower than the reserved manifest schema. Unsu
 
 All parsing, discovery, snapshot, regex, provider-request, and behavioral-execution paths enforce explicit ceilings. JSON Schema regexes use RE2 syntax. See the repository's [safety and resource limits](https://github.com/Parth2412/aidrift/blob/main/docs/reference/safety-limits.md) before integrating the programmatic API with untrusted project input.
 
-Version `0.9.0-beta.1` is the first announced public beta on npm's `next` channel. Its API remains prerelease and may change before 1.0.
+Version `0.9.0-beta.2` is the current public beta on npm's `next` channel. Its API remains prerelease and may change before 1.0.

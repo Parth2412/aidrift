@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
+      - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.2
         with:
           samples: "5"
           timeout: "120"
