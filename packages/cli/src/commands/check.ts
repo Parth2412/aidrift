@@ -991,8 +991,7 @@ function xmlEscape(value: string): string {
 
 function formatEvidenceSuffix(
   statistics:
-    | { readonly pValue: number; readonly confidenceInterval: readonly number[] }
-    | undefined,
+    { readonly pValue: number; readonly confidenceInterval: readonly number[] } | undefined,
 ): string {
   if (statistics === undefined) return "";
   return ` [p=${statistics.pValue.toFixed(6)}, CI=${statistics.confidenceInterval[0]?.toFixed(4)}..${statistics.confidenceInterval[1]?.toFixed(4)}]`;

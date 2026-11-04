@@ -147,5 +147,4 @@ export interface StorageConfig {
 }
 
 export type PluginConfig =
-  | string
-  | { readonly name: string; readonly version?: string; readonly options?: unknown };
+  string | { readonly name: string; readonly version?: string; readonly options?: unknown };

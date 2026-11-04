@@ -35,22 +35,26 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
-    "@vitest/coverage-v8": "4.1.11",
-    "prettier": "^3.5.3",
-    "turbo": "2.10.12",
+    "@types/node": "^22.20.5",
+    "@vitest/coverage-v8": "4.1.12",
+    "prettier": "^3.9.8",
+    "turbo": "2.10.13",
     "typescript": "^5.8.3",
-    "vite": "7.3.5",
-    "vitest": "4.1.11"
+    "vite": "7.3.7",
+    "vitest": "4.1.12"
   },
   "pnpm": {
     "overrides": {
-      "brace-expansion@2.1.0": "2.1.4",
+      "brace-expansion@>=2.0.0 <2.1.7": "2.1.7",
       "esbuild@0.27.7": "0.28.1",
-      "fast-uri@3.1.0": "3.1.6",
+      "fast-uri@>=3.0.0 <3.1.9": "3.1.9",
+      "glob@>=9.0.0 <14.0.2": "14.0.3",
+      "minimatch@<11.0.1": "11.0.4",
       "nanoid@3.3.11": "3.3.18",
       "postcss@8.5.10": "8.5.23",
-      "vite": "7.3.5"
+      "source-map-js@<1.2.2": "1.2.2",
+      "undici@>=6.0.0 <6.29.1": "6.29.1",
+      "vite": "7.3.7"
     }
   }
 }

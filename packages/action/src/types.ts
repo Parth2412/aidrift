@@ -194,9 +194,7 @@ export interface IssueComment {
   readonly id: number;
   readonly body?: string | null | undefined;
   readonly user?:
-    | { readonly login?: string | undefined; readonly type?: string | undefined }
-    | null
-    | undefined;
+    { readonly login?: string | undefined; readonly type?: string | undefined } | null | undefined;
 }
 
 export interface CommentAdapter {

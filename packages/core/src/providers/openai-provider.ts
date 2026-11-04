@@ -181,16 +181,14 @@ function normalizeOpenAIParameters(
       continue;
     }
     if (name === "stop") {
-      if (
-        !(
-          (typeof value === "string" && value.length <= MAX_STOP_SEQUENCE_CHARACTERS) ||
-          (Array.isArray(value) &&
-            value.length <= 4 &&
-            value.every(
-              (item) => typeof item === "string" && item.length <= MAX_STOP_SEQUENCE_CHARACTERS,
-            ))
-        )
-      ) {
+      if (!(
+        (typeof value === "string" && value.length <= MAX_STOP_SEQUENCE_CHARACTERS) ||
+        (Array.isArray(value) &&
+          value.length <= 4 &&
+          value.every(
+            (item) => typeof item === "string" && item.length <= MAX_STOP_SEQUENCE_CHARACTERS,
+          ))
+      )) {
         throw invalidParameter(
           name,
           `must be a string or an array of at most four strings, each no longer than ${MAX_STOP_SEQUENCE_CHARACTERS} characters`,
