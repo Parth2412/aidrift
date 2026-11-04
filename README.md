@@ -1,6 +1,6 @@
-# AIDrift by ZettaCore
+# AIDrift
 
-AIDrift is a local-first, Git-native CLI for versioning, diffing, testing, and gating the behavioral state of AI systems. It is an open-source project from [ZettaCore](https://zettacorelabs.com).
+AIDrift is an open-source, local-first, Git-native CLI for versioning, diffing, testing, and gating the behavioral state of AI systems.
 
 One-line pitch: Terraform for AI behavior.
 
@@ -12,7 +12,7 @@ The animation uses AIDrift's deterministic mock provider: no API key, network re
 
 ## Current Status
 
-`0.9.0-beta.1` is the first public beta. The CLI packages are distributed through npm's `next` channel, and the GitHub Action is available from the matching immutable release tag. The following commands are available:
+`0.9.0-beta.2` is the current public beta. The CLI packages are distributed through npm's `next` channel, and the GitHub Action is available from the matching immutable release tag. The following commands are available:
 
 | Command            | Description                                                  |
 | ------------------ | ------------------------------------------------------------ |
@@ -102,7 +102,7 @@ permissions:
 
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.1
+  - uses: Parth2412/aidrift/packages/action@v0.9.0-beta.2
     with:
       samples: "5"
       timeout: "120"

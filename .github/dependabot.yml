@@ -10,6 +10,10 @@ updates:
       - chore
     commit-message:
       prefix: chore
+    ignore:
+      # Types must match the oldest supported runtime (Node 22.14) declared in engines.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:

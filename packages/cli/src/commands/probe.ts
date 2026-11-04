@@ -136,8 +136,7 @@ export function registerProbeCommand(program: Command, options: RegisterProbeCom
 
       const isLive = providerId !== "mock";
       let providerForModel:
-        | ((model: ProbeModelTarget) => ReturnType<typeof buildLiveProvider>)
-        | undefined;
+        ((model: ProbeModelTarget) => ReturnType<typeof buildLiveProvider>) | undefined;
       let observedBudgetUsd: number | undefined;
 
       if (isLive) {

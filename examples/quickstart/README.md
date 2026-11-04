@@ -1,6 +1,6 @@
 # AIDrift offline quickstart
 
-This example proves the complete `0.9.0-beta.1` baseline-to-regression workflow without an API key or network call. It uses AIDrift's deterministic mock provider so the result is reproducible; replace the synthetic assertion and provider with behavior from your application after the walkthrough.
+This example proves the complete `0.9.0-beta.2` baseline-to-regression workflow without an API key or network call. It uses AIDrift's deterministic mock provider so the result is reproducible; replace the synthetic assertion and provider with behavior from your application after the walkthrough.
 
 From the repository root, build the packages once and run the local CLI:
 

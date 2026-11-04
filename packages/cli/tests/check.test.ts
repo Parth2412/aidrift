@@ -14,12 +14,7 @@ const schemaPath = path.resolve(testDir, "..", "..", "sdk", "schemas", "check-ou
 const junitXsdPath = path.join(fixturesDir, "junit.xsd");
 
 type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | readonly JsonValue[]
-  | { readonly [key: string]: JsonValue };
+  string | number | boolean | null | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 
 function fixturePath(scenario: string): string {
   return path.join(fixturesDir, scenario, ".aistate.yml");

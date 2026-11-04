@@ -211,8 +211,7 @@ export function registerPlanCommand(program: Command, options: RegisterPlanComma
           "probe",
         );
         let providerForModel:
-          | ((model: ProbeModelTarget) => ReturnType<typeof buildLiveProvider>)
-          | undefined;
+          ((model: ProbeModelTarget) => ReturnType<typeof buildLiveProvider>) | undefined;
 
         if (isLive) {
           checkProviderEnvVar(providerId as LiveProviderId, env);

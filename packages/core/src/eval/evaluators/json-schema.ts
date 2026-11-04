@@ -103,9 +103,7 @@ function assertJsonOutputComplexity(assertion: JsonSchemaAssertion, root: unknow
 
 function schemaErrorsText(
   errors:
-    | null
-    | readonly { readonly instancePath?: string; readonly message?: string }[]
-    | undefined,
+    null | readonly { readonly instancePath?: string; readonly message?: string }[] | undefined,
 ): string {
   return (errors ?? [])
     .map((error) => `${error.instancePath || "/"} ${error.message ?? "is invalid"}`)

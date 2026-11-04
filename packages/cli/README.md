@@ -29,4 +29,4 @@ This needs no API key and no YAML editing. `init` creates a deterministic offlin
 
 OpenAI and Anthropic execution reads credentials only from `AIDRIFT_OPENAI_API_KEY` and `AIDRIFT_ANTHROPIC_API_KEY`. Live checks require an explicit `--cost-budget`; the deterministic mock provider remains the offline default for development and tests.
 
-See the [complete regression example](https://github.com/Parth2412/aidrift/tree/main/examples/quickstart), [generated CLI reference](https://github.com/Parth2412/aidrift/blob/main/docs/reference/cli.md), and repository README for the supported manifest/runtime boundary. Version `0.9.0-beta.1` is the first announced public beta and remains prerelease software until 1.0.
+See the [complete regression example](https://github.com/Parth2412/aidrift/tree/main/examples/quickstart), [generated CLI reference](https://github.com/Parth2412/aidrift/blob/main/docs/reference/cli.md), and repository README for the supported manifest/runtime boundary. Version `0.9.0-beta.2` is the current public beta and remains prerelease software until 1.0.
