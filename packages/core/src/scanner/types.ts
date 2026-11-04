@@ -1,9 +1,5 @@
 export type ArtifactKind =
-  | "prompt"
-  | "tool_schema"
-  | "rag_config"
-  | "safety_rules"
-  | "model_env_ref";
+  "prompt" | "tool_schema" | "rag_config" | "safety_rules" | "model_env_ref";
 
 export type DetectedModelProviderName = "openai" | "anthropic" | "cohere";
 

@@ -2,7 +2,7 @@
 
 ## Project Identity
 
-AIDrift by ZettaCore is a local-first, Git-native TypeScript CLI for versioning, diffing, testing, and gating the behavioral state of AI systems.
+AIDrift is a local-first, Git-native TypeScript CLI for versioning, diffing, testing, and gating the behavioral state of AI systems.
 
 - Owner: Parth Kaloliya
 - License: Apache-2.0

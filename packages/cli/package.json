@@ -1,7 +1,7 @@
 {
   "name": "@zettacore/aidrift",
-  "version": "0.9.0-beta.1",
-  "description": "AIDrift by ZettaCore CLI for versioning, testing, and gating AI behavioral state.",
+  "version": "0.9.0-beta.2",
+  "description": "AIDrift CLI for versioning, testing, and gating AI behavioral state.",
   "license": "Apache-2.0",
   "author": "Parth Kaloliya (https://github.com/Parth2412)",
   "homepage": "https://github.com/Parth2412/aidrift#readme",
@@ -62,9 +62,9 @@
     "commander": "^12.1.0"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
+    "@types/node": "^22.20.5",
     "ajv": "^8.20.0",
     "typescript": "^5.8.3",
-    "vitest": "4.1.11"
+    "vitest": "4.1.12"
   }
 }

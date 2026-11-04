@@ -2,26 +2,15 @@ import type { RegressionStatistics } from "../eval/statistics.js";
 import type { EvalProvider } from "../providers/types.js";
 
 export type ProbeCategory =
-  | "deterministic"
-  | "structural"
-  | "semantic"
-  | "behavioral"
-  | "performance";
+  "deterministic" | "structural" | "semantic" | "behavioral" | "performance";
 
 export type ProbeComparisonType =
-  | "exact"
-  | "structural"
-  | "semantic"
-  | "behavioral"
-  | "performance";
+  "exact" | "structural" | "semantic" | "behavioral" | "performance";
 
 export type ProbeStatus = "PASS" | "WARN" | "DRIFT" | "INSUFFICIENT" | "ERROR" | "NEW";
 
 export type ProbeStructuralRule =
-  | "json_object_name_status"
-  | "json_array_red_green_blue"
-  | "numbered_list_three"
-  | "xml_result_ok";
+  "json_object_name_status" | "json_array_red_green_blue" | "numbered_list_three" | "xml_result_ok";
 
 export interface ProbeRubricConcept {
   readonly label: string;

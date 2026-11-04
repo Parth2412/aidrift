@@ -6,10 +6,30 @@ The project follows Semantic Versioning.
 
 ## Unreleased (development)
 
+## [0.9.0-beta.2] - 2026-11-04
+
+### Security
+
+- Upgraded `glob` in `@zettacore/aidrift-core` to `^14.0.3` (GHSA-3g3m-2fjr-6pw4), which also resolves the `minimatch` and `brace-expansion` denial-of-service advisories on that path.
+- Upgraded `re2js` to a release patched for quadratic-time lookbehind matching (GHSA-gg6h-894w-4m9c).
+- Forced patched transitive resolutions for `fast-uri` 3.1.9 (via `ajv`), `undici` 6.29.1, `brace-expansion` 2.1.7, `glob` 14.0.3, and `minimatch` 11.0.4 (via the Action's artifact upload dependencies) with version-range overrides so lockfile refreshes cannot regress.
+- Upgraded development tooling: `vite` 7.3.7, `vitest` and `@vitest/coverage-v8` 4.1.12, and `source-map-js` 1.2.2.
+- Rebuilt the checked-in Action bundle and its license inventory with the patched dependencies. `pnpm audit` reports no known vulnerabilities at any severity.
+
+### Changed
+
+- Updated `ignore`, `yaml`, `turbo`, `prettier`, and pinned workflow actions (`actions/setup-node` v7.1.0, `actions/upload-artifact` v7.0.2, `github/codeql-action` v4.39.1). Each workflow action SHA was verified against its upstream release tag.
+- Dependabot no longer proposes `@types/node` major versions beyond the Node 22.14 engine floor.
+
 ### Documentation
 
+- Presented the project under the AIDrift name in the README and package descriptions. Package names are unchanged.
 - Updated beta and security guidance to point directly to the enabled private vulnerability reporting channel.
 - Added the owner-approved private conduct-reporting contact required before external beta recruitment.
+
+### Migration notes
+
+- No CLI, manifest, snapshot, evidence-schema, or Action input/output changes. Update the Action pin to `@v0.9.0-beta.2` and the npm packages to `0.9.0-beta.2`.
 
 ## [0.9.0-beta.1] - 2026-09-09
 
